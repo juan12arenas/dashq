@@ -642,75 +642,75 @@ tr:hover td{background:rgba(255,255,255,.015);}
 <div class="screen" id="scOnboarding">
   <div class="ob-shell" style="padding:24px 0;">
     <div style="text-align:center;margin-bottom:24px;">
-      <div style="font-size:2rem;margin-bottom:8px;">🎉</div>
-      <h1 style="font-family:var(--font-d);font-size:1.3rem;font-weight:700;color:var(--white);margin-bottom:4px;">Primera vez detectada</h1>
-      <p style="font-size:.84rem;color:var(--mute);">Configura tu empresa en 3 pasos — toma menos de 5 minutos</p>
+      <div style="font-size:2rem;margin-bottom:8px;">🏢</div>
+      <h1 style="font-family:var(--font-d);font-size:1.3rem;font-weight:700;color:var(--white);margin-bottom:4px;">Cuéntanos sobre tu empresa</h1>
+      <p style="font-size:.84rem;color:var(--mute);">Solo 4 datos — puedes completar el resto en ⚙️ Configuración</p>
     </div>
     <div class="ob-progress">
-      <div class="ob-step-pill active" id="ob_s1">① Empresa</div>
-      <div class="ob-step-pill" id="ob_s2">② Contexto DOFA</div>
-      <div class="ob-step-pill" id="ob_s3">③ Primer OKR</div>
+      <div class="ob-step-pill active" id="ob_s1">① Tu perfil</div>
+      <div class="ob-step-pill" id="ob_s2">② Tu empresa</div>
     </div>
+
+    <!-- Paso 1: perfil usuario -->
     <div id="ob_step1">
       <div class="ob-card">
-        <h2>🏢 Datos de tu empresa</h2>
-        <p>Personaliza DashQ con el nombre, sector y color de marca de tu organización.</p>
+        <h2>👤 Tu perfil</h2>
+        <p>Estos datos ya los tienes — solo confírmalos.</p>
         <div class="form-grid">
-          <div class="field"><label>Nombre de la empresa</label><input id="ob_emp" placeholder="Ej: Caribe Fresh S.A.S."/></div>
-          <div class="field"><label>Sector / Industria</label><input id="ob_sec" placeholder="Ej: Distribución de alimentos"/></div>
-          <div class="field"><label>Ciudad principal</label><input id="ob_ciu" placeholder="Ej: Barranquilla"/></div>
-          <div class="field"><label>Producto / Servicio</label><input id="ob_pro" placeholder="Ej: Frutas y verduras frescas"/></div>
-          <div class="field"><label>Meta ventas mensual ($)</label><input id="ob_meta" type="number" placeholder="85000000"/></div>
-          <div class="field"><label>Color de marca</label>
-            <div class="color-row">
-              <input id="ob_col" value="#00E5A0" oninput="document.getElementById('ob_sw').style.background=this.value" style="flex:1;"/>
-              <div class="swatch" id="ob_sw" style="background:#00E5A0;"></div>
-            </div>
+          <div class="field full">
+            <label>Nombre completo</label>
+            <input id="ob_nombre" placeholder="Tu nombre"/>
           </div>
-          <div class="field"><label>Misión</label><textarea id="ob_mis" rows="2" placeholder="Proveer productos de calidad..."></textarea></div>
-          <div class="field"><label>Visión</label><textarea id="ob_vis" rows="2" placeholder="Ser líder en la región..."></textarea></div>
+          <div class="field full">
+            <label>Correo electrónico</label>
+            <input id="ob_email" type="email" placeholder="tu@empresa.com"/>
+          </div>
         </div>
       </div>
       <div class="ob-nav"><div></div><button class="btn btn-em" onclick="obNext(2)">Siguiente →</button></div>
     </div>
+
+    <!-- Paso 2: empresa -->
     <div id="ob_step2" style="display:none;">
       <div class="ob-card">
-        <h2>🔍 Contexto estratégico (DOFA)</h2>
-        <p>Esta información alimenta al analizador de IA para darte recomendaciones reales y específicas de tu empresa.</p>
+        <h2>🏢 Tu empresa</h2>
+        <p>Información básica — puedes editar esto después en Configuración.</p>
         <div class="form-grid">
-          <div class="field"><label>💪 Fortalezas (una por línea)</label><textarea id="ob_for" rows="4" placeholder="Red de distribución consolidada&#10;Productos frescos de alta calidad"></textarea></div>
-          <div class="field"><label>🚀 Oportunidades</label><textarea id="ob_opp" rows="4" placeholder="Crecimiento e-commerce alimentario&#10;Expansión a nuevos municipios"></textarea></div>
-          <div class="field"><label>⚠️ Debilidades</label><textarea id="ob_deb" rows="4" placeholder="Alta dependencia de temporadas&#10;Sistema de trazabilidad manual"></textarea></div>
-          <div class="field"><label>🔴 Amenazas</label><textarea id="ob_ame" rows="4" placeholder="Competidores con mayor capital&#10;Volatilidad de precios agrícolas"></textarea></div>
+          <div class="field full">
+            <label>Nombre de la empresa</label>
+            <input id="ob_emp" placeholder="Ej: Distribuidora del Caribe S.A.S."/>
+          </div>
+          <div class="field">
+            <label>NIT</label>
+            <input id="ob_nit" placeholder="Ej: 900.123.456-7"/>
+          </div>
+          <div class="field">
+            <label>Sector / Industria</label>
+            <input id="ob_sec" placeholder="Ej: Distribución de alimentos"/>
+          </div>
+          <div class="field">
+            <label>Tamaño de la empresa</label>
+            <select id="ob_tam">
+              <option value="">Selecciona...</option>
+              <option>Microempresa (1-10 empleados)</option>
+              <option>Pequeña (11-50 empleados)</option>
+              <option>Mediana (51-200 empleados)</option>
+              <option>Grande (200+ empleados)</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Ciudad principal</label>
+            <input id="ob_ciu" placeholder="Ej: Barranquilla"/>
+          </div>
         </div>
       </div>
       <div class="ob-nav">
         <button class="btn btn-ghost" onclick="obNext(1)">← Anterior</button>
-        <button class="btn btn-em" onclick="obNext(3)">Siguiente →</button>
-      </div>
-    </div>
-    <div id="ob_step3" style="display:none;">
-      <div class="ob-card">
-        <h2>🎯 Tu primer OKR</h2>
-        <p>Define el objetivo más importante para este período. La IA te ayudará a proponer Key Results medibles.</p>
-        <div class="form-grid">
-          <div class="field full"><label>Objective</label><input id="ob_obj" placeholder="Ej: Incrementar ventas y cobertura en Q3 2025"/></div>
-          <div class="field"><label>Key Result 1</label><input id="ob_kr1" placeholder="Alcanzar $85M en ventas mensuales"/></div>
-          <div class="field"><label>Meta KR1</label><input id="ob_km1" type="number" placeholder="85000000"/></div>
-          <div class="field"><label>Key Result 2</label><input id="ob_kr2" placeholder="Incorporar 15 nuevos clientes"/></div>
-          <div class="field"><label>Meta KR2</label><input id="ob_km2" type="number" placeholder="15"/></div>
-          <div class="field"><label>Key Result 3</label><input id="ob_kr3" placeholder="90% de entregas a tiempo"/></div>
-          <div class="field"><label>Meta KR3 (%)</label><input id="ob_km3" type="number" placeholder="90"/></div>
-        </div>
-      </div>
-      <div class="ob-nav">
-        <button class="btn btn-ghost" onclick="obNext(2)">← Anterior</button>
         <button class="btn btn-em" onclick="obFinish()">🚀 Crear mi DashQ</button>
       </div>
     </div>
   </div>
 </div>
-
 <!-- ═══════════════ MAIN APP ═══════════════ -->
 <div class="screen" id="scApp">
   <!-- Sidebar -->
@@ -986,12 +986,24 @@ tr:hover td{background:rgba(255,255,255,.015);}
 
       <!-- CONFIG -->
       <div class="panel" id="panel_config">
+
+        <!-- EMPRESA -->
         <div class="cfg-section">
-          <div class="cfg-title">Empresa</div>
+          <div class="cfg-title">🏢 Empresa</div>
           <div class="cfg-card">
             <div class="form-grid">
               <div class="field"><label>Nombre empresa</label><input id="cfg_emp"/></div>
+              <div class="field"><label>NIT</label><input id="cfg_nit" placeholder="900.123.456-7"/></div>
               <div class="field"><label>Sector</label><input id="cfg_sec"/></div>
+              <div class="field"><label>Tamaño</label>
+                <select id="cfg_tam">
+                  <option value="">Selecciona...</option>
+                  <option>Microempresa (1-10 empleados)</option>
+                  <option>Pequeña (11-50 empleados)</option>
+                  <option>Mediana (51-200 empleados)</option>
+                  <option>Grande (200+ empleados)</option>
+                </select>
+              </div>
               <div class="field"><label>Ciudad</label><input id="cfg_ciu"/></div>
               <div class="field"><label>Meta mensual ($)</label><input id="cfg_meta" type="number"/></div>
               <div class="field"><label>Color de marca</label>
@@ -1001,34 +1013,70 @@ tr:hover td{background:rgba(255,255,255,.015);}
                 </div>
               </div>
             </div>
-            <button class="btn btn-em btn-sm" style="margin-top:14px;" onclick="saveConfig()">💾 Guardar cambios</button>
+            <button class="btn btn-em btn-sm" style="margin-top:14px;" onclick="saveConfig()">💾 Guardar empresa</button>
           </div>
         </div>
+
+        <!-- PRODUCTOS -->
         <div class="cfg-section">
-          <div class="cfg-title">Google Sheets</div>
+          <div class="cfg-title">📦 Lista de productos</div>
           <div class="cfg-card">
-            <div class="field" style="margin-bottom:12px;"><label>URL del Apps Script publicado</label>
-              <input id="cfg_script" placeholder="https://script.google.com/macros/s/..."/></div>
+            <div style="display:flex;gap:8px;margin-bottom:14px;">
+              <input id="inp_prod" placeholder="Nombre del producto" style="flex:1;background:var(--ink3);border:1px solid var(--rim);border-radius:var(--r);padding:9px 13px;color:var(--white);font-size:.86rem;font-family:var(--font);outline:none;" onkeydown="if(event.key==='Enter')addProducto()"/>
+              <button class="btn btn-em btn-sm" onclick="addProducto()">+ Agregar</button>
+            </div>
+            <div id="lista_productos" style="display:flex;flex-wrap:wrap;gap:8px;min-height:40px;">
+              <span style="color:var(--mute);font-size:.82rem;">Cargando productos...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- VENDEDORES -->
+        <div class="cfg-section">
+          <div class="cfg-title">👥 Lista de vendedores</div>
+          <div class="cfg-card">
+            <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;">
+              <input id="inp_vend_nombre" placeholder="Nombre del vendedor" style="flex:1;min-width:160px;background:var(--ink3);border:1px solid var(--rim);border-radius:var(--r);padding:9px 13px;color:var(--white);font-size:.86rem;font-family:var(--font);outline:none;" onkeydown="if(event.key==='Enter')addVendedor()"/>
+              <input id="inp_vend_zona" placeholder="Zona asignada" style="flex:1;min-width:120px;background:var(--ink3);border:1px solid var(--rim);border-radius:var(--r);padding:9px 13px;color:var(--white);font-size:.86rem;font-family:var(--font);outline:none;" onkeydown="if(event.key==='Enter')addVendedor()"/>
+              <button class="btn btn-em btn-sm" onclick="addVendedor()">+ Agregar</button>
+            </div>
+            <div id="lista_vendedores">
+              <span style="color:var(--mute);font-size:.82rem;">Cargando vendedores...</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- GOOGLE SHEETS -->
+        <div class="cfg-section">
+          <div class="cfg-title">🔗 Google Sheets</div>
+          <div class="cfg-card">
+            <div class="field" style="margin-bottom:12px;">
+              <label>URL del Apps Script publicado</label>
+              <input id="cfg_script" placeholder="https://script.google.com/macros/s/..."/>
+            </div>
             <div style="display:flex;gap:10px;flex-wrap:wrap;">
               <button class="btn btn-em btn-sm" onclick="saveScriptUrl()">💾 Guardar URL</button>
               <button class="btn btn-ghost btn-sm" onclick="testConnection()">🔌 Probar conexión</button>
             </div>
           </div>
         </div>
+
+        <!-- USUARIO -->
         <div class="cfg-section">
-          <div class="cfg-title">Usuario actual</div>
+          <div class="cfg-title">👤 Usuario actual</div>
           <div class="cfg-card">
             <div style="display:flex;align-items:center;gap:14px;">
-              <div class="sb-avatar" style="width:44px;height:44px;font-size:1rem;" id="cfg_avatar">JA</div>
+              <div class="sb-avatar" style="width:44px;height:44px;font-size:1rem;" id="cfg_avatar">?</div>
               <div>
-                <div style="font-weight:700;color:var(--white);" id="cfg_name">Juan Arenas</div>
-                <div style="font-size:.78rem;color:var(--mute);" id="cfg_email">juan@caribefresh.com</div>
+                <div style="font-weight:700;color:var(--white);" id="cfg_name">—</div>
+                <div style="font-size:.78rem;color:var(--mute);" id="cfg_email">—</div>
                 <div style="margin-top:4px;"><span class="badge b-green">Admin</span></div>
               </div>
             </div>
             <button class="btn btn-danger btn-sm" style="margin-top:14px;" onclick="logout()">↩ Cerrar sesión</button>
           </div>
         </div>
+
       </div>
 
     </div><!-- /content -->
@@ -1064,1138 +1112,279 @@ tr:hover td{background:rgba(255,255,255,.015);}
 <div id="toast"></div>
 
 
+
 <script>
 
 // ══════════════════════════════════════════════
-// DATA DEMO — Caribe Fresh S.A.S.
+// STATE
 // ══════════════════════════════════════════════
-const DEMO_CONFIG = {
-  empresa:'Caribe Fresh S.A.S.',sector:'Distribución de frutas y verduras frescas',
-  ciudad:'Barranquilla, Colombia',producto:'Frutas y verduras frescas',
-  meta:85000000,color:'#00C9A7',
-  mision:'Proveer frutas y verduras frescas de la más alta calidad a hogares y empresas del Caribe colombiano, garantizando frescura, trazabilidad y servicio oportuno.',
-  vision:'Ser la distribuidora de productos frescos más confiable y tecnológica del norte de Colombia para 2027, con presencia en 20 municipios y 500 clientes activos.'
-};
-
-const DEMO_DOFA = {
-  fortalezas:'Red de distribución consolidada en Barranquilla\nProductos frescos de alta calidad\nRelación directa con productores locales\nEquipo de vendedores con amplia experiencia\nFlota propia de transporte refrigerado',
-  oportunidades:'Crecimiento del e-commerce alimentario post-pandemia\nExpansión a nuevos municipios del Atlántico\nTendencia nacional hacia alimentación saludable\nDemanda creciente de frutas exóticas\nProgramas gubernamentales de apoyo al agro',
-  debilidades:'Alta dependencia de temporadas agrícolas\nSistema de trazabilidad aún manual\nCapacidad de almacenamiento limitada\nPoca presencia digital y redes sociales\nDependencia de un solo proveedor por producto',
-  amenazas:'Competidores con mayor capital y tecnología\nVolatilidad de precios agrícolas por clima\nCambios en normativas sanitarias INVIMA\nInflación que reduce poder adquisitivo\nNuevos entrantes con modelos directos al consumidor'
-};
-
-const DEMO_OKRS = [
-  {
-    id:1, objective:'Incrementar ventas y cobertura en Q3 2025',
-    krs:[
-      {id:11,texto:'Alcanzar $85M en ventas mensuales',unidad:'$',meta:85000000,avance:72},
-      {id:12,texto:'Incorporar 15 nuevos clientes activos',unidad:'clientes',meta:15,avance:60},
-      {id:13,texto:'90% de pedidos entregados a tiempo',unidad:'%',meta:90,avance:87},
-    ]
+let STATE = {
+  user: null,
+  isDemo: false,
+  period: 'Este mes',
+  dateFrom: null,
+  dateTo: null,
+  productos: ['Banano','Piña','Mango','Aguacate','Papaya','Maracuyá'],
+  vendedores: [
+    {nombre:'Carlos Mendez',zona:'Norte'},
+    {nombre:'Ana Pérez',zona:'Centro'},
+    {nombre:'Luis Torres',zona:'Sur'},
+    {nombre:'María García',zona:'Oriente'},
+    {nombre:'Pedro Ruiz',zona:'Occidente'},
+  ],
+  config: {
+    empresa:'Caribe Fresh S.A.S.',nit:'',sector:'Distribución de frutas y verduras',
+    tamano:'Pequeña (11-50 empleados)',ciudad:'Barranquilla',
+    meta:85000000,color:'#00E5A0',mision:'',vision:''
   },
-  {
-    id:2, objective:'Expandir cobertura geográfica en el Atlántico',
-    krs:[
-      {id:21,texto:'Apertura operativa zona Suroccidente',unidad:'%',meta:100,avance:40},
-      {id:22,texto:'Llegar a 5 nuevos municipios',unidad:'municipios',meta:5,avance:40},
-      {id:23,texto:'20 clientes nuevos en zonas nuevas',unidad:'clientes',meta:20,avance:25},
-    ]
-  }
-];
-
-const DEMO_VENTAS = [
-  {id:1,fecha:'2025-07-14',vendedor:'Carlos Mendez',producto:'Banano',zona:'Norte',unidades:500,monto:3850000,estado:'Entregado'},
-  {id:2,fecha:'2025-07-14',vendedor:'Ana Pérez',producto:'Aguacate',zona:'Centro',unidades:200,monto:4200000,estado:'Entregado'},
-  {id:3,fecha:'2025-07-13',vendedor:'Luis Torres',producto:'Mango',zona:'Sur',unidades:350,monto:2800000,estado:'Entregado'},
-  {id:4,fecha:'2025-07-13',vendedor:'María García',producto:'Piña',zona:'Zona Industrial',unidades:180,monto:1980000,estado:'Pendiente'},
-  {id:5,fecha:'2025-07-12',vendedor:'Pedro Ruiz',producto:'Papaya',zona:'Suroccidente',unidades:120,monto:1560000,estado:'Entregado'},
-  {id:6,fecha:'2025-07-12',vendedor:'Carlos Mendez',producto:'Maracuyá',zona:'Norte',unidades:80,monto:2400000,estado:'Entregado'},
-  {id:7,fecha:'2025-07-11',vendedor:'Ana Pérez',producto:'Banano',zona:'Centro',unidades:620,monto:4774000,estado:'Entregado'},
-  {id:8,fecha:'2025-07-11',vendedor:'Luis Torres',producto:'Aguacate',zona:'Sur',unidades:150,monto:3150000,estado:'En tránsito'},
-  {id:9,fecha:'2025-07-10',vendedor:'María García',producto:'Mango',zona:'Norte',unidades:400,monto:3200000,estado:'Entregado'},
-  {id:10,fecha:'2025-07-10',vendedor:'Pedro Ruiz',producto:'Piña',zona:'Zona Industrial',unidades:200,monto:2200000,estado:'Entregado'},
-];
+  dofa: {fortalezas:'',oportunidades:'',debilidades:'',amenazas:''},
+  okrs: [
+    {id:1,objective:'Incrementar ventas y cobertura en Q3 2025',
+     krs:[
+       {id:11,texto:'Alcanzar $85M en ventas mensuales',meta:85000000,avance:72,unidad:'$',linkedToVentas:false},
+       {id:12,texto:'Incorporar 15 nuevos clientes activos',meta:15,avance:60,unidad:'clientes',linkedToVentas:false},
+       {id:13,texto:'90% de pedidos entregados a tiempo',meta:90,avance:87,unidad:'%',linkedToVentas:false},
+     ]},
+    {id:2,objective:'Mejorar eficiencia operacional',
+     krs:[
+       {id:21,texto:'Reducir merma a menos del 3%',meta:3,avance:58,unidad:'%',linkedToVentas:false},
+       {id:22,texto:'Incorporar 2 nuevas zonas de distribución',meta:2,avance:50,unidad:'zonas',linkedToVentas:false},
+     ]}
+  ],
+  ventas: [
+    {id:1,fecha:'2026-07-16',vendedor:'Carlos Mendez',producto:'Banano',zona:'Norte',unidades:500,monto:4050000,estado:'Entregado',timestamp:'2026-07-16T08:00:00'},
+    {id:2,fecha:'2026-07-16',vendedor:'Ana Pérez',producto:'Piña',zona:'Centro',unidades:300,monto:2700000,estado:'Pendiente',timestamp:'2026-07-16T09:00:00'},
+  ],
+  scriptUrl: '',
+};
 
 const DEMO_MESES = {
   labels:['Feb','Mar','Abr','May','Jun','Jul'],
-  ventas:[52400000,58700000,54200000,61800000,67300000,61200000],
-  pedidos:[712,798,743,851,892,847]
+  ventas:[52400000,58700000,54200000,61800000,67300000,61200000]
 };
 
-// App state
-let STATE = {
-  user: null,
-  config: {...DEMO_CONFIG},
-  dofa: {...DEMO_DOFA},
-  okrs: [...DEMO_OKRS],
-  ventas: [...DEMO_VENTAS],
-  isDemo: false,
-  scriptUrl: '',
-  period: 'Este mes'
-};
+let charts = {};
 
-function loadCfgFields(){
-  ['cfg_emp','cfg_sec','cfg_ciu'].forEach((id,i)=>{
-    const k=['empresa','sector','ciudad'][i];
-    const el=document.getElementById(id);if(el)el.value=STATE.config[k]||'';
-  });
-  const cm=document.getElementById('cfg_meta');if(cm)cm.value=STATE.config.meta||'';
-  const cc=document.getElementById('cfg_col');if(cc)cc.value=STATE.config.color||'#00E5A0';
-  const sw=document.getElementById('cfg_sw');if(sw)sw.style.background=STATE.config.color||'#00E5A0';
-  const cs=document.getElementById('cfg_script');if(cs)cs.value=localStorage.getItem('dq_script_url')||'';
+// ══════════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════════
+function fmt(n){ return new Intl.NumberFormat('es-CO').format(Math.round(n||0)); }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function toast(msg){
+  const t=document.getElementById('toast');
+  if(!t) return;
+  t.textContent=msg; t.classList.add('show');
+  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),3000);
+}
+function saveLocal(){
+  try{
+    localStorage.setItem('dq_state',JSON.stringify({
+      okrs:STATE.okrs, ventas:STATE.ventas, config:STATE.config,
+      dofa:STATE.dofa, productos:STATE.productos, vendedores:STATE.vendedores
+    }));
+  }catch(e){}
+}
+function adjFont(d){
+  const cur=parseFloat(document.documentElement.style.fontSize)||14;
+  const next=Math.min(20,Math.max(11,cur+d));
+  document.documentElement.style.fontSize=next+'px';
+  localStorage.setItem('dq_fontsize',next);
+  toast((d>0?'A+ Texto más grande':'A- Texto más pequeño')+' ('+next+'px)');
 }
 
 // ══════════════════════════════════════════════
-// AUTH
+// LOGIN
 // ══════════════════════════════════════════════
-
 function switchLoginTab(tab){
   ['quick','google'].forEach(t=>{
-    document.getElementById('tab_'+t).classList.toggle('active',t===tab);
-    document.getElementById('panel_'+t).style.display=t===tab?'block':'none';
+    const tb=document.getElementById('tab_'+t);
+    const pn=document.getElementById('panel_'+t);
+    if(tb) tb.classList.toggle('active',t===tab);
+    if(pn) pn.style.display=t===tab?'block':'none';
   });
 }
 
 function loginRapido(){
-  const nombre = document.getElementById('inNombre')?.value.trim();
-  const email  = document.getElementById('inEmail')?.value.trim();
-  if(!nombre){ toast('⚠️ Ingresa tu nombre'); return; }
-  if(!email||!email.includes('@')){ toast('⚠️ Ingresa un correo válido'); return; }
-
-  const initials = nombre.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
-  const user = {name:nombre, email, initials, picture:''};
-  STATE.user  = user;
-  STATE.isDemo = false;
-  localStorage.setItem('dq_session', JSON.stringify(user));
-
-  // Show loading state
-  const btn = document.querySelector('[onclick="loginRapido()"]');
-  if(btn){ btn.textContent='⏳ Verificando...'; btn.disabled=true; }
-
-  const scriptUrl = localStorage.getItem('dq_script_url');
-
+  const nombre=document.getElementById('inNombre')?.value.trim();
+  const email=document.getElementById('inEmail')?.value.trim();
+  if(!nombre){toast('⚠️ Ingresa tu nombre');return;}
+  if(!email||!email.includes('@')){toast('⚠️ Ingresa un correo válido');return;}
+  const initials=nombre.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+  const user={name:nombre,email,initials,picture:''};
+  STATE.user=user;
+  STATE.isDemo=false;
+  localStorage.setItem('dq_session',JSON.stringify(user));
+  const btn=document.querySelector('[onclick="loginRapido()"]');
+  if(btn){btn.textContent='⏳ Verificando...';btn.disabled=true;}
+  const scriptUrl=localStorage.getItem('dq_script_url');
   if(!scriptUrl){
-    // No Sheet configured yet — go to onboarding directly
-    toast('👋 Bienvenido/a '+nombre.split(' ')[0]+' — configuremos tu empresa');
-    setTimeout(()=>{ if(btn){btn.textContent='🚀 Entrar a DashQ';btn.disabled=false;} startOnboarding(user); }, 400);
+    toast('👋 Bienvenido/a '+nombre.split(' ')[0]+' — cuéntanos sobre tu empresa');
+    setTimeout(()=>{if(btn){btn.textContent='🚀 Entrar a DashQ';btn.disabled=false;}startOnboarding(user);},400);
     return;
   }
-
-  // Check if user already exists in Sheet
   toast('🔍 Verificando tu acceso...');
   fetch(scriptUrl+'?action=getUsuario&email='+encodeURIComponent(email))
     .then(r=>r.json())
     .then(data=>{
       if(btn){btn.textContent='🚀 Entrar a DashQ';btn.disabled=false;}
-      if(data && data.email){
-        // User exists — check if config exists too
+      if(data&&data.email){
         toast('✅ Bienvenido/a de vuelta, '+nombre.split(' ')[0]);
         checkFirstTime(user);
-      } else {
-        // New user — save and go to onboarding
+      }else{
         saveToSheets('saveUsuario',{email,nombre,rol:'admin'});
-        toast('👋 Primera vez — configuremos tu empresa');
-        setTimeout(()=> startOnboarding(user), 600);
+        toast('👋 Primera vez — cuéntanos sobre tu empresa');
+        setTimeout(()=>startOnboarding(user),600);
       }
     })
     .catch(()=>{
-      // Sheet not reachable — continue anyway with local data
       if(btn){btn.textContent='🚀 Entrar a DashQ';btn.disabled=false;}
       toast('⚠️ Sin conexión al Sheet — entrando en modo local');
-      setTimeout(()=> checkFirstTime(user), 400);
+      setTimeout(()=>checkFirstTime(user),400);
     });
 }
 
-function adjFont(d){
-  const cur = parseFloat(document.documentElement.style.fontSize)||14;
-  const next = Math.min(20,Math.max(11,cur+d));
-  document.documentElement.style.fontSize = next+'px';
-  localStorage.setItem('dq_fontsize', next);
-  toast((d>0?'🔡 Texto más grande':'🔡 Texto más pequeño')+' ('+next+'px)');
+function loginDemo(){
+  const user={name:'Demo User',email:'demo@dashq.app',picture:'',initials:'DU'};
+  STATE.isDemo=true; STATE.user=user;
+  toast('🚀 Modo demo activado — Caribe Fresh S.A.S.');
+  setTimeout(()=>initApp(user),400);
 }
-
-function setDateRange(range){
-  // Update active button
-  ['mes','tri','sem','anio'].forEach(r=>{
-    const el=document.getElementById('dq_'+r);
-    if(el) el.classList.toggle('active',r===range);
-  });
-  const now = new Date();
-  let from = new Date();
-  if(range==='mes'){from=new Date(now.getFullYear(),now.getMonth(),1);}
-  else if(range==='trimestre'){from=new Date(now.getFullYear(),now.getMonth()-2,1);}
-  else if(range==='semestre'){from=new Date(now.getFullYear(),now.getMonth()-5,1);}
-  else if(range==='anio'){from=new Date(now.getFullYear(),0,1);}
-  const fromStr = from.toISOString().split('T')[0];
-  const toStr = now.toISOString().split('T')[0];
-  const df=document.getElementById('date_from');
-  const dt=document.getElementById('date_to');
-  if(df) df.value=fromStr;
-  if(dt) dt.value=toStr;
-  STATE.dateFrom = fromStr;
-  STATE.dateTo = toStr;
-  STATE.activeDateRange = range;
-  applyDateFilter();
-}
-
-function applyCustomRange(){
-  const from = document.getElementById('date_from')?.value;
-  const to = document.getElementById('date_to')?.value;
-  if(!from||!to) return;
-  // Clear quick button active states
-  ['mes','tri','sem','anio'].forEach(r=>{
-    const el=document.getElementById('dq_'+r);
-    if(el) el.classList.remove('active');
-  });
-  STATE.dateFrom = from;
-  STATE.dateTo = to;
-  applyDateFilter();
-}
-
-function getFilteredVentas(){
-  if(!STATE.dateFrom||!STATE.dateTo) return STATE.ventas;
-  return STATE.ventas.filter(v=>{
-    const d=v.fecha||v.timestamp?.split('T')[0]||'';
-    return d>=STATE.dateFrom && d<=STATE.dateTo;
-  });
-}
-
-function applyDateFilter(){
-  const filtered = getFilteredVentas();
-  const totalV = filtered.reduce((s,v)=>s+v.monto,0);
-  const pedidos = filtered.length;
-  const pct = STATE.config.meta>0?Math.round(totalV/STATE.config.meta*100):0;
-
-  // Update KPI cards
-  const kv=document.getElementById('kpi_ventas');
-  const kp=document.getElementById('kpi_pedidos');
-  const km=document.getElementById('kpi_meta');
-  if(kv) kv.textContent='$'+fmt(totalV);
-  if(kp) kp.textContent=pedidos;
-  if(km) km.textContent=pct+'%';
-
-  // Update bars
-  const kfv=document.getElementById('kf_ventas');
-  const kfp=document.getElementById('kf_pedidos');
-  const kfm=document.getElementById('kf_meta');
-  if(kfv) kfv.style.width=Math.min(100,pct)+'%';
-  if(kfp) kfp.style.width=Math.min(100,Math.round(pedidos/20*100))+'%';
-  if(kfm) kfm.style.width=Math.min(100,pct)+'%';
-
-  // Update recent table
-  const filtered8 = filtered.slice(0,8);
-  const tb=document.getElementById('tb_recent');
-  if(tb){
-    if(!filtered8.length){
-      tb.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--mute);padding:20px;">Sin ventas en el período seleccionado</td></tr>';
-    } else {
-      tb.innerHTML=filtered8.map(v=>`<tr>
-        <td>${v.fecha}</td><td>${esc(v.vendedor)}</td><td>${esc(v.producto)}</td>
-        <td>${esc(v.zona)}</td><td class="num">${v.unidades}</td>
-        <td class="num">$${fmt(v.monto)}</td>
-        <td>${estadoBadge(v.estado)}</td>
-      </tr>`).join('');
-    }
-  }
-
-  // Update charts with filtered data
-  updateChartsWithFilter(filtered);
-  toast('📅 Filtro aplicado — '+filtered.length+' registros');
-}
-
-function updateChartsWithFilter(filtered){
-  if(!charts.ventas) return;
-  // Group by month
-  const byMonth={};
-  filtered.forEach(v=>{
-    const m=v.fecha?.substring(0,7)||'';
-    byMonth[m]=(byMonth[m]||0)+v.monto;
-  });
-  const labels=Object.keys(byMonth).sort();
-  const data=labels.map(m=>byMonth[m]);
-  if(charts.ventas&&labels.length>0){
-    charts.ventas.data.labels=labels;
-    charts.ventas.data.datasets[0].data=data;
-    charts.ventas.update('active');
-  }
-  // By product
-  const byProd={};
-  filtered.forEach(v=>{byProd[v.producto]=(byProd[v.producto]||0)+v.monto;});
-  if(charts.prod&&Object.keys(byProd).length>0){
-    charts.prod.data.labels=Object.keys(byProd);
-    charts.prod.data.datasets[0].data=Object.values(byProd);
-    charts.prod.update('active');
-  }
-  // By vendor
-  const byVend={};
-  filtered.forEach(v=>{byVend[v.vendedor]=(byVend[v.vendedor]||0)+v.monto;});
-  if(charts.vend&&Object.keys(byVend).length>0){
-    charts.vend.data.labels=Object.keys(byVend);
-    charts.vend.data.datasets[0].data=Object.values(byVend);
-    charts.vend.update('active');
-  }
-  // By zone
-  const byZona={};
-  filtered.forEach(v=>{byZona[v.zona]=(byZona[v.zona]||0)+v.monto;});
-  if(charts.zona&&Object.keys(byZona).length>0){
-    charts.zona.data.labels=Object.keys(byZona);
-    charts.zona.data.datasets[0].data=Object.values(byZona);
-    charts.zona.update('active');
-  }
-}
-window.onload = () => {
-  // Restore font size
-  const savedFs = localStorage.getItem('dq_fontsize');
-  if(savedFs) document.documentElement.style.fontSize = savedFs+'px';
-  const _su=localStorage.getItem('dq_script_url')||'';
-  const _ci=localStorage.getItem('dq_client_id')||'';
-  const _suel=document.getElementById('inScriptUrl');
-  const _ciel=document.getElementById('inClientId');
-  if(_suel&&_su)_suel.value=_su;
-  if(_ciel&&_ci)_ciel.value=_ci;
-
-  // Restaurar sesión previa
-  const savedSession = localStorage.getItem('dq_session');
-  if(savedSession){
-    try{
-      const s = JSON.parse(savedSession);
-      STATE.user = s;
-      STATE.isDemo = false;
-      // Pre-fill login form fields for quick reference
-      const ni=document.getElementById('inNombre');
-      const ei=document.getElementById('inEmail');
-      if(ni) ni.value = s.name||'';
-      if(ei) ei.value = s.email||'';
-      checkFirstTime(s); // verify still has access
-    }catch(e){ localStorage.removeItem('dq_session'); }
-  }
-};
 
 function initGoogleAuth(){
-  const clientId = document.getElementById('inClientId').value.trim();
-  const scriptUrl = document.getElementById('inScriptUrl').value.trim();
-  if(!clientId){ toast('⚠️ Ingresa tu Google Client ID'); return; }
-  if(!scriptUrl){ toast('⚠️ Ingresa la URL del Apps Script'); return; }
-  STATE.scriptUrl = scriptUrl;
-  localStorage.setItem('dq_script_url', scriptUrl);
-
-  google.accounts.id.initialize({
-    client_id: clientId,
-    callback: handleGoogleLogin,
-    auto_select: false
-  });
-  google.accounts.id.prompt((notification)=>{
-    if(notification.isNotDisplayed()||notification.isSkippedMoment()){
-      // Fallback: render button
-      google.accounts.id.renderButton(
-        document.querySelector('.btn-google').parentElement,
-        {theme:'filled_blue',size:'large',width:320}
-      );
-    }
-  });
+  const clientId=document.getElementById('inClientId')?.value.trim();
+  const scriptUrl=document.getElementById('inScriptUrl')?.value.trim();
+  if(!clientId){toast('⚠️ Ingresa el Google Client ID');return;}
+  if(scriptUrl) localStorage.setItem('dq_script_url',scriptUrl);
+  if(typeof google==='undefined'){toast('❌ Google Identity no cargó — revisa tu conexión');return;}
+  google.accounts.id.initialize({client_id:clientId,callback:handleGoogleLogin});
+  google.accounts.id.prompt();
 }
 
 function handleGoogleLogin(response){
-  const payload = parseJWT(response.credential);
-  const user = {
-    name: payload.name,
-    email: payload.email,
-    picture: payload.picture,
-    initials: payload.name.split(' ').map(n=>n[0]).join('').substring(0,2).toUpperCase()
-  };
-  localStorage.setItem('dq_session', JSON.stringify(user));
-  checkFirstTime(user);
+  try{
+    const data=parseJWT(response.credential);
+    const user={name:data.name,email:data.email,picture:data.picture||'',
+      initials:(data.name||'U').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase()};
+    STATE.user=user; STATE.isDemo=false;
+    localStorage.setItem('dq_session',JSON.stringify(user));
+    checkFirstTime(user);
+  }catch(e){toast('❌ Error al procesar login de Google');}
 }
 
 function parseJWT(token){
-  const base64 = token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
+  const base64=token.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
   return JSON.parse(atob(base64));
 }
 
 function checkFirstTime(user){
-  // Check via Apps Script if user has config
-  const scriptUrl = localStorage.getItem('dq_script_url');
-  if(!scriptUrl){ startOnboarding(user); return; }
+  const scriptUrl=localStorage.getItem('dq_script_url');
+  if(!scriptUrl){startOnboarding(user);return;}
   fetch(scriptUrl+'?action=getConfig&email='+encodeURIComponent(user.email))
     .then(r=>r.json())
     .then(data=>{
-      if(data && data.empresa){ STATE.config=data; initApp(user); }
-      else { startOnboarding(user); }
+      if(data&&data.empresa){STATE.config={...STATE.config,...data};initApp(user);}
+      else{startOnboarding(user);}
     })
-    .catch(()=> startOnboarding(user));
-}
-
-function loginDemo(){
-  const user = {name:'Juan Arenas',email:'juan@caribefresh.com',picture:'',initials:'JA'};
-  STATE.isDemo = true; // Demo mode — sync is informational only
-  STATE.user = user;
-  toast('🚀 Modo demo activado — Caribe Fresh S.A.S.');
-  setTimeout(()=> initApp(user), 400);
-}
-
-function startOnboarding(user){
-  STATE.user = user;
-  showScreen('scOnboarding');
-}
-
-function initApp(user){
-  STATE.user = user;
-  // Update header
-  document.getElementById('sb_name').textContent=user.name;
-  document.getElementById('sb_empresa').textContent=STATE.config.empresa.split(' ')[0];
-  ['sb_avatar','cfg_avatar'].forEach(id=>{const av=document.getElementById(id);if(!av)return;
-    if(user.picture){av.innerHTML=`<img src="${user.picture}" alt=""/>"`;}
-    else{av.textContent=user.initials||user.name[0]||'U';}});
-  const cn=document.getElementById('cfg_name');if(cn)cn.textContent=user.name;
-  const ce=document.getElementById('cfg_email');if(ce)ce.textContent=user.email;
-  // Load contexto
-  loadContextoFields();
-  // Show app
-  showScreen('scApp');
-  // Init charts & data after short delay
-  setTimeout(()=>{
-    initCharts();
-    setTimeout(()=>{
-      [['kf_ventas',72],['kf_pedidos',84],['kf_meta',72],['kf_okrs',58]].forEach(([id,pct])=>{
-        const el=document.getElementById(id);if(el)el.style.width=pct+'%';
-      });
-    },400);
-    renderOKRs();
-    renderVentasTable();
-    // Set today in venta form
-    document.getElementById('v_fecha').valueAsDate = new Date();
-  }, 100);
+    .catch(()=>startOnboarding(user));
 }
 
 function logout(){
   localStorage.removeItem('dq_session');
-  STATE.user = null;
-  STATE.isDemo = false;
+  STATE.user=null; STATE.isDemo=false;
   showScreen('scLogin');
   toast('👋 Sesión cerrada');
 }
 
 // ══════════════════════════════════════════════
-// ONBOARDING
+// ONBOARDING (2 pasos)
 // ══════════════════════════════════════════════
+function startOnboarding(user){
+  showScreen('scOnboarding');
+  setTimeout(()=>{
+    const ni=document.getElementById('ob_nombre');
+    const ei=document.getElementById('ob_email');
+    if(ni&&user?.name) ni.value=user.name;
+    if(ei&&user?.email) ei.value=user.email;
+  },100);
+}
+
 function obNext(step){
-  [1,2,3].forEach(i=>{
-    document.getElementById('ob_step'+i).style.display = i===step?'block':'none';
-    const el = document.getElementById('ob_s'+i);
-    el.className = 'ob-step'+(i<step?' done':i===step?' active':'');
-  });
+  if(step===2){
+    const nombre=document.getElementById('ob_nombre')?.value.trim();
+    const email=document.getElementById('ob_email')?.value.trim();
+    if(!nombre){toast('⚠️ Ingresa tu nombre');return;}
+    if(!email||!email.includes('@')){toast('⚠️ Ingresa un correo válido');return;}
+    STATE.user={...STATE.user,name:nombre,email,
+      initials:nombre.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase()};
+    localStorage.setItem('dq_session',JSON.stringify(STATE.user));
+  }
+  for(let i=1;i<=2;i++){
+    const el=document.getElementById('ob_step'+i);
+    if(el) el.style.display=i===step?'block':'none';
+    const pill=document.getElementById('ob_s'+i);
+    if(pill) pill.className='ob-step-pill'+(i===step?' active':i<step?' done':'');
+  }
 }
 
 function obFinish(){
-  const config = {
-    empresa: document.getElementById('ob_emp').value||'Mi Empresa',
-    sector: document.getElementById('ob_sec').value||'General',
-    ciudad: document.getElementById('ob_ciu').value||'Colombia',
-    producto: document.getElementById('ob_pro').value||'Productos',
-    meta: parseFloat(document.getElementById('ob_meta').value)||50000000,
-    color: document.getElementById('ob_col').value||'#00C9A7',
-    mision: document.getElementById('ob_mis').value||'',
-    vision: document.getElementById('ob_vis').value||'',
+  const emp=document.getElementById('ob_emp')?.value.trim();
+  if(!emp){toast('⚠️ Ingresa el nombre de la empresa');return;}
+  const config={
+    empresa:emp,
+    nit:document.getElementById('ob_nit')?.value.trim()||'',
+    sector:document.getElementById('ob_sec')?.value.trim()||'',
+    tamano:document.getElementById('ob_tam')?.value||'',
+    ciudad:document.getElementById('ob_ciu')?.value.trim()||'Colombia',
+    meta:50000000, color:'#00E5A0', mision:'', vision:''
   };
-  const dofa = {
-    fortalezas: document.getElementById('ob_for').value,
-    oportunidades: document.getElementById('ob_opp').value,
-    debilidades: document.getElementById('ob_deb').value,
-    amenazas: document.getElementById('ob_ame').value,
-  };
-  const okr = {
-    id: Date.now(), objective: document.getElementById('ob_obj').value||'Primer objetivo',
-    krs:[
-      {id:Date.now()+1,texto:document.getElementById('ob_kr1').value||'KR1',meta:parseFloat(document.getElementById('ob_km1').value)||100,avance:0,unidad:''},
-      {id:Date.now()+2,texto:document.getElementById('ob_kr2').value||'KR2',meta:parseFloat(document.getElementById('ob_km2').value)||100,avance:0,unidad:''},
-      {id:Date.now()+3,texto:document.getElementById('ob_kr3').value||'KR3',meta:parseFloat(document.getElementById('ob_km3').value)||100,avance:0,unidad:'%'},
-    ]
-  };
-  STATE.config = config;
-  STATE.dofa = dofa;
-  STATE.okrs = [okr];
-  STATE.ventas = [];
-  // Save to Sheets if connected
-  // Register user and save all data to Sheets
+  STATE.config=config;
+  STATE.dofa={fortalezas:'',oportunidades:'',debilidades:'',amenazas:''};
+  STATE.okrs=[]; STATE.ventas=[];
   if(STATE.user?.email){
     saveToSheets('saveUsuario',{email:STATE.user.email,nombre:STATE.user.name,rol:'admin'});
   }
-  saveToSheets('saveConfig', {config, dofa, okrs:[okr], email:STATE.user?.email||''});
-  localStorage.setItem('dq_config', JSON.stringify(config));
-  toast('✅ ¡DashQ configurado! Bienvenido.');
-  initApp(STATE.user);
-}
-
-// ══════════════════════════════════════════════
-// CHARTS
-// ══════════════════════════════════════════════
-let charts = {};
-function initCharts(){
-  const em = getComputedStyle(document.documentElement).getPropertyValue('--em').trim()||'#00E5A0';
-  const gridColor = 'rgba(48,54,61,0.6)';
-  const tooltipDefaults = {
-    backgroundColor:'#1C2333',
-    borderColor:'#30363D',
-    borderWidth:1,
-    titleColor:'#F0F6FF',
-    bodyColor:'#A8BFDA',
-    padding:10,
-    cornerRadius:8,
-    displayColors:true,
-  };
-  const scales = {
-    x:{grid:{color:gridColor},ticks:{color:'#768390',font:{size:11}}},
-    y:{grid:{color:gridColor},ticks:{color:'#768390',font:{size:11},
-       callback:v=>v>=1000000?'$'+Math.round(v/1000000)+'M':v>=1000?'$'+Math.round(v/1000)+'K':'$'+v}}
-  };
-
-  // 1. Ventas trend (line) — interactive
-  const ctx1=document.getElementById('ch_ventas')?.getContext('2d');
-  if(ctx1){
-    if(charts.ventas) charts.ventas.destroy();
-    charts.ventas=new Chart(ctx1,{
-      type:'line',
-      data:{
-        labels:DEMO_MESES.labels,
-        datasets:[{
-          label:'Ventas COP',
-          data:DEMO_MESES.ventas,
-          borderColor:'#00C9A7',
-          backgroundColor:'rgba(0,201,167,.08)',
-          tension:.4,fill:true,
-          pointBackgroundColor:'#00C9A7',
-          pointRadius:5,pointHoverRadius:8,
-          pointHoverBackgroundColor:'#fff',
-          pointHoverBorderColor:'#00C9A7',
-          pointHoverBorderWidth:2,
-        }]
-      },
-      options:{
-        responsive:true,maintainAspectRatio:false,
-        interaction:{mode:'index',intersect:false},
-        plugins:{
-          legend:{display:false},
-          tooltip:{...tooltipDefaults,callbacks:{
-            label:ctx=>'  $'+fmt(ctx.parsed.y)+' COP',
-            title:ctx=>ctx[0].label,
-          }}
-        },
-        scales,
-        onClick:(e,els)=>{
-          if(els.length){
-            const idx=els[0].index;
-            toast('📅 '+DEMO_MESES.labels[idx]+': $'+fmt(DEMO_MESES.ventas[idx]));
-          }
-        }
-      }
-    });
-  }
-
-  // 2. Mix productos (donut) — interactive
-  const ctx2=document.getElementById('ch_productos')?.getContext('2d');
-  const prodData=Object.entries(
-    STATE.ventas.reduce((m,v)=>{m[v.producto]=(m[v.producto]||0)+v.monto;return m;},
-    {Banano:18500000,Piña:14200000,Mango:9800000,Aguacate:7600000,Papaya:5400000,Otros:5700000})
-  );
-  if(ctx2){
-    if(charts.prod) charts.prod.destroy();
-    charts.prod=new Chart(ctx2,{
-      type:'doughnut',
-      data:{
-        labels:prodData.map(p=>p[0]),
-        datasets:[{
-          data:prodData.map(p=>p[1]),
-          backgroundColor:['#00C9A7','#3B82F6','#8B5CF6','#F97316','#EF4444','#6B7280'],
-          hoverOffset:12,borderWidth:2,borderColor:'#0F1F3D',
-        }]
-      },
-      options:{
-        responsive:true,maintainAspectRatio:false,cutout:'65%',
-        plugins:{
-          legend:{position:'right',labels:{color:'#A8BFDA',font:{size:11},padding:10,usePointStyle:true}},
-          tooltip:{...tooltipDefaults,callbacks:{
-            label:ctx=>' '+ctx.label+': $'+fmt(ctx.parsed)+' ('+Math.round(ctx.parsed/ctx.dataset.data.reduce((a,b)=>a+b,0)*100)+'%)',
-          }}
-        },
-        onClick:(e,els)=>{
-          if(els.length) toast('📦 '+prodData[els[0].index][0]+': $'+fmt(prodData[els[0].index][1]));
-        }
-      }
-    });
-  }
-
-  // 3. Vendedores (horizontal bar) — interactive
-  const ctx3=document.getElementById('ch_vendedores')?.getContext('2d');
-  const vendData=Object.entries(
-    STATE.ventas.reduce((m,v)=>{m[v.vendedor]=(m[v.vendedor]||0)+v.monto;return m;},
-    {'Carlos Mendez':38400000,'Ana Pérez':34200000,'Luis Torres':21800000,'María García':18600000,'Pedro Ruiz':15400000})
-  ).sort((a,b)=>b[1]-a[1]);
-  if(ctx3){
-    if(charts.vend) charts.vend.destroy();
-    charts.vend=new Chart(ctx3,{
-      type:'bar',
-      data:{
-        labels:vendData.map(v=>v[0]),
-        datasets:[{
-          label:'Ventas',
-          data:vendData.map(v=>v[1]),
-          backgroundColor:['#00C9A7','#3B82F6','#8B5CF6','#F97316','#EF4444'],
-          borderRadius:6,borderSkipped:false,
-        }]
-      },
-      options:{
-        indexAxis:'y',responsive:true,maintainAspectRatio:false,
-        interaction:{mode:'index',intersect:false},
-        plugins:{
-          legend:{display:false},
-          tooltip:{...tooltipDefaults,callbacks:{label:ctx=>' $'+fmt(ctx.parsed.x)+' COP'}}
-        },
-        scales:{
-          x:{...scales.x,grid:{color:gridColor}},
-          y:{grid:{display:false},ticks:{color:'#CDD9E5',font:{size:11}}}
-        },
-        onClick:(e,els)=>{
-          if(els.length) toast('👤 '+vendData[els[0].index][0]+': $'+fmt(vendData[els[0].index][1]));
-        }
-      }
-    });
-  }
-
-  // 4. Zonas (vertical bar) — interactive
-  const ctx4=document.getElementById('ch_zonas')?.getContext('2d');
-  const zonaData=Object.entries(
-    STATE.ventas.reduce((m,v)=>{m[v.zona]=(m[v.zona]||0)+v.monto;return m;},
-    {Norte:18700000,Sur:16400000,Centro:12800000,Oriente:7200000,Occidente:4100000,'Industrial':2000000})
-  );
-  if(ctx4){
-    if(charts.zona) charts.zona.destroy();
-    charts.zona=new Chart(ctx4,{
-      type:'bar',
-      data:{
-        labels:zonaData.map(z=>z[0]),
-        datasets:[{
-          label:'Ventas por zona',
-          data:zonaData.map(z=>z[1]),
-          backgroundColor:'rgba(0,201,167,.7)',
-          hoverBackgroundColor:'#00C9A7',
-          borderRadius:6,borderSkipped:false,
-        }]
-      },
-      options:{
-        responsive:true,maintainAspectRatio:false,
-        interaction:{mode:'index',intersect:false},
-        plugins:{
-          legend:{display:false},
-          tooltip:{...tooltipDefaults,callbacks:{label:ctx=>' $'+fmt(ctx.parsed.y)+' COP'}}
-        },
-        scales:{...scales},
-        onClick:(e,els)=>{
-          if(els.length) toast('📍 '+zonaData[els[0].index][0]+': $'+fmt(zonaData[els[0].index][1]));
-        }
-      }
-    });
-  }
-
-  // Init date range to current month
-  setDateRange('mes');
-}
-
-function getSemaforo(pct){
-  if(pct>=70) return {ico:'🟢',cls:'semaforo-verde',color:'var(--green)'};
-  if(pct>=40) return {ico:'🟡',cls:'semaforo-amarillo',color:'var(--yellow)'};
-  return {ico:'🔴',cls:'semaforo-rojo',color:'var(--red)'};
-}
-
-function calcKRAvanceFromVentas(kr){
-  // Auto-link: if KR meta is in $ and unidad contains 'venta' or '$', use actual ventas
-  if(!kr.meta||kr.avance>0) return kr.avance; // manual override if slider moved
-  const totalV = STATE.ventas.reduce((s,v)=>s+v.monto,0);
-  if((kr.unidad||'').includes('$')||(kr.texto||'').toLowerCase().includes('venta')||(kr.texto||'').toLowerCase().includes('ingreso')){
-    if(kr.meta>0) return Math.min(100,Math.round((totalV/kr.meta)*100));
-  }
-  return kr.avance;
-}
-
-function deleteOKR(okrId){
-  STATE.okrs = STATE.okrs.filter(o=>o.id!==okrId);
-  saveLocal(); renderOKRs(); updateOKRKPI();
-  toast('🗑 OKR eliminado');
-}
-
-function editKRText(okrId, krId){
-  const okr = STATE.okrs.find(o=>o.id===okrId);
-  const kr = okr?.krs.find(k=>k.id===krId);
-  if(!kr) return;
-  const newTxt = prompt('Editar Key Result:', kr.texto);
-  if(newTxt!==null && newTxt.trim()){
-    kr.texto = newTxt.trim();
-    saveLocal(); renderOKRs();
-  }
-}
-
-function editKRMeta(okrId, krId){
-  const okr = STATE.okrs.find(o=>o.id===okrId);
-  const kr = okr?.krs.find(k=>k.id===krId);
-  if(!kr) return;
-  const newMeta = prompt('Nueva meta numérica:', kr.meta);
-  if(newMeta!==null && !isNaN(parseFloat(newMeta))){
-    kr.meta = parseFloat(newMeta);
-    saveLocal(); renderOKRs();
-  }
-}
-
-function editOKRObjective(okrId){
-  const okr = STATE.okrs.find(o=>o.id===okrId);
-  if(!okr) return;
-  const newObj = prompt('Editar Objective:', okr.objective);
-  if(newObj!==null && newObj.trim()){
-    okr.objective = newObj.trim();
-    saveLocal(); renderOKRs();
-  }
-}
-
-function renderOKRs(){
-  const container = document.getElementById('okrs_list');
-  if(!STATE.okrs.length){
-    container.innerHTML='<div class="empty"><div class="empty-icon">🎯</div><p>No hay OKRs definidos.<br/>Haz clic en "Nuevo OKR" para comenzar.</p></div>';
-    return;
-  }
-  // Auto-sync KRs linked to ventas
-  const totalV = STATE.ventas.reduce((s,v)=>s+v.monto,0);
-  STATE.okrs.forEach(okr=>okr.krs.forEach(kr=>{
-    if(kr.linkedToVentas && kr.meta>0){
-      kr.avance = Math.min(100,Math.round((totalV/kr.meta)*100));
-    }
-  }));
-
-  container.innerHTML = STATE.okrs.map((okr,oi)=>{
-    const avg=Math.round(okr.krs.reduce((s,k)=>s+k.avance,0)/okr.krs.length);
-    const sem=getSemaforo(avg);
-    return `<div class="okr-card">
-      <div class="okr-top">
-        <div class="okr-num">O${oi+1}</div>
-        <div class="okr-obj" title="Clic para editar" onclick="editOKRObjective(${okr.id})" style="cursor:pointer;" title="Clic para editar">${esc(okr.objective)} ✏️</div>
-        <div class="okr-pct" style="color:${sem.color};">${sem.ico} ${avg}%</div>
-        <button onclick="deleteOKR(${okr.id})" style="background:none;border:none;color:var(--rose);cursor:pointer;font-size:.9rem;padding:0 4px;" title="Eliminar OKR">🗑</button>
-      </div>
-      ${okr.krs.map(kr=>{
-        const s=getSemaforo(kr.avance);
-        const isLinked = kr.linkedToVentas;
-        return `
-        <div class="kr-block">
-          <div class="kr-row">
-            <span class="kr-sem">${s.ico}</span>
-            <span class="kr-txt" onclick="editKRText(${okr.id},${kr.id})" style="cursor:pointer;" title="Clic para editar">${esc(kr.texto)} ✏️</span>
-            <span class="kr-pct">${kr.avance}%</span>
-          </div>
-          <div class="bar"><div class="bar-fill" style="width:${kr.avance}%;background:${s.color};transition:width .6s;"></div></div>
-          <div class="kr-meta" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
-            <span>Meta: <span onclick="editKRMeta(${okr.id},${kr.id})" style="cursor:pointer;color:var(--em);text-decoration:underline dotted;" title="Clic para editar">${typeof kr.meta==='number'&&kr.meta>1000?'$'+fmt(kr.meta):kr.meta} ${kr.unidad||''}</span> ✏️</span>
-            ${isLinked?'<span style="font-size:.7rem;background:rgba(0,229,160,.12);color:var(--em);padding:1px 6px;border-radius:6px;border:1px solid rgba(0,229,160,.25);">🔗 Auto-ventas</span>':'<label style="font-size:.75rem;color:var(--mute);display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" onchange="linkKRToVentas(${okr.id},${kr.id},this.checked)" style="accent-color:var(--em);"/> vincular a ventas</label>'}
-          </div>
-          ${!isLinked?`<input type="range" class="slider" min="0" max="100" value="${kr.avance}" oninput="updateKR(${okr.id},${kr.id},this.value)"/>`:'<div style="font-size:.78rem;color:var(--mute);margin-top:4px;">📊 Calculado automáticamente desde el módulo de ventas</div>'}
-        </div>`;
-      }).join('')}
-    </div>`;
-  }).join('');
-  updateOKRKPI();
-}
-
-
-function linkKRToVentas(okrId, krId, linked){
-  const okr = STATE.okrs.find(o=>o.id===okrId);
-  const kr = okr?.krs.find(k=>k.id===krId);
-  if(!kr) return;
-  kr.linkedToVentas = linked;
-  if(!linked) kr.avance = 0; // reset to manual
-  saveLocal(); renderOKRs();
-  toast(linked ? '🔗 KR vinculado a ventas — se actualiza automáticamente' : '✅ KR desvinculado — control manual');
-}
-
-
-function updateKR(okrId, krId, val){
-  const okr = STATE.okrs.find(o=>o.id===okrId);
-  if(!okr) return;
-  const kr = okr.krs.find(k=>k.id===krId);
-  if(!kr) return;
-  kr.avance = parseInt(val);
+  saveToSheets('saveConfig',{config,email:STATE.user?.email||''});
   saveLocal();
-  renderOKRs();
-}
-
-function updateOKRKPI(){
-  if(!STATE.okrs.length) return;
-  const all = STATE.okrs.flatMap(o=>o.krs);
-  const avg = Math.round(all.reduce((s,k)=>s+k.avance,0)/all.length);
-  const sem = getSemaforo(avg);
-  document.getElementById('kpi_okrs').innerHTML = sem.ico+' '+avg+'%';
-  document.getElementById('ia_okr').textContent=avg+'% promedio';
-  const ob=document.getElementById('sb_okr_badge');if(ob)ob.textContent=avg+'%';
-}
-
-function openAddOKR(){ document.getElementById('modalOKR').classList.add('open'); }
-function closeModal(){ document.getElementById('modalOKR').classList.remove('open'); }
-function saveNewOKR(){
-  const obj = document.getElementById('new_obj').value.trim();
-  if(!obj){ toast('⚠️ Escribe el Objective'); return; }
-  const krs = [...document.querySelectorAll('.new_kr_txt')]
-    .map((el,i)=>({id:Date.now()+i,texto:el.value||'Key Result '+(i+1),meta:100,avance:0,unidad:'%'}))
-    .filter(k=>k.texto);
-  STATE.okrs.push({id:Date.now(),objective:obj,krs});
-  saveLocal();
-  renderOKRs();
-  closeModal();
-  toast('✅ OKR guardado');
-  document.getElementById('new_obj').value='';
-  document.querySelectorAll('.new_kr_txt').forEach(el=>el.value='');
+  toast('✅ ¡DashQ configurado! Ajusta los detalles en ⚙️ Config');
+  setTimeout(()=>initApp(STATE.user),600);
 }
 
 // ══════════════════════════════════════════════
-// VENTAS
+// INIT APP
 // ══════════════════════════════════════════════
-function registrarVenta(){
-  const v = {
-    id:Date.now(),
-    fecha:document.getElementById('v_fecha').value,
-    vendedor:document.getElementById('v_vendedor').value,
-    producto:document.getElementById('v_producto').value,
-    zona:document.getElementById('v_zona').value,
-    unidades:parseInt(document.getElementById('v_uni').value)||0,
-    monto:parseFloat(document.getElementById('v_monto').value)||0,
-    estado:document.getElementById('v_estado').value,
-  };
-  if(!v.fecha||!v.vendedor||!v.producto||!v.zona||!v.monto){
-    toast('⚠️ Completa todos los campos obligatorios'); return;
-  }
-  STATE.ventas.unshift(v);
-  saveLocal();
-  renderVentasTable();
-  renderRecentVentas();
-  toast('✅ Venta registrada correctamente');
-  // Reset form (keep fecha and vendedor)
-  ['v_producto','v_zona'].forEach(id=>document.getElementById(id).value='');
-  ['v_uni','v_monto'].forEach(id=>document.getElementById(id).value='');
-  document.getElementById('v_fecha').valueAsDate=new Date();
+function initApp(user){
+  showScreen('scApp');
+  // Update sidebar
+  document.getElementById('sb_name').textContent=user.name||'Usuario';
+  document.getElementById('sb_empresa').textContent=(STATE.config.empresa||'Mi Empresa').split(' ')[0];
+  ['sb_avatar','cfg_avatar'].forEach(id=>{
+    const av=document.getElementById(id); if(!av) return;
+    if(user.picture) av.innerHTML='<img src="'+user.picture+'" alt="" style="width:100%;height:100%;object-fit:cover;border-radius:50%;"/>';
+    else av.textContent=user.initials||user.name?.[0]||'U';
+  });
+  const cn=document.getElementById('cfg_name'); if(cn) cn.textContent=user.name;
+  const ce=document.getElementById('cfg_email'); if(ce) ce.textContent=user.email;
+  setTimeout(()=>{
+    initCharts();
+    syncProductosToForm();
+    syncVendedoresToForm();
+    renderOKRs();
+    renderVentasTable();
+    renderRecentVentas();
+    setTimeout(()=>{
+      [['kf_ventas',72],['kf_pedidos',84],['kf_meta',72],['kf_okrs',58]].forEach(([id,pct])=>{
+        const el=document.getElementById(id); if(el) el.style.width=pct+'%';
+      });
+    },400);
+    updateOKRKPI();
+  },100);
+  registerPWA();
 }
 
-function renderVentasTable(){
-  const tbody = document.getElementById('tb_ventas_full');
-  document.getElementById('v_count').textContent = STATE.ventas.length+' registros';
-  if(!STATE.ventas.length){
-    tbody.innerHTML='<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted);">No hay ventas registradas</td></tr>';
-    return;
-  }
-  tbody.innerHTML = STATE.ventas.slice(0,50).map(v=>`
-    <tr>
-      <td>${v.fecha}</td>
-      <td>${esc(v.vendedor)}</td>
-      <td>${esc(v.producto)}</td>
-      <td>${esc(v.zona)}</td>
-      <td style="text-align:right;">${v.unidades}</td>
-      <td style="text-align:right;font-weight:600;">$${fmt(v.monto)}</td>
-      <td>${estadoBadge(v.estado)}</td>
-      <td><button class="btn btn-danger btn-sm" onclick="deleteVenta(${v.id})">🗑</button></td>
-    </tr>`).join('');
-}
-
-function renderRecentVentas(){
-  const tbody = document.getElementById('tb_recent');
-  tbody.innerHTML = STATE.ventas.slice(0,10).map(v=>`
-    <tr>
-      <td>${v.fecha}</td>
-      <td>${esc(v.vendedor)}</td>
-      <td>${esc(v.producto)}</td>
-      <td>${esc(v.zona)}</td>
-      <td style="text-align:right;">${v.unidades}</td>
-      <td style="text-align:right;font-weight:600;">$${fmt(v.monto)}</td>
-      <td>${estadoBadge(v.estado)}</td>
-    </tr>`).join('');
-}
-
-function deleteVenta(id){
-  STATE.ventas = STATE.ventas.filter(v=>v.id!==id);
-  saveLocal(); renderVentasTable(); renderRecentVentas();
-  toast('🗑 Venta eliminada');
-}
-
-function estadoBadge(e){
-  const m={'Entregado':'b-green','Pendiente':'b-amber','En tránsito':'b-blue'};
-  return `<span class="badge ${m[e]||'badge-yellow'}">${e}</span>`;
-}
-
-// ══════════════════════════════════════════════
-// ANÁLISIS IA
-// ══════════════════════════════════════════════
-async function generarAnalisis(){
-  const apiKey = document.getElementById('ia_key').value.trim();
-  if(!apiKey){ toast('⚠️ Ingresa tu Mistral API Key'); return; }
-
-  document.getElementById('ia_loading').style.display='flex';
-  document.getElementById('ia_result').style.display='none';
-
-  const all = STATE.okrs.flatMap(o=>o.krs);
-  const avgOKR = all.length ? Math.round(all.reduce((s,k)=>s+k.avance,0)/all.length) : 0;
-  const totalVentas = STATE.ventas.reduce((s,v)=>s+v.monto,0)||61200000;
-  const pctMeta = Math.round((totalVentas/STATE.config.meta)*100);
-
-  const prompt = `Analiza el estado estratégico de la empresa ${STATE.config.empresa} del sector ${STATE.config.sector} en ${STATE.config.ciudad}.
-
-DATOS ACTUALES:
-- Ventas del período: $${fmt(totalVentas)} COP (${pctMeta}% de la meta de $${fmt(STATE.config.meta)})
-- Promedio cumplimiento OKRs: ${avgOKR}%
-- OKRs activos: ${STATE.okrs.length}
-- Detalle OKRs: ${STATE.okrs.map(o=>o.objective+': '+Math.round(o.krs.reduce((s,k)=>s+k.avance,0)/o.krs.length)+'%').join(' | ')}
-
-CONTEXTO DOFA:
-Fortalezas: ${STATE.dofa.fortalezas||'No definidas'}
-Oportunidades: ${STATE.dofa.oportunidades||'No definidas'}
-Debilidades: ${STATE.dofa.debilidades||'No definidas'}
-Amenazas: ${STATE.dofa.amenazas||'No definidas'}
-
-Misión: ${STATE.config.mision||'No definida'}
-Visión: ${STATE.config.vision||'No definida'}
-
-Responde SOLO en JSON con esta estructura exacta:
-{
-  "estado": "Párrafo de 2-3 líneas sobre el estado estratégico general con semáforo 🟢🟡🔴",
-  "oportunidades": ["Oportunidad 1 detectada en los datos","Oportunidad 2","Oportunidad 3"],
-  "alertas": ["Alerta o riesgo 1","Alerta 2","Alerta 3"],
-  "recomendaciones": ["Recomendación específica 1","Recomendación 2","Recomendación 3"],
-  "pasos": ["Paso inmediato 1 (esta semana)","Paso 2 (este mes)","Paso 3 (este trimestre)"]
-}`;
-
-  try {
-    const res = await fetch('https://api.mistral.ai/v1/chat/completions',{
-      method:'POST',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
-      body:JSON.stringify({
-        model:'mistral-large-latest',
-        messages:[
-          {role:'system',content:'Eres un consultor estratégico senior especializado en empresas latinoamericanas. Tus análisis son directos, concretos y orientados a la acción. Responde SOLO con el JSON solicitado, sin texto adicional.'},
-          {role:'user',content:prompt}
-        ],
-        max_tokens:800,temperature:.7
-      })
-    });
-    const data = await res.json();
-    // Check for API errors first
-    if(data.error){ 
-      throw new Error('Mistral: '+( data.error.message||JSON.stringify(data.error)));
-    }
-    if(!data.choices?.[0]?.message?.content){
-      throw new Error('Respuesta inesperada de Mistral — verifica tu API Key');
-    }
-    const text = data.choices[0].message.content;
-    const clean = text.replace(/```json\n?|```/g,'').trim();
-    let result;
-    try{ result = JSON.parse(clean); }
-    catch(parseErr){
-      // Try to extract JSON from the text if it has extra content
-      const jsonMatch = clean.match(/\{[\s\S]*\}/);
-      if(jsonMatch){ result = JSON.parse(jsonMatch[0]); }
-      else{ throw new Error('La IA no devolvió JSON válido. Intenta de nuevo.'); }
-    }
-
-    document.getElementById('ia_estado').innerHTML = result.estado||'';
-    renderIAList('ia_oportunidades', result.oportunidades||[], 'var(--green)', '🚀');
-    renderIAList('ia_alertas', result.alertas||[], 'var(--red)', '⚠️');
-    renderIAList('ia_recomendaciones', result.recomendaciones||[], 'var(--blue)', '💡');
-    renderIAList('ia_pasos', result.pasos||[], 'var(--yellow)', '📋');
-
-    document.getElementById('ia_loading').style.display='none';
-    document.getElementById('ia_result').style.display='block';
-    toast('✅ Análisis generado con Mistral AI');
-  } catch(e){
-    document.getElementById('ia_loading').style.display='none';
-    const msg = e.message||'Error desconocido';
-    if(msg.includes('401')||msg.includes('Unauthorized')) toast('❌ API Key inválida — verifica en console.mistral.ai');
-    else if(msg.includes('429')) toast('❌ Límite de Mistral alcanzado — espera un momento');
-    else if(msg.includes('fetch')) toast('❌ Sin conexión — verifica tu internet');
-    else toast('❌ '+msg);
-  }
-}
-
-function renderIAList(id, items, color, icon){
-  document.getElementById(id).innerHTML = items.map((item,i)=>`
-    <div class="ia-item">
-      <div class="ia-num" style="background:${color}22;color:${color};">${i+1}</div>
-      <div>${esc(item)}</div>
-    </div>`).join('');
-}
-
-function exportarAnalisisPDF(){
-  const estado = document.getElementById('ia_estado').textContent;
-  if(!estado){ toast('⚠️ Genera el análisis primero'); return; }
-  const fecha = new Date().toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric'});
-  const html = `<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"/>
-<title>Análisis IA — ${STATE.config.empresa}</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Segoe UI',Arial,sans-serif;color:#1e293b;padding:32px 40px;font-size:11px;line-height:1.6;}
-h1{font-size:18px;font-weight:900;border-bottom:3px solid #00C9A7;padding-bottom:8px;margin-bottom:6px;}
-.meta{font-size:10px;color:#64748b;margin-bottom:20px;}
-h2{font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:#00C9A7;margin:16px 0 8px;border-bottom:1px solid #f1f5f9;padding-bottom:3px;}
-.item{background:#f8fafc;border-radius:6px;padding:8px 12px;margin-bottom:8px;font-size:11px;border-left:3px solid #00C9A7;}
-footer{margin-top:20px;border-top:1px solid #e2e8f0;padding-top:8px;text-align:center;font-size:9px;color:#94a3b8;}
-
-.login-tab{
-  flex:1;padding:9px 14px;background:none;border:none;border-bottom:2px solid transparent;
-  color:var(--mute);font-size:.82rem;font-weight:600;cursor:pointer;
-  font-family:var(--font);transition:all .2s;
-}
-.login-tab:hover{color:var(--white);}
-.login-tab.active{color:var(--em);border-bottom-color:var(--em);}
-.btn-quick{
-  width:100%;padding:13px;background:var(--em);color:#000;
-  border:none;border-radius:var(--r);font-size:.9rem;font-weight:700;
-  cursor:pointer;font-family:var(--font);transition:all .2s;margin-bottom:10px;
-}
-.btn-quick:hover{filter:brightness(1.08);transform:translateY(-1px);}
-/* Font size control */
-#font-ctrl{
-  display:flex;align-items:center;gap:4px;
-}
-.font-btn{
-  background:var(--card2);border:1px solid var(--rim);color:var(--mute);
-  border-radius:6px;width:28px;height:28px;cursor:pointer;font-size:.82rem;
-  font-family:var(--font);display:flex;align-items:center;justify-content:center;
-  transition:all .2s;
-}
-.font-btn:hover{border-color:var(--em);color:var(--em);}
-/* Date range picker */
-#date-range-wrap{
-  display:flex;align-items:center;gap:8px;
-}
-#date-range-wrap input[type=date]{
-  background:var(--card2);border:1px solid var(--rim);border-radius:8px;
-  padding:4px 10px;color:var(--white);font-size:.78rem;font-family:var(--font);
-  outline:none;cursor:pointer;
-}
-#date-range-wrap input[type=date]:focus{border-color:var(--em);}
-#date-range-wrap span{font-size:.78rem;color:var(--mute);}
-.date-quick-btn{
-  background:var(--card2);border:1px solid var(--rim);border-radius:6px;
-  padding:4px 10px;color:var(--mute);font-size:.75rem;font-weight:600;
-  cursor:pointer;font-family:var(--font);transition:all .2s;
-}
-.date-quick-btn:hover,.date-quick-btn.active{border-color:var(--em);color:var(--em);}
-</style></head><body>
-<h1>Análisis Estratégico con IA — ${STATE.config.empresa}</h1>
-<div class="meta"><b>Empresa:</b> ${STATE.config.empresa} · <b>Sector:</b> ${STATE.config.sector} · <b>Fecha:</b> ${fecha}</div>
-<h2>🎯 Estado estratégico</h2>
-<div class="item">${document.getElementById('ia_estado').textContent}</div>
-<h2>🚀 Oportunidades detectadas</h2>
-${[...document.getElementById('ia_oportunidades').querySelectorAll('.ia-item')].map(el=>`<div class="item">${el.lastElementChild.textContent}</div>`).join('')}
-<h2>⚠️ Alertas y riesgos</h2>
-${[...document.getElementById('ia_alertas').querySelectorAll('.ia-item')].map(el=>`<div class="item">${el.lastElementChild.textContent}</div>`).join('')}
-<h2>💡 Recomendaciones</h2>
-${[...document.getElementById('ia_recomendaciones').querySelectorAll('.ia-item')].map(el=>`<div class="item">${el.lastElementChild.textContent}</div>`).join('')}
-<h2>📋 Próximos pasos</h2>
-${[...document.getElementById('ia_pasos').querySelectorAll('.ia-item')].map(el=>`<div class="item">${el.lastElementChild.textContent}</div>`).join('')}
-<footer>DashQ · ${STATE.config.empresa} · CUC Posgrado · Sesión 4 · ${fecha}</footer>
-</body></html>`;
-  const blob=new Blob([html],{type:'text/html'});
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url;a.target='_blank';a.rel='noopener';
-  document.body.appendChild(a);a.click();
-  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},1000);
-  toast('📄 Análisis exportado — Ctrl+P para PDF');
-}
-
-// ══════════════════════════════════════════════
-// CONTEXTO
-// ══════════════════════════════════════════════
-function loadContextoFields(){
-  const d=STATE.dofa;
-  document.getElementById('ctx_mis').value=STATE.config.mision||'';
-  document.getElementById('ctx_vis').value=STATE.config.vision||'';
-  document.getElementById('ctx_for').value=d.fortalezas||'';
-  document.getElementById('ctx_opp').value=d.oportunidades||'';
-  document.getElementById('ctx_deb').value=d.debilidades||'';
-  document.getElementById('ctx_ame').value=d.amenazas||'';
-}
-
-function saveContexto(){
-  STATE.config.mision=document.getElementById('ctx_mis').value;
-  STATE.config.vision=document.getElementById('ctx_vis').value;
-  STATE.dofa={
-    fortalezas:document.getElementById('ctx_for').value,
-    oportunidades:document.getElementById('ctx_opp').value,
-    debilidades:document.getElementById('ctx_deb').value,
-    amenazas:document.getElementById('ctx_ame').value,
-  };
-  saveLocal();
-  saveToSheets('saveContexto',{dofa:STATE.dofa,config:STATE.config});
-  toast('✅ Contexto estratégico guardado');
-}
-
-// ══════════════════════════════════════════════
-// CONFIG
-// ══════════════════════════════════════════════
-function saveConfig(){
-  STATE.config.empresa=document.getElementById('cfg_emp').value;
-  STATE.config.sector=document.getElementById('cfg_sec').value;
-  STATE.config.ciudad=document.getElementById('cfg_ciu').value;
-  STATE.config.meta=parseFloat(document.getElementById('cfg_meta').value)||50000000;
-  STATE.config.color=document.getElementById('cfg_col').value;
-  document.getElementById('hdr_empresa').textContent=' · '+STATE.config.empresa.split(' ')[0];
-  saveLocal();
-  saveToSheets('saveConfig',{config:STATE.config});
-  toast('✅ Configuración guardada');
-}
-
-function saveScriptUrl(){
-  const url=document.getElementById('cfg_script').value.trim();
-  if(!url){toast('⚠️ Ingresa la URL del script');return;}
-  STATE.scriptUrl=url;
-  localStorage.setItem('dq_script_url',url);
-  toast('✅ URL guardada');
-}
-
-async function testConnection(){
-  const url=localStorage.getItem('dq_script_url');
-  if(!url){toast('⚠️ Configura la URL primero');return;}
-  try{
-    const r=await fetch(url+'?action=ping');
-    const d=await r.json();
-    toast(d.ok?'✅ Conexión exitosa':'⚠️ Script respondió pero con error');
-  }catch(e){toast('❌ No se pudo conectar al script');}
-}
-
-function syncAll(){
-  if(STATE.isDemo){toast('ℹ️ Modo demo — configura tu Sheet para sincronizar');return;}
-  syncSheets();
-}
-
-// ══════════════════════════════════════════════
-// GOOGLE SHEETS SYNC
-// ══════════════════════════════════════════════
-async function syncSheets(){
-  const url=localStorage.getItem('dq_script_url');
-  if(!url){toast('ℹ️ Configura la URL del Apps Script en ⚙️ Config');return;}
-  if(STATE.isDemo){toast('ℹ️ Modo demo — conecta tu Sheet real');return;}
-  try{
-    // Sync ventas
-    for(const v of STATE.ventas.slice(0,20)){
-      await saveToSheets('postVenta',{...v,email:STATE.user?.email});
-    }
-    // Sync OKRs
-    await saveToSheets('postOKRs',{okrs:STATE.okrs,email:STATE.user?.email});
-    toast('✅ Sincronizado con Google Sheets');
-  }catch(e){toast('❌ Error de sincronización: '+e.message);}
-}
-
-async function saveToSheets(action, data){
-  const url=localStorage.getItem('dq_script_url')||STATE.scriptUrl;
-  if(!url) return;
-  try{
-    await fetch(url,{
-      method:'POST',mode:'no-cors',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({action,...data})
-    });
-  }catch(e){console.warn('Sheets sync:',e);}
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  const el=document.getElementById(id);
+  if(el) el.classList.add('active');
 }
 
 // ══════════════════════════════════════════════
@@ -2207,85 +1396,792 @@ function goTab(name){
     t.classList.toggle('active',oc.includes("'"+name+"'"));
   });
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
-  document.getElementById('panel_'+name).classList.add('active');
-  const titles={dashboard:'Dashboard',okrs:'OKRs · Q3 2025',ventas:'Registro de Ventas',analisis:'Análisis con IA',contexto:'Contexto Estratégico',config:'Configuración'};
+  const panel=document.getElementById('panel_'+name);
+  if(panel) panel.classList.add('active');
+  const titles={dashboard:'Dashboard',okrs:'OKRs · Q3 2025',ventas:'Registro de Ventas',
+    analisis:'Análisis con IA',contexto:'Contexto Estratégico',config:'Configuración'};
   const ttl=document.getElementById('topbar_title'); if(ttl) ttl.textContent=titles[name]||name;
-  // Update IA context bar
-  if(name==='analisis'){
-    const all=STATE.okrs.flatMap(o=>o.krs);
-    const avg=all.length?Math.round(all.reduce((s,k)=>s+k.avance,0)/all.length):0;
-    const totalV=STATE.ventas.reduce((s,v)=>s+v.monto,0)||61200000;
-    document.getElementById('ia_emp').textContent=STATE.config.empresa;
-    document.getElementById('ia_ven').textContent='$'+fmt(totalV);
-    document.getElementById('ia_okr').textContent=avg+'% promedio';
-  }
   if(name==='contexto') loadContextoFields();
   if(name==='config') loadCfgFields();
-}
-
-function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  if(name==='analisis'){
+    const avg=STATE.okrs.length?Math.round(STATE.okrs.flatMap(o=>o.krs).reduce((s,k)=>s+k.avance,0)/STATE.okrs.flatMap(o=>o.krs).length):0;
+    const sem=getSemaforo(avg);
+    const ia_emp=document.getElementById('ia_emp'); if(ia_emp) ia_emp.textContent=STATE.config.empresa;
+    const ia_ven=document.getElementById('ia_ven'); if(ia_ven) ia_ven.textContent='$'+fmt(STATE.ventas.reduce((s,v)=>s+v.monto,0));
+    const ia_okr=document.getElementById('ia_okr'); if(ia_okr) ia_okr.textContent=avg+'% promedio';
+  }
 }
 
 function togglePeriod(){
   const opts=['Este mes','Este trimestre','Últimos 6 meses','Este año'];
   const cur=opts.indexOf(STATE.period);
   STATE.period=opts[(cur+1)%opts.length];
-  document.getElementById('hdr_period').textContent=STATE.period;
+  document.getElementById('hdr_period') && (document.getElementById('hdr_period').textContent=STATE.period);
   toast('📅 Período: '+STATE.period);
 }
 
-function toggleUserMenu(){
-  // Simple: show logout toast
-  if(confirm('¿Cerrar sesión?')) logout();
+function syncAll(){
+  if(STATE.isDemo){toast('ℹ️ Modo demo — configura tu Sheet en ⚙️ Config para sincronizar');return;}
+  syncSheets();
 }
 
 // ══════════════════════════════════════════════
-// UTILS
+// DATE FILTER
 // ══════════════════════════════════════════════
-function fmt(n){ return new Intl.NumberFormat('es-CO').format(Math.round(n||0)); }
-function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-function saveLocal(){ localStorage.setItem('dq_state',JSON.stringify({okrs:STATE.okrs,ventas:STATE.ventas,config:STATE.config,dofa:STATE.dofa})); }
-function toast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  clearTimeout(t._t);
-  t._t=setTimeout(()=>t.classList.remove('show'),3000);
+function setDateRange(range){
+  ['mes','tri','sem','anio'].forEach(r=>{
+    const el=document.getElementById('dq_'+r);
+    if(el) el.classList.toggle('active',r===range);
+  });
+  const now=new Date(); let from=new Date();
+  if(range==='mes') from=new Date(now.getFullYear(),now.getMonth(),1);
+  else if(range==='tri') from=new Date(now.getFullYear(),now.getMonth()-2,1);
+  else if(range==='sem') from=new Date(now.getFullYear(),now.getMonth()-5,1);
+  else if(range==='anio') from=new Date(now.getFullYear(),0,1);
+  const fromStr=from.toISOString().split('T')[0];
+  const toStr=now.toISOString().split('T')[0];
+  const df=document.getElementById('date_from'); if(df) df.value=fromStr;
+  const dt=document.getElementById('date_to'); if(dt) dt.value=toStr;
+  STATE.dateFrom=fromStr; STATE.dateTo=toStr;
+  applyDateFilter();
 }
 
-// PWA Manifest (generated as Blob for GitHub Pages compatibility)
-function registerPWA(){
+function applyCustomRange(){
+  const from=document.getElementById('date_from')?.value;
+  const to=document.getElementById('date_to')?.value;
+  if(!from||!to) return;
+  ['mes','tri','sem','anio'].forEach(r=>{const el=document.getElementById('dq_'+r);if(el)el.classList.remove('active');});
+  STATE.dateFrom=from; STATE.dateTo=to;
+  applyDateFilter();
+}
+
+function getFilteredVentas(){
+  if(!STATE.dateFrom||!STATE.dateTo) return STATE.ventas;
+  return STATE.ventas.filter(v=>{
+    const d=v.fecha||v.timestamp?.split('T')[0]||'';
+    return d>=STATE.dateFrom&&d<=STATE.dateTo;
+  });
+}
+
+function applyDateFilter(){
+  const filtered=getFilteredVentas();
+  const totalV=filtered.reduce((s,v)=>s+v.monto,0);
+  const pct=STATE.config.meta>0?Math.round(totalV/STATE.config.meta*100):0;
+  const kv=document.getElementById('kpi_ventas'); if(kv) kv.textContent='$'+fmt(totalV);
+  const kp=document.getElementById('kpi_pedidos'); if(kp) kp.textContent=filtered.length;
+  const km=document.getElementById('kpi_meta'); if(km) km.textContent=pct+'%';
+  const kfv=document.getElementById('kf_ventas'); if(kfv) kfv.style.width=Math.min(100,pct)+'%';
+  const kfp=document.getElementById('kf_pedidos'); if(kfp) kfp.style.width=Math.min(100,Math.round(filtered.length/20*100))+'%';
+  const kfm=document.getElementById('kf_meta'); if(kfm) kfm.style.width=Math.min(100,pct)+'%';
+  renderRecentVentas(filtered.slice(0,8));
+  updateChartsWithFilter(filtered);
+}
+
+function updateChartsWithFilter(filtered){
+  if(!filtered||!filtered.length) return;
+  const byMonth={};
+  filtered.forEach(v=>{const m=(v.fecha||'').substring(0,7); byMonth[m]=(byMonth[m]||0)+v.monto;});
+  const labels=Object.keys(byMonth).sort();
+  if(charts.ventas&&labels.length){
+    charts.ventas.data.labels=labels;
+    charts.ventas.data.datasets[0].data=labels.map(m=>byMonth[m]);
+    charts.ventas.update('active');
+  }
+  const byProd={};
+  filtered.forEach(v=>{byProd[v.produto||v.producto]=(byProd[v.produto||v.producto]||0)+v.monto;});
+  if(charts.prod&&Object.keys(byProd).length){
+    charts.prod.data.labels=Object.keys(byProd);
+    charts.prod.data.datasets[0].data=Object.values(byProd);
+    charts.prod.update('active');
+  }
+  const byVend={};
+  filtered.forEach(v=>{byVend[v.vendedor]=(byVend[v.vendedor]||0)+v.monto;});
+  if(charts.vend&&Object.keys(byVend).length){
+    const sorted=Object.entries(byVend).sort((a,b)=>b[1]-a[1]);
+    charts.vend.data.labels=sorted.map(x=>x[0]);
+    charts.vend.data.datasets[0].data=sorted.map(x=>x[1]);
+    charts.vend.update('active');
+  }
+  const byZona={};
+  filtered.forEach(v=>{byZona[v.zona]=(byZona[v.zona]||0)+v.monto;});
+  if(charts.zona&&Object.keys(byZona).length){
+    charts.zona.data.labels=Object.keys(byZona);
+    charts.zona.data.datasets[0].data=Object.values(byZona);
+    charts.zona.update('active');
+  }
+}
+
+// ══════════════════════════════════════════════
+// CHARTS
+// ══════════════════════════════════════════════
+function initCharts(){
+  const gridColor='rgba(48,54,61,0.6)';
+  const tooltipDefaults={
+    backgroundColor:'#1C2333',borderColor:'#30363D',borderWidth:1,
+    titleColor:'#F0F6FF',bodyColor:'#A8BFDA',padding:10,cornerRadius:8,displayColors:true
+  };
+  const scalesBase={
+    x:{grid:{color:gridColor},ticks:{color:'#768390',font:{size:11}}},
+    y:{grid:{color:gridColor},ticks:{color:'#768390',font:{size:11},
+       callback:v=>v>=1000000?'$'+Math.round(v/1000000)+'M':v>=1000?'$'+Math.round(v/1000)+'K':'$'+v}}
+  };
+
+  // Ventas trend (line)
+  const ctx1=document.getElementById('ch_ventas')?.getContext('2d');
+  if(ctx1){
+    if(charts.ventas) charts.ventas.destroy();
+    charts.ventas=new Chart(ctx1,{type:'line',
+      data:{labels:DEMO_MESES.labels,datasets:[{
+        label:'Ventas COP',data:DEMO_MESES.ventas,
+        borderColor:'#00C9A7',backgroundColor:'rgba(0,201,167,.08)',
+        tension:.4,fill:true,pointBackgroundColor:'#00C9A7',
+        pointRadius:5,pointHoverRadius:9,pointHoverBackgroundColor:'#fff',
+        pointHoverBorderColor:'#00C9A7',pointHoverBorderWidth:2,
+      }]},
+      options:{responsive:true,maintainAspectRatio:false,
+        interaction:{mode:'index',intersect:false},
+        plugins:{legend:{display:false},tooltip:{...tooltipDefaults,
+          callbacks:{label:c=>'  $'+fmt(c.parsed.y)+' COP',title:c=>c[0].label}}},
+        scales:scalesBase,
+        onClick:(e,els)=>{if(els.length) toast('📅 '+DEMO_MESES.labels[els[0].index]+': $'+fmt(DEMO_MESES.ventas[els[0].index]));}}
+    });
+  }
+
+  // Mix productos (donut)
+  const ctx2=document.getElementById('ch_productos')?.getContext('2d');
+  const byProdDemo=STATE.ventas.reduce((m,v)=>{m[v.producto]=(m[v.producto]||0)+v.monto;return m;},
+    {Banano:18500000,Piña:14200000,Mango:9800000,Aguacate:7600000,Papaya:5400000,Otros:5700000});
+  const prodEntries=Object.entries(byProdDemo);
+  if(ctx2){
+    if(charts.prod) charts.prod.destroy();
+    charts.prod=new Chart(ctx2,{type:'doughnut',
+      data:{labels:prodEntries.map(p=>p[0]),datasets:[{
+        data:prodEntries.map(p=>p[1]),
+        backgroundColor:['#00C9A7','#3B82F6','#8B5CF6','#F97316','#EF4444','#6B7280'],
+        hoverOffset:12,borderWidth:2,borderColor:'#0F1F3D',
+      }]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'65%',
+        plugins:{legend:{position:'right',labels:{color:'#A8BFDA',font:{size:11},padding:10,usePointStyle:true}},
+          tooltip:{...tooltipDefaults,callbacks:{label:c=>' '+c.label+': $'+fmt(c.parsed)+' ('+Math.round(c.parsed/c.dataset.data.reduce((a,b)=>a+b,0)*100)+'%)'}}},
+        onClick:(e,els)=>{if(els.length) toast('📦 '+prodEntries[els[0].index][0]+': $'+fmt(prodEntries[els[0].index][1]));}}
+    });
+  }
+
+  // Vendedores (horizontal bar)
+  const ctx3=document.getElementById('ch_vendedores')?.getContext('2d');
+  const byVendDemo=STATE.ventas.reduce((m,v)=>{m[v.vendedor]=(m[v.vendedor]||0)+v.monto;return m;},
+    {'Carlos Mendez':38400000,'Ana Pérez':34200000,'Luis Torres':21800000,'María García':18600000,'Pedro Ruiz':15400000});
+  const vendEntries=Object.entries(byVendDemo).sort((a,b)=>b[1]-a[1]);
+  if(ctx3){
+    if(charts.vend) charts.vend.destroy();
+    charts.vend=new Chart(ctx3,{type:'bar',
+      data:{labels:vendEntries.map(v=>v[0]),datasets:[{
+        data:vendEntries.map(v=>v[1]),
+        backgroundColor:['#00C9A7','#3B82F6','#8B5CF6','#F97316','#EF4444'],
+        borderRadius:6,borderSkipped:false,
+      }]},
+      options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+        interaction:{mode:'index',intersect:false},
+        plugins:{legend:{display:false},tooltip:{...tooltipDefaults,callbacks:{label:c=>' $'+fmt(c.parsed.x)+' COP'}}},
+        scales:{x:{...scalesBase.x},y:{grid:{display:false},ticks:{color:'#CDD9E5',font:{size:11}}}},
+        onClick:(e,els)=>{if(els.length) toast('👤 '+vendEntries[els[0].index][0]+': $'+fmt(vendEntries[els[0].index][1]));}}
+    });
+  }
+
+  // Zonas (vertical bar)
+  const ctx4=document.getElementById('ch_zonas')?.getContext('2d');
+  const byZonaDemo=STATE.ventas.reduce((m,v)=>{m[v.zona]=(m[v.zona]||0)+v.monto;return m;},
+    {Norte:18700000,Sur:16400000,Centro:12800000,Oriente:7200000,Occidente:4100000,'Industrial':2000000});
+  const zonaEntries=Object.entries(byZonaDemo);
+  if(ctx4){
+    if(charts.zona) charts.zona.destroy();
+    charts.zona=new Chart(ctx4,{type:'bar',
+      data:{labels:zonaEntries.map(z=>z[0]),datasets:[{
+        data:zonaEntries.map(z=>z[1]),
+        backgroundColor:'rgba(0,201,167,.7)',hoverBackgroundColor:'#00C9A7',
+        borderRadius:6,borderSkipped:false,
+      }]},
+      options:{responsive:true,maintainAspectRatio:false,
+        interaction:{mode:'index',intersect:false},
+        plugins:{legend:{display:false},tooltip:{...tooltipDefaults,callbacks:{label:c=>' $'+fmt(c.parsed.y)+' COP'}}},
+        scales:scalesBase,
+        onClick:(e,els)=>{if(els.length) toast('📍 '+zonaEntries[els[0].index][0]+': $'+fmt(zonaEntries[els[0].index][1]));}}
+    });
+  }
+
+  setDateRange('mes');
+}
+
+// ══════════════════════════════════════════════
+// SEMÁFORO
+// ══════════════════════════════════════════════
+function getSemaforo(pct){
+  if(pct>=70) return {ico:'🟢',color:'var(--em)'};
+  if(pct>=40) return {ico:'🟡',color:'var(--amber)'};
+  return {ico:'🔴',color:'var(--rose)'};
+}
+
+// ══════════════════════════════════════════════
+// OKRs
+// ══════════════════════════════════════════════
+function renderOKRs(){
+  const container=document.getElementById('okrs_list');
+  if(!container) return;
+  if(!STATE.okrs.length){
+    container.innerHTML='<div class="empty"><div class="empty-icon">🎯</div><p>No hay OKRs definidos.<br/>Haz clic en "Nuevo OKR" para comenzar.</p></div>';
+    return;
+  }
+  // Auto-sync linkedToVentas KRs
+  const totalV=STATE.ventas.reduce((s,v)=>s+v.monto,0);
+  STATE.okrs.forEach(o=>o.krs.forEach(k=>{
+    if(k.linkedToVentas&&k.meta>0) k.avance=Math.min(100,Math.round(totalV/k.meta*100));
+  }));
+  container.innerHTML=STATE.okrs.map((okr,oi)=>{
+    const avg=Math.round(okr.krs.reduce((s,k)=>s+k.avance,0)/okr.krs.length);
+    const sem=getSemaforo(avg);
+    return '<div class="okr-card">'+
+      '<div class="okr-top">'+
+        '<div class="okr-num">O'+(oi+1)+'</div>'+
+        '<div class="okr-obj" onclick="editOKRObjective('+okr.id+')" style="cursor:pointer;" title="Clic para editar">'+esc(okr.objective)+' ✏️</div>'+
+        '<div class="okr-pct" style="color:'+sem.color+';">'+sem.ico+' '+avg+'%</div>'+
+        '<button onclick="deleteOKR('+okr.id+')" style="background:none;border:none;color:var(--rose);cursor:pointer;font-size:.9rem;padding:0 4px;" title="Eliminar">🗑</button>'+
+      '</div>'+
+      okr.krs.map(kr=>{
+        const s=getSemaforo(kr.avance);
+        return '<div class="kr-block">'+
+          '<div class="kr-row"><span class="kr-sem">'+s.ico+'</span><span class="kr-txt" onclick="editKRText('+okr.id+','+kr.id+')" style="cursor:pointer;" title="Clic para editar">'+esc(kr.texto)+' ✏️</span><span class="kr-pct">'+kr.avance+'%</span></div>'+
+          '<div class="bar"><div class="bar-fill" style="width:'+kr.avance+'%;background:'+s.color+';transition:width .6s;"></div></div>'+
+          '<div class="kr-meta" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">'+
+            '<span>Meta: <span onclick="editKRMeta('+okr.id+','+kr.id+')" style="cursor:pointer;color:var(--em);text-decoration:underline dotted;" title="Clic para editar">'+(typeof kr.meta==='number'&&kr.meta>1000?'$'+fmt(kr.meta):kr.meta)+' '+(kr.unidad||'')+'</span></span>'+
+            (kr.linkedToVentas?
+              '<span style="font-size:.7rem;background:rgba(0,229,160,.12);color:var(--em);padding:1px 6px;border-radius:6px;border:1px solid rgba(0,229,160,.25);">🔗 Auto-ventas</span>':
+              '<label style="font-size:.75rem;color:var(--mute);display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" onchange="linkKRToVentas('+okr.id+','+kr.id+',this.checked)" style="accent-color:var(--em);"/> vincular a ventas</label>')+
+          '</div>'+
+          (!kr.linkedToVentas?'<input type="range" class="slider" min="0" max="100" value="'+kr.avance+'" oninput="updateKR('+okr.id+','+kr.id+',this.value)"/>':
+            '<div style="font-size:.78rem;color:var(--mute);margin-top:4px;">📊 Calculado desde el módulo de ventas</div>')+
+        '</div>';
+      }).join('')+
+    '</div>';
+  }).join('');
+  updateOKRKPI();
+}
+
+function updateKR(oId,kId,val){
+  const okr=STATE.okrs.find(o=>o.id===oId);
+  const kr=okr?.krs.find(k=>k.id===kId);
+  if(!kr) return;
+  kr.avance=parseInt(val);
+  saveLocal(); renderOKRs();
+}
+
+function updateOKRKPI(){
+  const all=STATE.okrs.flatMap(o=>o.krs);
+  if(!all.length) return;
+  const avg=Math.round(all.reduce((s,k)=>s+k.avance,0)/all.length);
+  const sem=getSemaforo(avg);
+  const kpi=document.getElementById('kpi_okrs'); if(kpi) kpi.innerHTML=sem.ico+' '+avg+'%';
+  const kf=document.getElementById('kf_okrs'); if(kf) kf.style.width=avg+'%';
+  const badge=document.getElementById('sb_okr_badge'); if(badge) badge.textContent=avg+'%';
+}
+
+function deleteOKR(okrId){
+  STATE.okrs=STATE.okrs.filter(o=>o.id!==okrId);
+  saveLocal(); renderOKRs(); updateOKRKPI();
+  toast('🗑 OKR eliminado');
+}
+
+function editKRText(okrId,krId){
+  const kr=STATE.okrs.find(o=>o.id===okrId)?.krs.find(k=>k.id===krId);
+  if(!kr) return;
+  const nuevo=prompt('Editar Key Result:',kr.texto);
+  if(nuevo!==null&&nuevo.trim()){kr.texto=nuevo.trim();saveLocal();renderOKRs();}
+}
+
+function editKRMeta(okrId,krId){
+  const kr=STATE.okrs.find(o=>o.id===okrId)?.krs.find(k=>k.id===krId);
+  if(!kr) return;
+  const nuevo=prompt('Nueva meta:',kr.meta);
+  if(nuevo!==null&&!isNaN(parseFloat(nuevo))){kr.meta=parseFloat(nuevo);saveLocal();renderOKRs();}
+}
+
+function editOKRObjective(okrId){
+  const okr=STATE.okrs.find(o=>o.id===okrId);
+  if(!okr) return;
+  const nuevo=prompt('Editar Objective:',okr.objective);
+  if(nuevo!==null&&nuevo.trim()){okr.objective=nuevo.trim();saveLocal();renderOKRs();}
+}
+
+function linkKRToVentas(okrId,krId,linked){
+  const kr=STATE.okrs.find(o=>o.id===okrId)?.krs.find(k=>k.id===krId);
+  if(!kr) return;
+  kr.linkedToVentas=linked;
+  if(!linked) kr.avance=0;
+  saveLocal(); renderOKRs();
+  toast(linked?'🔗 KR vinculado a ventas':'✅ KR en modo manual');
+}
+
+function openAddOKR(){ document.getElementById('modalOKR').classList.add('open'); }
+function closeModal(){ document.getElementById('modalOKR').classList.remove('open'); }
+function saveNewOKR(){
+  const obj=document.getElementById('new_obj')?.value.trim();
+  if(!obj){toast('⚠️ Escribe un Objective');return;}
+  const krs=Array.from(document.querySelectorAll('.new_kr_txt'))
+    .map((inp,i)=>({id:Date.now()+i,texto:inp.value.trim()||'Key Result '+(i+1),meta:100,avance:0,unidad:'%',linkedToVentas:false}));
+  STATE.okrs.push({id:Date.now(),objective:obj,krs});
+  saveLocal(); renderOKRs(); updateOKRKPI(); closeModal();
+  toast('✅ OKR creado');
+}
+
+// ══════════════════════════════════════════════
+// VENTAS
+// ══════════════════════════════════════════════
+function registrarVenta(){
+  const fecha=document.getElementById('v_fecha')?.value;
+  const vendedor=document.getElementById('v_vendedor')?.value;
+  const producto=document.getElementById('v_producto')?.value;
+  const zona=document.getElementById('v_zona')?.value;
+  const monto=parseFloat(document.getElementById('v_monto')?.value);
+  if(!fecha||!vendedor||!producto||!zona||!monto){toast('⚠️ Completa todos los campos');return;}
+  const venta={
+    id:Date.now(),fecha,vendedor,producto,zona,
+    unidades:parseInt(document.getElementById('v_uni')?.value)||1,
+    monto,estado:document.getElementById('v_estado')?.value||'Entregado',
+    timestamp:new Date().toISOString()
+  };
+  STATE.ventas.unshift(venta);
+  saveLocal();
+  document.getElementById('v_producto').value='';
+  document.getElementById('v_zona').value='';
+  document.getElementById('v_uni').value='';
+  document.getElementById('v_monto').value='';
+  renderVentasTable();
+  renderRecentVentas();
+  updateOKRKPI();
+  toast('✅ Venta registrada — $'+fmt(monto));
+}
+
+function estadoBadge(e){
+  const m={'Entregado':'b-green','Pendiente':'b-amber','En tránsito':'b-blue'};
+  return '<span class="badge '+(m[e]||'b-amber')+'">'+e+'</span>';
+}
+
+function renderVentasTable(){
+  const tb=document.getElementById('tb_ventas_full');
+  if(!tb) return;
+  const vc=document.getElementById('v_count'); if(vc) vc.textContent=STATE.ventas.length+' registros';
+  if(!STATE.ventas.length){
+    tb.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--mute);padding:24px;">Sin ventas registradas</td></tr>';
+    return;
+  }
+  tb.innerHTML=STATE.ventas.map(v=>'<tr>'+
+    '<td>'+v.fecha+'</td><td>'+esc(v.vendedor)+'</td><td>'+esc(v.producto)+'</td>'+
+    '<td>'+esc(v.zona)+'</td><td class="num">'+v.unidades+'</td><td class="num">$'+fmt(v.monto)+'</td>'+
+    '<td>'+estadoBadge(v.estado)+'</td>'+
+    '<td><button onclick="deleteVenta('+v.id+')" style="background:none;border:none;color:var(--rose);cursor:pointer;font-size:.9rem;" title="Eliminar">🗑</button></td>'+
+  '</tr>').join('');
+}
+
+function renderRecentVentas(filtered){
+  const tb=document.getElementById('tb_recent');
+  if(!tb) return;
+  const ventas=filtered||(STATE.ventas.slice(0,8));
+  if(!ventas.length){
+    tb.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--mute);padding:20px;">Sin ventas en el período</td></tr>';
+    return;
+  }
+  tb.innerHTML=ventas.map(v=>'<tr>'+
+    '<td>'+v.fecha+'</td><td>'+esc(v.vendedor)+'</td><td>'+esc(v.producto)+'</td>'+
+    '<td>'+esc(v.zona)+'</td><td class="num">'+v.unidades+'</td><td class="num">$'+fmt(v.monto)+'</td>'+
+    '<td>'+estadoBadge(v.estado)+'</td>'+
+  '</tr>').join('');
+}
+
+function deleteVenta(id){
+  STATE.ventas=STATE.ventas.filter(v=>v.id!==id);
+  saveLocal(); renderVentasTable(); renderRecentVentas();
+  toast('🗑 Venta eliminada');
+}
+
+// ══════════════════════════════════════════════
+// ANÁLISIS IA
+// ══════════════════════════════════════════════
+async function generarAnalisis(){
+  const apiKey=document.getElementById('ia_key')?.value.trim();
+  if(!apiKey){toast('⚠️ Ingresa tu Mistral API Key');return;}
+  document.getElementById('ia_loading').style.display='flex';
+  document.getElementById('ia_result').style.display='none';
+  const all=STATE.okrs.flatMap(o=>o.krs);
+  const avgOKR=all.length?Math.round(all.reduce((s,k)=>s+k.avance,0)/all.length):0;
+  const totalV=STATE.ventas.reduce((s,v)=>s+v.monto,0)||61200000;
+  const pctMeta=Math.round(totalV/STATE.config.meta*100);
+  const prompt='Analiza el estado estratégico de '+STATE.config.empresa+' ('+STATE.config.sector+', '+STATE.config.ciudad+').\n\n'+
+    'Ventas: $'+fmt(totalV)+' COP ('+pctMeta+'% de meta $'+fmt(STATE.config.meta)+')\n'+
+    'OKRs promedio: '+avgOKR+'%\n'+
+    'Fortalezas: '+(STATE.dofa.fortalezas||'No definidas')+'\n'+
+    'Oportunidades: '+(STATE.dofa.oportunidades||'No definidas')+'\n\n'+
+    'Responde SOLO en JSON: {"estado":"...","oportunidades":["...","...","..."],"alertas":["...","...","..."],"recomendaciones":["...","...","..."],"pasos":["...","...","..."]}';
   try{
-    const cfg = STATE.config||DEMO_CONFIG;
-    const manifest={name:'DashQ · '+cfg.empresa,short_name:'DashQ',
-      start_url:'.',display:'standalone',background_color:'#0D1117',
-      theme_color:cfg.color||'#00C9A7',
-      icons:[{src:"data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' fill='%230D1117' rx='20'/><text y='.9em' font-size='70' x='15'>📊</text></svg>",sizes:'192x192',type:'image/svg+xml'}]};
-    const mUrl=URL.createObjectURL(new Blob([JSON.stringify(manifest)],{type:'application/json'}));
-    const ml=document.createElement('link');ml.rel='manifest';ml.href=mUrl;document.head.appendChild(ml);
-    if('serviceWorker' in navigator){
-      navigator.serviceWorker.register(URL.createObjectURL(new Blob([`
-        const C='dq-v1';
-        self.addEventListener('install',e=>e.waitUntil(caches.open(C).then(c=>c.addAll(['.']))));
-        self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));
-      `],{type:'application/javascript'}))).catch(()=>{});
+    const res=await fetch('https://api.mistral.ai/v1/chat/completions',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
+      body:JSON.stringify({model:'mistral-large-latest',max_tokens:800,temperature:.7,
+        messages:[
+          {role:'system',content:'Eres consultor estratégico senior latinoamericano. Directo y accionable. Responde SOLO JSON sin texto adicional.'},
+          {role:'user',content:prompt}
+        ]})
+    });
+    const data=await res.json();
+    if(data.error) throw new Error('Mistral: '+(data.error.message||JSON.stringify(data.error)));
+    if(!data.choices?.[0]?.message?.content) throw new Error('Respuesta inesperada — verifica tu API Key');
+    const text=data.choices[0].message.content;
+    const clean=text.replace(/```json\n?|```/g,'').trim();
+    let result;
+    try{ result=JSON.parse(clean); }
+    catch(pe){
+      const m=clean.match(/\{[\s\S]*\}/);
+      if(m) result=JSON.parse(m[0]);
+      else throw new Error('La IA no devolvió JSON válido. Intenta de nuevo.');
     }
-  }catch(e){}
+    document.getElementById('ia_loading').style.display='none';
+    document.getElementById('ia_result').style.display='block';
+    const ie=document.getElementById('ia_estado'); if(ie) ie.innerHTML=result.estado||'';
+    renderIAList('ia_oportunidades',result.oportunidades||[],'var(--green)','🚀');
+    renderIAList('ia_alertas',result.alertas||[],'var(--rose)','⚠️');
+    renderIAList('ia_recomendaciones',result.recomendaciones||[],'var(--blue)','💡');
+    renderIAList('ia_pasos',result.pasos||[],'var(--amber)','📋');
+  }catch(e){
+    document.getElementById('ia_loading').style.display='none';
+    const msg=e.message||'Error desconocido';
+    if(msg.includes('401')||msg.toLowerCase().includes('unauthorized')) toast('❌ API Key inválida — verifica en console.mistral.ai');
+    else if(msg.includes('429')) toast('❌ Límite de Mistral alcanzado — espera un momento');
+    else toast('❌ '+msg);
+  }
 }
-registerPWA();
 
-// Load saved state
-const saved=localStorage.getItem('dq_state');
-if(saved){
+function renderIAList(id,items,color,icon){
+  const el=document.getElementById(id); if(!el) return;
+  el.innerHTML=items.map((item,i)=>
+    '<div class="ia-item"><div class="ia-n" style="background:'+color+';color:#fff;">'+(i+1)+'</div><span>'+esc(item)+'</span></div>'
+  ).join('');
+}
+
+function exportarAnalisisPDF(){
+  const fecha=new Date().toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric'});
+  const totalV=STATE.ventas.reduce((s,v)=>s+v.monto,0);
+  const all=STATE.okrs.flatMap(o=>o.krs);
+  const avgOKR=all.length?Math.round(all.reduce((s,k)=>s+k.avance,0)/all.length):0;
+  const sem=getSemaforo(avgOKR);
+  const narrativa=document.getElementById('ia_estado')?.textContent||'';
+  const html='<!DOCTYPE html><html><head><meta charset="UTF-8"/><style>'+
+    'body{font-family:Georgia,serif;max-width:800px;margin:40px auto;color:#1a1a2e;}'+
+    'h1{color:#0A1628;font-size:1.6rem;border-bottom:3px solid #00E5A0;padding-bottom:10px;}'+
+    'h2{color:#0A1628;font-size:1.1rem;margin-top:24px;}'+
+    '.sem{font-size:1.2rem;font-weight:700;padding:12px;border-radius:8px;background:#f0f9f6;}'+
+    '.dofa{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:16px 0;}'+
+    '.dofa-cell{padding:12px;border-radius:8px;font-size:.9rem;}'+
+    '.okr-bar{height:10px;background:#e0e0e0;border-radius:5px;overflow:hidden;margin:4px 0 8px;}'+
+    '.okr-fill{height:100%;border-radius:5px;background:#00E5A0;}'+
+    '@media print{body{margin:20px;}}'+
+    '</style></head><body>'+
+    '<h1>📊 DashQ — Reporte Ejecutivo</h1>'+
+    '<p><b>Empresa:</b> '+esc(STATE.config.empresa)+' &nbsp;·&nbsp; <b>NIT:</b> '+(STATE.config.nit||'—')+' &nbsp;·&nbsp; <b>Fecha:</b> '+fecha+'</p>'+
+    '<h2>Estado Estratégico General</h2>'+
+    '<div class="sem">'+sem.ico+' '+avgOKR+'% promedio de OKRs'+(narrativa?'<br><br>'+esc(narrativa):'')+'</div>'+
+    '<h2>Ventas del período</h2>'+
+    '<p>Total: <b>$'+fmt(totalV)+'</b> COP &nbsp;·&nbsp; Meta: $'+fmt(STATE.config.meta)+' &nbsp;·&nbsp; Cumplimiento: '+Math.round(totalV/STATE.config.meta*100)+'%</p>'+
+    '<h2>OKRs</h2>'+
+    STATE.okrs.map(o=>{
+      const avg=Math.round(o.krs.reduce((s,k)=>s+k.avance,0)/o.krs.length);
+      return '<p><b>'+esc(o.objective)+'</b> — '+avg+'%</p>'+
+        o.krs.map(k=>'<p style="margin:2px 0 0 16px;">'+esc(k.texto)+' ('+k.avance+'%)<div class="okr-bar"><div class="okr-fill" style="width:'+k.avance+'%"></div></div></p>').join('');
+    }).join('')+
+    '<h2>DOFA</h2><div class="dofa">'+
+    '<div class="dofa-cell" style="background:#f0faf5;"><b>💪 Fortalezas</b><br>'+(STATE.dofa.fortalezas||'—')+'</div>'+
+    '<div class="dofa-cell" style="background:#f0f5ff;"><b>🚀 Oportunidades</b><br>'+(STATE.dofa.oportunidades||'—')+'</div>'+
+    '<div class="dofa-cell" style="background:#fffbf0;"><b>⚠️ Debilidades</b><br>'+(STATE.dofa.debilidades||'—')+'</div>'+
+    '<div class="dofa-cell" style="background:#fff5f5;"><b>🔴 Amenazas</b><br>'+(STATE.dofa.amenazas||'—')+'</div>'+
+    '</div>'+
+    '<p style="margin-top:40px;font-size:.8rem;color:#888;border-top:1px solid #ccc;padding-top:10px;">DashQ · '+esc(STATE.config.empresa)+' · CUC Posgrado · Sesión 4 · '+fecha+'</p>'+
+    '</body></html>';
+  const blob=new Blob([html],{type:'text/html'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;a.target='_blank';a.rel='noopener';
+  document.body.appendChild(a);a.click();
+  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},1000);
+  toast('📄 Reporte abierto — Ctrl+P para PDF');
+}
+
+// ══════════════════════════════════════════════
+// CONTEXTO
+// ══════════════════════════════════════════════
+function loadContextoFields(){
+  const d=STATE.dofa||{};
+  ['mis','vis','for','opp','deb','ame'].forEach(k=>{
+    const el=document.getElementById('ctx_'+k); if(!el) return;
+    if(k==='mis') el.value=STATE.config.mision||'';
+    else if(k==='vis') el.value=STATE.config.vision||'';
+    else if(k==='for') el.value=d.fortalezas||'';
+    else if(k==='opp') el.value=d.oportunidades||'';
+    else if(k==='deb') el.value=d.debilidades||'';
+    else if(k==='ame') el.value=d.amenazas||'';
+  });
+}
+
+function saveContexto(){
+  STATE.config.mision=document.getElementById('ctx_mis')?.value||'';
+  STATE.config.vision=document.getElementById('ctx_vis')?.value||'';
+  STATE.dofa={
+    fortalezas:document.getElementById('ctx_for')?.value||'',
+    oportunidades:document.getElementById('ctx_opp')?.value||'',
+    debilidades:document.getElementById('ctx_deb')?.value||'',
+    amenazas:document.getElementById('ctx_ame')?.value||'',
+  };
+  saveLocal();
+  saveToSheets('saveContexto',{dofa:STATE.dofa,config:STATE.config});
+  toast('✅ Contexto estratégico guardado');
+}
+
+// ══════════════════════════════════════════════
+// CONFIG
+// ══════════════════════════════════════════════
+function loadCfgFields(){
+  const f={cfg_emp:'empresa',cfg_sec:'sector',cfg_ciu:'ciudad',cfg_nit:'nit'};
+  Object.entries(f).forEach(([id,key])=>{const el=document.getElementById(id);if(el)el.value=STATE.config[key]||'';});
+  const cm=document.getElementById('cfg_meta');if(cm)cm.value=STATE.config.meta||'';
+  const cc=document.getElementById('cfg_col');if(cc)cc.value=STATE.config.color||'#00E5A0';
+  const sw=document.getElementById('cfg_sw');if(sw)sw.style.background=STATE.config.color||'#00E5A0';
+  const ct=document.getElementById('cfg_tam');if(ct)ct.value=STATE.config.tamano||'';
+  const cs=document.getElementById('cfg_script');if(cs)cs.value=localStorage.getItem('dq_script_url')||'';
+  if(!STATE.productos) STATE.productos=[];
+  if(!STATE.vendedores) STATE.vendedores=[];
+  renderProductos();
+  renderVendedores();
+}
+
+function saveConfig(){
+  STATE.config.empresa=document.getElementById('cfg_emp')?.value||STATE.config.empresa;
+  STATE.config.nit=document.getElementById('cfg_nit')?.value||'';
+  STATE.config.sector=document.getElementById('cfg_sec')?.value||STATE.config.sector;
+  STATE.config.ciudad=document.getElementById('cfg_ciu')?.value||STATE.config.ciudad;
+  STATE.config.tamano=document.getElementById('cfg_tam')?.value||'';
+  STATE.config.meta=parseFloat(document.getElementById('cfg_meta')?.value)||STATE.config.meta;
+  STATE.config.color=document.getElementById('cfg_col')?.value||STATE.config.color;
+  const sb=document.getElementById('sb_empresa');
+  if(sb) sb.textContent=STATE.config.empresa.split(' ')[0];
+  saveLocal();
+  saveToSheets('saveConfig',{config:STATE.config});
+  toast('✅ Configuración guardada');
+}
+
+function saveScriptUrl(){
+  const url=document.getElementById('cfg_script')?.value.trim();
+  if(!url){toast('⚠️ Ingresa la URL del Apps Script');return;}
+  localStorage.setItem('dq_script_url',url);
+  STATE.scriptUrl=url;
+  toast('✅ URL guardada — prueba la conexión');
+}
+
+async function testConnection(){
+  const url=localStorage.getItem('dq_script_url');
+  if(!url){toast('⚠️ Configura la URL primero');return;}
   try{
-    const s=JSON.parse(saved);
-    if(s.okrs) STATE.okrs=s.okrs;
-    if(s.ventas) STATE.ventas=s.ventas;
-    if(s.config) STATE.config={...STATE.config,...s.config};
-    if(s.dofa) STATE.dofa=s.dofa;
+    const r=await fetch(url+'?action=ping');
+    const d=await r.json();
+    toast(d.ok?'✅ Conectado · '+(d.empresa||'Sheet OK'):'⚠️ Script respondió con error');
+  }catch(e){toast('❌ No se pudo conectar — verifica la URL');}
+}
+
+// ══════════════════════════════════════════════
+// PRODUCTOS Y VENDEDORES
+// ══════════════════════════════════════════════
+function renderProductos(){
+  const container=document.getElementById('lista_productos');
+  if(!container) return;
+  const prods=STATE.productos||[];
+  if(!prods.length){container.innerHTML='<span style="color:var(--mute);font-size:.82rem;">Sin productos. Agrega el primero.</span>';return;}
+  container.innerHTML=prods.map((p,i)=>
+    '<div style="display:flex;align-items:center;gap:6px;background:var(--ink3);border:1px solid var(--rim);border-radius:8px;padding:5px 10px;">'+
+      '<span style="font-size:.85rem;color:var(--white);">📦 '+esc(p)+'</span>'+
+      '<button onclick="editProducto('+i+')" style="background:none;border:none;color:var(--mute);cursor:pointer;font-size:.75rem;padding:0 2px;">✏️</button>'+
+      '<button onclick="deleteProducto('+i+')" style="background:none;border:none;color:var(--rose);cursor:pointer;font-size:.75rem;padding:0 2px;">🗑</button>'+
+    '</div>'
+  ).join('');
+  syncProductosToForm();
+}
+
+function addProducto(){
+  const inp=document.getElementById('inp_prod');
+  const val=inp?.value.trim();
+  if(!val){toast('⚠️ Escribe el nombre del producto');return;}
+  if(!STATE.productos) STATE.productos=[];
+  if(STATE.productos.includes(val)){toast('⚠️ Ese producto ya existe');return;}
+  STATE.productos.push(val);
+  inp.value='';
+  saveLocal(); renderProductos();
+  toast('✅ Producto "'+val+'" agregado');
+}
+
+function editProducto(idx){
+  const nuevo=prompt('Editar producto:',STATE.productos[idx]);
+  if(nuevo!==null&&nuevo.trim()){STATE.productos[idx]=nuevo.trim();saveLocal();renderProductos();toast('✅ Actualizado');}
+}
+
+function deleteProducto(idx){
+  if(!confirm('¿Eliminar "'+STATE.productos[idx]+'"?')) return;
+  STATE.productos.splice(idx,1);
+  saveLocal(); renderProductos();
+  toast('🗑 Producto eliminado');
+}
+
+function syncProductosToForm(){
+  const sel=document.getElementById('v_producto'); if(!sel) return;
+  const cur=sel.value;
+  sel.innerHTML='<option value="">Selecciona...</option>'+
+    (STATE.productos||[]).map(p=>'<option'+(p===cur?' selected':'')+'>'+esc(p)+'</option>').join('');
+}
+
+function renderVendedores(){
+  const container=document.getElementById('lista_vendedores');
+  if(!container) return;
+  const vends=STATE.vendedores||[];
+  if(!vends.length){container.innerHTML='<span style="color:var(--mute);font-size:.82rem;">Sin vendedores. Agrega el primero.</span>';return;}
+  container.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:.84rem;">'+
+    '<thead><tr>'+
+      '<th style="background:var(--ink3);padding:8px 12px;text-align:left;font-size:.7rem;font-weight:700;color:var(--mute);text-transform:uppercase;border-bottom:1px solid var(--rim);">Nombre</th>'+
+      '<th style="background:var(--ink3);padding:8px 12px;text-align:left;font-size:.7rem;font-weight:700;color:var(--mute);text-transform:uppercase;border-bottom:1px solid var(--rim);">Zona</th>'+
+      '<th style="background:var(--ink3);padding:8px 12px;text-align:center;font-size:.7rem;font-weight:700;color:var(--mute);text-transform:uppercase;border-bottom:1px solid var(--rim);">Acciones</th>'+
+    '</tr></thead><tbody>'+
+    vends.map((v,i)=>'<tr>'+
+      '<td style="padding:9px 12px;border-bottom:1px solid rgba(30,53,96,.5);color:var(--white);">👤 '+esc(v.nombre)+'</td>'+
+      '<td style="padding:9px 12px;border-bottom:1px solid rgba(30,53,96,.5);color:var(--mute);">'+(v.zona||'—')+'</td>'+
+      '<td style="padding:9px 12px;border-bottom:1px solid rgba(30,53,96,.5);text-align:center;">'+
+        '<button onclick="editVendedor('+i+')" style="background:none;border:none;color:var(--blue);cursor:pointer;font-size:.82rem;margin:0 4px;">✏️ Editar</button>'+
+        '<button onclick="deleteVendedor('+i+')" style="background:none;border:none;color:var(--rose);cursor:pointer;font-size:.82rem;margin:0 4px;">🗑 Eliminar</button>'+
+      '</td>'+
+    '</tr>').join('')+
+    '</tbody></table>';
+  syncVendedoresToForm();
+}
+
+function addVendedor(){
+  const nombre=document.getElementById('inp_vend_nombre')?.value.trim();
+  const zona=document.getElementById('inp_vend_zona')?.value.trim()||'Sin zona';
+  if(!nombre){toast('⚠️ Ingresa el nombre del vendedor');return;}
+  if(!STATE.vendedores) STATE.vendedores=[];
+  if(STATE.vendedores.find(v=>v.nombre===nombre)){toast('⚠️ Ese vendedor ya existe');return;}
+  STATE.vendedores.push({nombre,zona});
+  document.getElementById('inp_vend_nombre').value='';
+  document.getElementById('inp_vend_zona').value='';
+  saveLocal(); renderVendedores();
+  toast('✅ Vendedor "'+nombre+'" agregado');
+}
+
+function editVendedor(idx){
+  const v=STATE.vendedores[idx];
+  const nombre=prompt('Nombre del vendedor:',v.nombre);
+  if(nombre===null) return;
+  const zona=prompt('Zona asignada:',v.zona||'');
+  if(zona===null) return;
+  STATE.vendedores[idx]={nombre:nombre.trim()||v.nombre,zona:zona.trim()||v.zona};
+  saveLocal(); renderVendedores();
+  toast('✅ Vendedor actualizado');
+}
+
+function deleteVendedor(idx){
+  if(!confirm('¿Eliminar a "'+STATE.vendedores[idx].nombre+'"?')) return;
+  STATE.vendedores.splice(idx,1);
+  saveLocal(); renderVendedores();
+  toast('🗑 Vendedor eliminado');
+}
+
+function syncVendedoresToForm(){
+  const sel=document.getElementById('v_vendedor'); if(!sel) return;
+  const cur=sel.value;
+  sel.innerHTML='<option value="">Selecciona...</option>'+
+    (STATE.vendedores||[]).map(v=>'<option'+(v.nombre===cur?' selected':'')+'>'+esc(v.nombre)+'</option>').join('');
+}
+
+// ══════════════════════════════════════════════
+// GOOGLE SHEETS SYNC
+// ══════════════════════════════════════════════
+async function syncSheets(){
+  const url=localStorage.getItem('dq_script_url');
+  if(!url){toast('ℹ️ Configura la URL del Apps Script en ⚙️ Config');return;}
+  if(STATE.isDemo){toast('ℹ️ Modo demo — conecta tu Sheet real en ⚙️ Config');return;}
+  toast('⟳ Sincronizando...');
+  try{
+    for(const v of STATE.ventas.slice(0,50)){
+      await saveToSheets('postVenta',{...v,email:STATE.user?.email||''});
+    }
+    await saveToSheets('postOKRs',{okrs:STATE.okrs,email:STATE.user?.email||''});
+    const hora=new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'});
+    toast('✅ Sincronizado con Google Sheets · '+hora);
+    const badge=document.getElementById('sync_badge');
+    if(badge){badge.textContent='✅ Última sync: '+hora;badge.style.display='inline';}
+  }catch(e){toast('❌ Error de sincronización: '+e.message);}
+}
+
+async function saveToSheets(action,data){
+  const url=localStorage.getItem('dq_script_url')||STATE.scriptUrl;
+  if(!url||STATE.isDemo) return;
+  try{
+    await fetch(url,{method:'POST',mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action,...data})});
   }catch(e){}
 }
+
+// ══════════════════════════════════════════════
+// PWA
+// ══════════════════════════════════════════════
+function registerPWA(){
+  const manifest={name:'DashQ · '+(STATE.config.empresa||'Mi Empresa'),short_name:'DashQ',
+    start_url:'./',display:'standalone',background_color:'#0A1628',
+    theme_color:STATE.config.color||'#00E5A0',
+    icons:[{src:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%230A1628" rx="20"/><text y=".9em" font-size="80">📊</text></svg>',sizes:'192x192',type:'image/svg+xml'}]};
+  const blob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
+  const mUrl=URL.createObjectURL(blob);
+  const link=document.createElement('link');link.rel='manifest';link.href=mUrl;
+  document.head.appendChild(link);
+  if('serviceWorker' in navigator){
+    const swCode='self.addEventListener("install",e=>e.waitUntil(caches.open("dq-v1").then(c=>c.add("/"))));self.addEventListener("fetch",e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));';
+    const swBlob=new Blob([swCode],{type:'application/javascript'});
+    navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>{});
+  }
+}
+
+// ══════════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════════
+window.onload=()=>{
+  const savedFs=localStorage.getItem('dq_fontsize');
+  if(savedFs) document.documentElement.style.fontSize=savedFs+'px';
+  const saved=localStorage.getItem('dq_state');
+  if(saved){
+    try{
+      const s=JSON.parse(saved);
+      if(s.okrs) STATE.okrs=s.okrs;
+      if(s.ventas) STATE.ventas=s.ventas;
+      if(s.config) STATE.config={...STATE.config,...s.config};
+      if(s.dofa) STATE.dofa=s.dofa;
+      if(s.productos) STATE.productos=s.productos;
+      if(s.vendedores) STATE.vendedores=s.vendedores;
+    }catch(e){}
+  }
+  const savedSession=localStorage.getItem('dq_session');
+  if(savedSession){
+    try{
+      const s=JSON.parse(savedSession);
+      STATE.user=s; STATE.isDemo=false;
+      const ni=document.getElementById('inNombre');
+      const ei=document.getElementById('inEmail');
+      if(ni) ni.value=s.name||'';
+      if(ei) ei.value=s.email||'';
+      checkFirstTime(s);
+    }catch(e){localStorage.removeItem('dq_session');}
+  }
+};
 
 </script>
 </body>
