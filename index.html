@@ -1142,31 +1142,8 @@ let STATE = {
     meta:85000000,color:'#00E5A0',mision:'',vision:''
   },
   dofa: {fortalezas:'',oportunidades:'',debilidades:'',amenazas:''},
-  okrs: [
-    {id:1,objective:'Incrementar ventas y cobertura en Q3 2025',
-     krs:[
-       {id:11,texto:'Alcanzar $85M en ventas mensuales',meta:85000000,avance:72,unidad:'$',linkedToVentas:false},
-       {id:12,texto:'Incorporar 15 nuevos clientes activos',meta:15,avance:60,unidad:'clientes',linkedToVentas:false},
-       {id:13,texto:'90% de pedidos entregados a tiempo',meta:90,avance:87,unidad:'%',linkedToVentas:false},
-     ]},
-    {id:2,objective:'Mejorar eficiencia operacional',
-     krs:[
-       {id:21,texto:'Reducir merma a menos del 3%',meta:3,avance:58,unidad:'%',linkedToVentas:false},
-       {id:22,texto:'Incorporar 2 nuevas zonas de distribución',meta:2,avance:50,unidad:'zonas',linkedToVentas:false},
-     ]}
-  ],
-  ventas: [
-    {id:1,fecha:'2026-06-15',vendedor:'Carlos Mendez',producto:'Banano',zona:'Norte',unidades:820,monto:6560000,estado:'Entregado',timestamp:'2026-06-15T08:00:00'},
-    {id:2,fecha:'2026-06-18',vendedor:'Ana Pérez',producto:'Piña',zona:'Centro',unidades:540,monto:4860000,estado:'Entregado',timestamp:'2026-06-18T09:00:00'},
-    {id:3,fecha:'2026-06-20',vendedor:'Luis Torres',producto:'Mango',zona:'Sur',unidades:380,monto:3040000,estado:'Entregado',timestamp:'2026-06-20T10:00:00'},
-    {id:4,fecha:'2026-06-22',vendedor:'María García',producto:'Aguacate',zona:'Oriente',unidades:290,monto:3480000,estado:'En tránsito',timestamp:'2026-06-22T11:00:00'},
-    {id:5,fecha:'2026-07-02',vendedor:'Carlos Mendez',producto:'Banano',zona:'Norte',unidades:750,monto:6000000,estado:'Entregado',timestamp:'2026-07-02T08:00:00'},
-    {id:6,fecha:'2026-07-05',vendedor:'Ana Pérez',producto:'Papaya',zona:'Centro',unidades:210,monto:2940000,estado:'Entregado',timestamp:'2026-07-05T09:00:00'},
-    {id:7,fecha:'2026-07-08',vendedor:'Pedro Ruiz',producto:'Maracuyá',zona:'Occidente',unidades:180,monto:1980000,estado:'Pendiente',timestamp:'2026-07-08T10:00:00'},
-    {id:8,fecha:'2026-07-10',vendedor:'Luis Torres',producto:'Piña',zona:'Sur',unidades:420,monto:3780000,estado:'Entregado',timestamp:'2026-07-10T11:00:00'},
-    {id:9,fecha:'2026-07-12',vendedor:'María García',producto:'Mango',zona:'Oriente',unidades:350,monto:2800000,estado:'Entregado',timestamp:'2026-07-12T08:00:00'},
-    {id:10,fecha:'2026-07-14',vendedor:'Carlos Mendez',producto:'Aguacate',zona:'Norte',unidades:260,monto:3120000,estado:'En tránsito',timestamp:'2026-07-14T09:00:00'},
-  ],
+  okrs: [], // Real OKRs loaded from localStorage; demo OKRs loaded in loginDemo()
+  ventas: [], // Real data loaded from localStorage; demo data loaded in loginDemo()
   scriptUrl: '',
 };
 
@@ -1189,6 +1166,7 @@ function toast(msg){
   clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),3000);
 }
 function saveLocal(){
+  if(STATE.isDemo) return; // Never persist demo data
   try{
     localStorage.setItem('dq_state',JSON.stringify({
       okrs:STATE.okrs, ventas:STATE.ventas, config:STATE.config,
@@ -1257,7 +1235,34 @@ function loginRapido(){
 
 function loginDemo(){
   const user={name:'Demo User',email:'demo@dashq.app',picture:'',initials:'DU'};
-  STATE.isDemo=true; STATE.user=user;
+  STATE.isDemo=true;
+  STATE.user=user;
+  // Load demo data fresh — never from localStorage
+  STATE.ventas=[
+    {id:1,fecha:'2026-06-15',vendedor:'Carlos Mendez',producto:'Banano',zona:'Norte',unidades:820,monto:6560000,estado:'Entregado',timestamp:'2026-06-15T08:00:00'},
+    {id:2,fecha:'2026-06-18',vendedor:'Ana Pérez',producto:'Piña',zona:'Centro',unidades:540,monto:4860000,estado:'Entregado',timestamp:'2026-06-18T09:00:00'},
+    {id:3,fecha:'2026-06-20',vendedor:'Luis Torres',producto:'Mango',zona:'Sur',unidades:380,monto:3040000,estado:'Entregado',timestamp:'2026-06-20T10:00:00'},
+    {id:4,fecha:'2026-06-22',vendedor:'María García',producto:'Aguacate',zona:'Oriente',unidades:290,monto:3480000,estado:'En tránsito',timestamp:'2026-06-22T11:00:00'},
+    {id:5,fecha:'2026-07-02',vendedor:'Carlos Mendez',producto:'Banano',zona:'Norte',unidades:750,monto:6000000,estado:'Entregado',timestamp:'2026-07-02T08:00:00'},
+    {id:6,fecha:'2026-07-05',vendedor:'Ana Pérez',producto:'Papaya',zona:'Centro',unidades:210,monto:2940000,estado:'Entregado',timestamp:'2026-07-05T09:00:00'},
+    {id:7,fecha:'2026-07-08',vendedor:'Pedro Ruiz',producto:'Maracuyá',zona:'Occidente',unidades:180,monto:1980000,estado:'Pendiente',timestamp:'2026-07-08T10:00:00'},
+    {id:8,fecha:'2026-07-10',vendedor:'Luis Torres',producto:'Piña',zona:'Sur',unidades:420,monto:3780000,estado:'Entregado',timestamp:'2026-07-10T11:00:00'},
+    {id:9,fecha:'2026-07-12',vendedor:'María García',producto:'Mango',zona:'Oriente',unidades:350,monto:2800000,estado:'Entregado',timestamp:'2026-07-12T08:00:00'},
+    {id:10,fecha:'2026-07-14',vendedor:'Carlos Mendez',producto:'Aguacate',zona:'Norte',unidades:260,monto:3120000,estado:'En tránsito',timestamp:'2026-07-14T09:00:00'},
+  ];
+  STATE.okrs=[
+    {id:1,objective:'Incrementar ventas y cobertura en Q3 2025',
+     krs:[
+       {id:11,texto:'Alcanzar $85M en ventas mensuales',meta:85000000,avance:72,unidad:'$',linkedToVentas:false},
+       {id:12,texto:'Incorporar 15 nuevos clientes activos',meta:15,avance:60,unidad:'clientes',linkedToVentas:false},
+       {id:13,texto:'90% de pedidos entregados a tiempo',meta:90,avance:87,unidad:'%',linkedToVentas:false},
+     ]},
+    {id:2,objective:'Mejorar eficiencia operacional',
+     krs:[
+       {id:21,texto:'Reducir merma a menos del 3%',meta:3,avance:58,unidad:'%',linkedToVentas:false},
+       {id:22,texto:'Incorporar 2 nuevas zonas de distribución',meta:2,avance:50,unidad:'zonas',linkedToVentas:false},
+     ]}
+  ];
   toast('🚀 Modo demo activado — Caribe Fresh S.A.S.');
   setTimeout(()=>initApp(user),400);
 }
@@ -1377,31 +1382,13 @@ function initApp(user){
   const cn=document.getElementById('cfg_name'); if(cn) cn.textContent=user.name;
   const ce=document.getElementById('cfg_email'); if(ce) ce.textContent=user.email;
   setTimeout(()=>{
-    // Demo loads Caribe Fresh data; new users start empty
-    if(!STATE.isDemo){
-      // Clear demo data for real users — keep only what's in localStorage
-      const hasData = STATE.ventas.length>2||STATE.okrs.some(o=>o.krs.some(k=>k.avance>0&&k.avance!==72&&k.avance!==60&&k.avance!==87));
-      if(!hasData){
-        STATE.ventas=[];
-        STATE.okrs=STATE.okrs.map(o=>({...o,krs:o.krs.map(k=>({...k,avance:0}))}));
-      }
-    }
     initCharts();
     syncProductosToForm();
     syncVendedoresToForm();
     renderOKRs();
     renderVentasTable();
     renderRecentVentas();
-    if(STATE.isDemo){
-      setTimeout(()=>{
-        [['kf_ventas',72],['kf_pedidos',84],['kf_meta',72],['kf_okrs',58]].forEach(([id,pct])=>{
-          const el=document.getElementById(id); if(el) el.style.width=pct+'%';
-        });
-      },400);
-    } else {
-      // Real user — show empty KPIs
-      updateKPIsFromVentas();
-    }
+    updateKPIsFromVentas();
     updateOKRKPI();
   },100);
   registerPWA();
@@ -1877,6 +1864,7 @@ function registrarVenta(){
   document.getElementById('v_monto').value='';
   renderVentasTable();
   renderRecentVentas();
+  updateKPIsFromVentas();
   updateOKRKPI();
   toast('✅ Venta registrada — $'+fmt(monto));
 }
@@ -2258,21 +2246,39 @@ async function saveToSheets(action,data){
 // ══════════════════════════════════════════════
 
 function updateKPIsFromVentas(){
-  const ventas = STATE.ventas;
+  const ventas = getFilteredVentas();
   const totalV = ventas.reduce((s,v)=>s+v.monto,0);
   const pedidos = ventas.length;
-  const pct = STATE.config.meta>0?Math.round(totalV/STATE.config.meta*100):0;
+  const meta = STATE.config.meta||85000000;
+  const pct = Math.min(999,Math.round(totalV/meta*100));
+  // Update KPI values
   const kv=document.getElementById('kpi_ventas'); if(kv) kv.textContent='$'+fmt(totalV);
   const kp=document.getElementById('kpi_pedidos'); if(kp) kp.textContent=pedidos;
   const km=document.getElementById('kpi_meta'); if(km) km.textContent=pct+'%';
-  const ks=document.getElementById('kpi_okrs');
+  // Update sub-text on meta card
+  const faltaSub = document.querySelector('#kpi_meta + .kpi-sub, .kpi-sub');
+  const metaFalta = meta - totalV;
+  const metaEl = document.querySelectorAll('.kpi-sub')[2];
+  if(metaEl) metaEl.innerHTML = metaFalta>0 
+    ? '<span class="delta warn">⚡ Faltan $'+fmt(metaFalta)+'</span>'
+    : '<span class="delta up">✓ Meta superada</span>';
+  // Update OKRs KPI
   const all=STATE.okrs.flatMap(o=>o.krs);
   const avgOKR=all.length?Math.round(all.reduce((s,k)=>s+k.avance,0)/all.length):0;
+  const ks=document.getElementById('kpi_okrs');
   if(ks) ks.innerHTML=getSemaforo(avgOKR).ico+' '+avgOKR+'%';
-  [['kf_ventas',Math.min(100,pct)],['kf_pedidos',Math.min(100,Math.round(pedidos/20*100))],
-   ['kf_meta',Math.min(100,pct)],['kf_okrs',avgOKR]].forEach(([id,w])=>{
+  // Animate bars
+  [['kf_ventas',Math.min(100,pct)],
+   ['kf_pedidos',Math.min(100,pedidos>0?Math.round(pedidos/Math.max(pedidos,20)*100):0)],
+   ['kf_meta',Math.min(100,pct)],
+   ['kf_okrs',avgOKR]
+  ].forEach(([id,w])=>{
     const el=document.getElementById(id); if(el) el.style.width=w+'%';
   });
+  // Update IA context bar
+  const iaEmp=document.getElementById('ia_emp'); if(iaEmp) iaEmp.textContent=STATE.config.empresa||'—';
+  const iaVen=document.getElementById('ia_ven'); if(iaVen) iaVen.textContent='$'+fmt(totalV);
+  const iaOkr=document.getElementById('ia_okr'); if(iaOkr) iaOkr.textContent=avgOKR+'% promedio';
 }
 
 function registerPWA(){
@@ -2313,12 +2319,15 @@ window.onload=()=>{
   if(savedSession){
     try{
       const s=JSON.parse(savedSession);
-      STATE.user=s; STATE.isDemo=false;
-      const ni=document.getElementById('inNombre');
-      const ei=document.getElementById('inEmail');
-      if(ni) ni.value=s.name||'';
-      if(ei) ei.value=s.email||'';
-      checkFirstTime(s);
+      // Only auto-login if not demo
+      if(s.email&&s.email!=='demo@dashq.app'){
+        STATE.user=s; STATE.isDemo=false;
+        const ni=document.getElementById('inNombre');
+        const ei=document.getElementById('inEmail');
+        if(ni) ni.value=s.name||'';
+        if(ei) ei.value=s.email||'';
+        checkFirstTime(s);
+      }
     }catch(e){localStorage.removeItem('dq_session');}
   }
 };
