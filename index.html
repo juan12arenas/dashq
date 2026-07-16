@@ -1273,6 +1273,8 @@ function D(){ return MODE==='demo'?DEMO:STATE; }
 // ── SHEETS SYNC (SOLO MODO REAL) ─────────────────────────────────────────
 async function saveToSheets(action, data){
   if(MODE==='demo') return;
+  // Ventas y OKRs SOLO via syncAll — nunca auto-sync
+  if(action==='postVenta'||action==='postOKRs') return;
   const url=localStorage.getItem('dq_script_url');
   if(!url) return;
   try{
@@ -1282,21 +1284,44 @@ async function saveToSheets(action, data){
   }catch(e){}
 }
 
+function getSyncedIds(){
+  try{ return new Set(JSON.parse(localStorage.getItem('dq_synced_ids')||'[]')); }
+  catch(e){ return new Set(); }
+}
+function markSynced(ids){
+  const existing=getSyncedIds();
+  ids.forEach(id=>existing.add(id));
+  localStorage.setItem('dq_synced_ids',JSON.stringify([...existing]));
+}
+
 async function syncAll(){
   if(MODE==='demo'){toast('ℹ️ El modo demo no sincroniza datos');return;}
   const url=localStorage.getItem('dq_script_url');
   if(!url){toast('⚠️ Configura la URL del Apps Script en ⚙️ Config');return;}
-  toast('⟳ Sincronizando...');
+
+  const synced=getSyncedIds();
+  const pending=STATE.ventas.filter(v=>!synced.has(String(v.id)));
+
   try{
-    // Send only ventas not yet synced (by unique id)
-    for(const v of STATE.ventas.slice(0,50)){
+    if(pending.length){
+      toast('⟳ Enviando '+pending.length+' venta(s) nueva(s)...');
+      const syncedNow=[];
+      for(const v of pending){
+        await fetch(url,{method:'POST',mode:'no-cors',
+          headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({action:'postVenta',...v,email:STATE.user?.email||''})});
+        syncedNow.push(String(v.id));
+      }
+      markSynced(syncedNow);
+    } else {
+      toast('ℹ️ Ventas ya sincronizadas — enviando OKRs...');
+    }
+    // OKRs always sync (overwrite, no duplicates)
+    if(STATE.okrs.length){
       await fetch(url,{method:'POST',mode:'no-cors',
         headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({action:'postVenta',...v,email:STATE.user?.email||''})});
+        body:JSON.stringify({action:'postOKRs',okrs:STATE.okrs,email:STATE.user?.email||''})});
     }
-    await fetch(url,{method:'POST',mode:'no-cors',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({action:'postOKRs',okrs:STATE.okrs,email:STATE.user?.email||''})});
     const hora=new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'});
     toast('✅ Sincronizado · '+hora);
   }catch(e){toast('❌ Error: '+e.message);}
