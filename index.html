@@ -1247,21 +1247,38 @@ function updateSyncBadge(){
 // ── SHEETS API ────────────────────────────────────────────────────────
 function getScriptUrl(){ return localStorage.getItem('dq_script_url')||''; }
 
-async function callSheets(action, data={}){
+// GET — returns JSON (Apps Script supports CORS on GET)
+async function getFromSheets(action, params={}){
   const url=getScriptUrl(); if(!url) return null;
   try{
-    const res=await fetch(url,{method:'POST',mode:'cors',
-      headers:{'Content-Type':'text/plain'},
-      body:JSON.stringify({action,...data,email:STATE.user?.email||''})});
+    const qs=new URLSearchParams({action,...params}).toString();
+    const res=await fetch(url+'?'+qs);
     return await res.json();
-  }catch(e){
-    // no-cors fallback (no response body)
-    try{
-      await fetch(url,{method:'POST',mode:'no-cors',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({action,...data,email:STATE.user?.email||''})});
-    }catch(e2){}
-    return null;
+  }catch(e){ return null; }
+}
+
+// POST — fire and forget (no-cors, no response body)
+async function postToSheets(action, data={}){
+  const url=getScriptUrl(); if(!url) return;
+  try{
+    await fetch(url,{
+      method:'POST',
+      mode:'no-cors',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({action,...data,email:STATE.user?.email||''})
+    });
+  }catch(e){}
+}
+
+// Alias for backward compat — use GET for reads, POST for writes
+async function callSheets(action, data={}){
+  const readActions=['ping','getConfig','getUsuario','getDashboard',
+    'getVentas','getOKRs','getContexto','getUserData'];
+  if(readActions.includes(action)){
+    return getFromSheets(action, {email:STATE.user?.email||'',...data});
+  } else {
+    await postToSheets(action, data);
+    return {ok:true};
   }
 }
 
@@ -1273,20 +1290,17 @@ async function syncAll(){
   if(!pending.length && !STATE.okrs.length){ toast('ℹ️ Todo sincronizado'); return; }
   toast('⟳ Sincronizando...');
   try{
-    // Use savePending endpoint — server deduplicates by ID
-    const result=await callSheets('savePending',{
-      ventas:pending, okrs:STATE.okrs, email:STATE.user?.email||''
-    });
-    if(result?.ok){
-      markSynced(pending.map(v=>v.id));
-      updateSyncBadge();
-      toast('✅ '+result.saved+' venta(s) enviada(s) · '+nowTime(), 'success');
-    } else {
-      // no-cors fallback — assume success
-      markSynced(pending.map(v=>v.id));
-      updateSyncBadge();
-      toast('✅ Sincronizado · '+nowTime(), 'success');
+    // Send each venta individually via no-cors POST
+    for(const v of pending){
+      await postToSheets('postVenta', {...v, email:STATE.user?.email||''});
     }
+    // Send OKRs
+    if(STATE.okrs.length){
+      await postToSheets('postOKRs', {okrs:STATE.okrs, email:STATE.user?.email||''});
+    }
+    markSynced(pending.map(v=>v.id));
+    updateSyncBadge();
+    toast('✅ '+pending.length+' venta(s) enviada(s) · '+nowTime(), 'success');
   }catch(e){ toast('❌ Error: '+e.message,'error'); }
 }
 
@@ -1323,7 +1337,7 @@ async function loginRapido(){
   }
   try{
     toast('🔍 Verificando...');
-    const data=await callSheets('getUserData',{email});
+    const data=await getFromSheets('getUserData',{email});
     if(btn){ btn.textContent='🚀 Entrar a DashQ'; btn.disabled=false; }
     if(data?.ok && data.exists){
       // User exists — load all data from Sheets
@@ -1378,7 +1392,7 @@ async function handleGoogleLogin(response){
       picture:d.picture||''};
     STATE=EMPTY_STATE(); STATE.user=user;
     localStorage.setItem('dq_session',JSON.stringify(user));
-    const data=await callSheets('getUserData',{email:d.email});
+    const data=await getFromSheets('getUserData',{email:d.email});
     if(data?.ok && data.exists){
       if(data.config) STATE.config={...STATE.config,...data.config};
       if(data.dofa) STATE.dofa=data.dofa;
@@ -2189,9 +2203,9 @@ function saveScriptUrl(){
 async function testConnection(){
   const url=getScriptUrl(); if(!url){ toast('⚠️ Configura la URL primero','error'); return; }
   try{
-    const r=await fetch(url+'?action=ping'); const d=await r.json();
-    toast(d.ok?'✅ Conectado · '+(d.empresa||'OK'):'⚠️ Error en respuesta');
-  }catch(e){ toast('❌ No se pudo conectar','error'); }
+    const d=await getFromSheets('ping');
+    toast(d?.ok?'✅ Conectado · '+(d.empresa||d.ts||'OK'):'⚠️ Sin respuesta — verifica la URL','error');
+  }catch(e){ toast('❌ No se pudo conectar: '+e.message,'error'); }
 }
 
 // ── PRODUCTOS ─────────────────────────────────
@@ -2296,7 +2310,7 @@ window.onload=()=>{
         // Auto-try to restore from Sheets
         const url=getScriptUrl();
         if(url){
-          callSheets('getUserData',{email:s.email}).then(data=>{
+          getFromSheets('getUserData',{email:s.email}).then(data=>{
             if(data?.ok&&data.exists){
               if(data.config) STATE.config={...STATE.config,...data.config};
               if(data.dofa) STATE.dofa=data.dofa;
