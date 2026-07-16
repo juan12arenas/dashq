@@ -615,7 +615,7 @@ tr:hover td{background:rgba(255,255,255,.015);}
         </div>
         <button class="btn-quick" onclick="loginRapido()">🚀 Entrar a DashQ</button>
         <div class="login-sep">o</div>
-        <button class="btn-demo" onclick="loginDemo()">📊 Demo — Caribe Fresh S.A.S.</button>
+
       </div>
 
       <!-- Google OAuth panel -->
@@ -764,7 +764,7 @@ tr:hover td{background:rgba(255,255,255,.015);}
           <button class="font-btn" onclick="adjFont(-1)" title="Reducir texto">A-</button>
           <button class="font-btn" onclick="adjFont(1)" title="Aumentar texto">A+</button>
         </div>
-        <div class="sync-btn" onclick="syncAll()">⟳ Sincronizar</div>
+        <div class="sync-btn" onclick="syncAll()" style="position:relative;">⟳ Sincronizar <span id="sync_pending" style="display:none;background:var(--rose);color:#fff;font-size:.65rem;font-weight:700;padding:1px 6px;border-radius:10px;margin-left:4px;"></span></div>
       </div>
     </div>
     <div id="content">
@@ -1143,69 +1143,16 @@ tr:hover td{background:rgba(255,255,255,.015);}
 <script>
 
 // ══════════════════════════════════════════════════════════════════════
-// DASHQ — Sistema de Gestión Estratégica
-// MODO DEMO: datos Caribe Fresh, sin Sheets, sin guardar nada
-// MODO REAL: datos propios, Sheets conectado, localStorage persistente
+// DASHQ — Sistema de Gestión Estratégica con IA
+// Versión: Real-only (sin demo embebido)
 // ══════════════════════════════════════════════════════════════════════
 
-// ── MODO ────────────────────────────────────────────────────────────────
-let MODE = 'none'; // 'demo' | 'real'
-
-// ── DATOS DEMO (inmutables, solo en memoria) ──────────────────────────
-const DEMO = {
-  user: {name:'Demo — Caribe Fresh',email:'demo@dashq.app',initials:'CF',picture:''},
-  config: {empresa:'Caribe Fresh S.A.S.',nit:'900.123.456-7',
-    sector:'Distribución de frutas y verduras',tamano:'Pequeña (11-50 empleados)',
-    ciudad:'Barranquilla',meta:85000000,color:'#00E5A0',mision:'',vision:''},
-  dofa: {
-    fortalezas:'Red de distribución consolidada en el Caribe\nProductos frescos de alta calidad\nRelaciones sólidas con proveedores locales',
-    oportunidades:'Crecimiento del e-commerce alimentario\nExpansión a nuevos municipios\nTendencia hacia alimentación saludable',
-    debilidades:'Sistema de trazabilidad manual\nAlta dependencia de temporadas agrícolas\nFlota de transporte limitada',
-    amenazas:'Competidores con mayor capital\nVolatilidad de precios agrícolas\nCambios en regulaciones sanitarias'
-  },
-  okrs: [
-    {id:1,objective:'Incrementar ventas y cobertura en Q3 2025',
-     krs:[
-       {id:11,texto:'Alcanzar $85M en ventas mensuales',meta:85000000,avance:72,unidad:'$',linkedToVentas:false},
-       {id:12,texto:'Incorporar 15 nuevos clientes activos',meta:15,avance:60,unidad:'clientes',linkedToVentas:false},
-       {id:13,texto:'90% de pedidos entregados a tiempo',meta:90,avance:87,unidad:'%',linkedToVentas:false},
-     ]},
-    {id:2,objective:'Mejorar eficiencia operacional',
-     krs:[
-       {id:21,texto:'Reducir merma a menos del 3%',meta:3,avance:58,unidad:'%',linkedToVentas:false},
-       {id:22,texto:'Abrir 2 nuevas zonas de distribución',meta:2,avance:50,unidad:'zonas',linkedToVentas:false},
-     ]}
-  ],
-  ventas: [
-    {id:1,fecha:'2026-06-15',vendedor:'Carlos Mendez',producto:'Banano',zona:'Norte',unidades:820,monto:6560000,estado:'Entregado'},
-    {id:2,fecha:'2026-06-18',vendedor:'Ana Pérez',producto:'Piña',zona:'Centro',unidades:540,monto:4860000,estado:'Entregado'},
-    {id:3,fecha:'2026-06-20',vendedor:'Luis Torres',producto:'Mango',zona:'Sur',unidades:380,monto:3040000,estado:'Entregado'},
-    {id:4,fecha:'2026-06-22',vendedor:'María García',producto:'Aguacate',zona:'Oriente',unidades:290,monto:3480000,estado:'En tránsito'},
-    {id:5,fecha:'2026-07-02',vendedor:'Carlos Mendez',producto:'Banano',zona:'Norte',unidades:750,monto:6000000,estado:'Entregado'},
-    {id:6,fecha:'2026-07-05',vendedor:'Ana Pérez',producto:'Papaya',zona:'Centro',unidades:210,monto:2940000,estado:'Entregado'},
-    {id:7,fecha:'2026-07-08',vendedor:'Pedro Ruiz',producto:'Maracuyá',zona:'Occidente',unidades:180,monto:1980000,estado:'Pendiente'},
-    {id:8,fecha:'2026-07-10',vendedor:'Luis Torres',producto:'Piña',zona:'Sur',unidades:420,monto:3780000,estado:'Entregado'},
-    {id:9,fecha:'2026-07-12',vendedor:'María García',producto:'Mango',zona:'Oriente',unidades:350,monto:2800000,estado:'Entregado'},
-    {id:10,fecha:'2026-07-14',vendedor:'Carlos Mendez',producto:'Aguacate',zona:'Norte',unidades:260,monto:3120000,estado:'En tránsito'},
-  ],
-  productos: ['Banano','Piña','Mango','Aguacate','Papaya','Maracuyá'],
-  vendedores: [
-    {nombre:'Carlos Mendez',zona:'Norte'},{nombre:'Ana Pérez',zona:'Centro'},
-    {nombre:'Luis Torres',zona:'Sur'},{nombre:'María García',zona:'Oriente'},
-    {nombre:'Pedro Ruiz',zona:'Occidente'},
-  ],
-};
-const DEMO_MESES = {
-  labels:['Feb','Mar','Abr','May','Jun','Jul'],
-  ventas:[52400000,58700000,54200000,61800000,67300000,61200000]
-};
-
-// ── STATE REAL (usuario autenticado) ──────────────────────────────────
+// ── STATE ────────────────────────────────────────────────────────────
 const EMPTY_STATE = () => ({
   user: null,
-  config: {empresa:'',nit:'',sector:'',tamano:'',ciudad:'',
-    meta:50000000,color:'#00E5A0',mision:'',vision:''},
-  dofa: {fortalezas:'',oportunidades:'',debilidades:'',amenazas:''},
+  config: { empresa:'', nit:'', sector:'', tamano:'', ciudad:'',
+    meta:50000000, color:'#00E5A0', mision:'', vision:'' },
+  dofa: { fortalezas:'', oportunidades:'', debilidades:'', amenazas:'' },
   okrs: [],
   ventas: [],
   productos: [],
@@ -1216,41 +1163,52 @@ const EMPTY_STATE = () => ({
 
 let STATE = EMPTY_STATE();
 let charts = {};
+let CF = { vendedor:null, producto:null, zona:null }; // cross-filter
 
-// ── HELPERS ─────────────────────────────────────────────────────────────
+// ── UTILS ────────────────────────────────────────────────────────────
 function fmt(n){ return new Intl.NumberFormat('es-CO').format(Math.round(n||0)); }
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
-function toast(msg){
+function today(){ return new Date().toISOString().split('T')[0]; }
+function nowTime(){ return new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'}); }
+
+function toast(msg, type='info'){
   const t=document.getElementById('toast');
   if(!t) return;
-  t.textContent=msg; t.classList.add('show');
-  clearTimeout(t._t); t._t=setTimeout(()=>t.classList.remove('show'),3200);
+  t.textContent=msg;
+  t.className='show';
+  if(type==='error') t.style.borderColor='var(--rose)';
+  else if(type==='success') t.style.borderColor='var(--em)';
+  else t.style.borderColor='var(--em)';
+  clearTimeout(t._t); t._t=setTimeout(()=>{ t.classList.remove('show'); },3200);
 }
-function getMistralKey(){
-  return localStorage.getItem('dq_mistral_key')||'';
-}
+
+function getMistralKey(){ return localStorage.getItem('dq_mistral_key')||''; }
+
 function saveMistralKey(){
   const k=document.getElementById('cfg_mistral_key')?.value.trim();
-  if(!k){toast('⚠️ Ingresa tu API Key de Mistral');return;}
-  localStorage.setItem('dq_mistral_key',k);
+  if(!k){ toast('⚠️ Ingresa tu API Key','error'); return; }
+  localStorage.setItem('dq_mistral_key', k);
   toast('✅ API Key guardada');
 }
+
 function adjFont(d){
   const cur=parseFloat(document.documentElement.style.fontSize)||14;
   const next=Math.min(20,Math.max(11,cur+d));
   document.documentElement.style.fontSize=next+'px';
-  localStorage.setItem('dq_fontsize',next);
-  toast((d>0?'A+':'A-')+' ('+next+'px)');
+  localStorage.setItem('dq_fontsize', next);
+  toast((d>0?'A+ ':'A- ')+'('+next+'px)');
 }
 
-// ── SAVE / LOAD (SOLO MODO REAL) ─────────────────────────────────────────
+// ── PERSISTENCIA LOCAL ───────────────────────────────────────────────
 function saveLocal(){
-  if(MODE==='demo') return; // NEVER persist demo
   try{
     localStorage.setItem('dq_state', JSON.stringify({
-      config:STATE.config, dofa:STATE.dofa,
-      okrs:STATE.okrs, ventas:STATE.ventas,
-      productos:STATE.productos, vendedores:STATE.vendedores,
+      config: STATE.config,
+      dofa: STATE.dofa,
+      okrs: STATE.okrs,
+      ventas: STATE.ventas,
+      productos: STATE.productos,
+      vendedores: STATE.vendedores,
     }));
   }catch(e){}
 }
@@ -1267,64 +1225,69 @@ function loadLocal(){
   }catch(e){}
 }
 
-// ── DATA SOURCE (returns demo or real data) ───────────────────────────
-function D(){ return MODE==='demo'?DEMO:STATE; }
-
-// ── SHEETS SYNC (SOLO MODO REAL) ─────────────────────────────────────────
-async function saveToSheets(action, data){
-  if(MODE==='demo') return;
-  // Ventas y OKRs SOLO via syncAll — nunca auto-sync
-  if(action==='postVenta'||action==='postOKRs') return;
-  const url=localStorage.getItem('dq_script_url');
-  if(!url) return;
-  try{
-    await fetch(url,{method:'POST',mode:'no-cors',
-      headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({action,...data,email:STATE.user?.email||''})});
-  }catch(e){}
-}
-
+// ── SYNC PENDIENTES ──────────────────────────────────────────────────
 function getSyncedIds(){
   try{ return new Set(JSON.parse(localStorage.getItem('dq_synced_ids')||'[]')); }
   catch(e){ return new Set(); }
 }
 function markSynced(ids){
-  const existing=getSyncedIds();
-  ids.forEach(id=>existing.add(id));
-  localStorage.setItem('dq_synced_ids',JSON.stringify([...existing]));
+  const ex=getSyncedIds(); ids.forEach(id=>ex.add(String(id)));
+  localStorage.setItem('dq_synced_ids', JSON.stringify([...ex]));
+}
+function getPendingCount(){
+  const synced=getSyncedIds();
+  return STATE.ventas.filter(v=>!synced.has(String(v.id))).length;
+}
+function updateSyncBadge(){
+  const n=getPendingCount();
+  const badge=document.getElementById('sync_pending');
+  if(badge){ badge.textContent=n>0?n+' pendiente'+(n>1?'s':''):''; badge.style.display=n>0?'inline':'none'; }
+}
+
+// ── SHEETS API ────────────────────────────────────────────────────────
+function getScriptUrl(){ return localStorage.getItem('dq_script_url')||''; }
+
+async function callSheets(action, data={}){
+  const url=getScriptUrl(); if(!url) return null;
+  try{
+    const res=await fetch(url,{method:'POST',mode:'cors',
+      headers:{'Content-Type':'text/plain'},
+      body:JSON.stringify({action,...data,email:STATE.user?.email||''})});
+    return await res.json();
+  }catch(e){
+    // no-cors fallback (no response body)
+    try{
+      await fetch(url,{method:'POST',mode:'no-cors',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({action,...data,email:STATE.user?.email||''})});
+    }catch(e2){}
+    return null;
+  }
 }
 
 async function syncAll(){
-  if(MODE==='demo'){toast('ℹ️ El modo demo no sincroniza datos');return;}
-  const url=localStorage.getItem('dq_script_url');
-  if(!url){toast('⚠️ Configura la URL del Apps Script en ⚙️ Config');return;}
-
+  const url=getScriptUrl();
+  if(!url){ toast('⚠️ Configura la URL del Apps Script en ⚙️ Config','error'); return; }
   const synced=getSyncedIds();
   const pending=STATE.ventas.filter(v=>!synced.has(String(v.id)));
-
+  if(!pending.length && !STATE.okrs.length){ toast('ℹ️ Todo sincronizado'); return; }
+  toast('⟳ Sincronizando...');
   try{
-    if(pending.length){
-      toast('⟳ Enviando '+pending.length+' venta(s) nueva(s)...');
-      const syncedNow=[];
-      for(const v of pending){
-        await fetch(url,{method:'POST',mode:'no-cors',
-          headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({action:'postVenta',...v,email:STATE.user?.email||''})});
-        syncedNow.push(String(v.id));
-      }
-      markSynced(syncedNow);
+    // Use savePending endpoint — server deduplicates by ID
+    const result=await callSheets('savePending',{
+      ventas:pending, okrs:STATE.okrs, email:STATE.user?.email||''
+    });
+    if(result?.ok){
+      markSynced(pending.map(v=>v.id));
+      updateSyncBadge();
+      toast('✅ '+result.saved+' venta(s) enviada(s) · '+nowTime(), 'success');
     } else {
-      toast('ℹ️ Ventas ya sincronizadas — enviando OKRs...');
+      // no-cors fallback — assume success
+      markSynced(pending.map(v=>v.id));
+      updateSyncBadge();
+      toast('✅ Sincronizado · '+nowTime(), 'success');
     }
-    // OKRs always sync (overwrite, no duplicates)
-    if(STATE.okrs.length){
-      await fetch(url,{method:'POST',mode:'no-cors',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({action:'postOKRs',okrs:STATE.okrs,email:STATE.user?.email||''})});
-    }
-    const hora=new Date().toLocaleTimeString('es-CO',{hour:'2-digit',minute:'2-digit'});
-    toast('✅ Sincronizado · '+hora);
-  }catch(e){toast('❌ Error: '+e.message);}
+  }catch(e){ toast('❌ Error: '+e.message,'error'); }
 }
 
 // ══════════════════════════════════════════════
@@ -1332,107 +1295,119 @@ async function syncAll(){
 // ══════════════════════════════════════════════
 function switchLoginTab(tab){
   ['quick','google'].forEach(t=>{
-    const tb=document.getElementById('tab_'+t);
-    const pn=document.getElementById('panel_'+t);
-    if(tb) tb.classList.toggle('active',t===tab);
-    if(pn) pn.style.display=t===tab?'block':'none';
+    document.getElementById('tab_'+t)?.classList.toggle('active',t===tab);
+    const p=document.getElementById('panel_'+t);
+    if(p) p.style.display=t===tab?'block':'none';
   });
 }
 
-function loginDemo(){
-  MODE='demo';
-  STATE=EMPTY_STATE(); // reset any real state
-  toast('🚀 Demo — Caribe Fresh S.A.S.');
-  setTimeout(()=>initApp(DEMO.user),300);
-}
-
-function loginRapido(){
+async function loginRapido(){
   const nombre=document.getElementById('inNombre')?.value.trim();
   const email=document.getElementById('inEmail')?.value.trim();
-  if(!nombre){toast('⚠️ Ingresa tu nombre');return;}
-  if(!email||!email.includes('@')){toast('⚠️ Ingresa un correo válido');return;}
-  MODE='real';
-  STATE=EMPTY_STATE();
-  loadLocal(); // load saved data
-  const initials=nombre.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
-  const user={name:nombre,email,initials,picture:''};
+  if(!nombre){ toast('⚠️ Ingresa tu nombre','error'); return; }
+  if(!email||!email.includes('@')){ toast('⚠️ Correo inválido','error'); return; }
+  const user={name:nombre, email,
+    initials:nombre.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase(),
+    picture:''};
   STATE.user=user;
-  localStorage.setItem('dq_session',JSON.stringify({name:nombre,email,initials}));
   const btn=document.querySelector('[onclick="loginRapido()"]');
-  if(btn){btn.textContent='⏳ Verificando...';btn.disabled=true;}
-  const scriptUrl=localStorage.getItem('dq_script_url');
-  if(!scriptUrl){
-    toast('👋 Bienvenido/a '+nombre.split(' ')[0]);
-    if(btn){btn.textContent='🚀 Entrar a DashQ';btn.disabled=false;}
-    if(!STATE.config.empresa){startOnboarding(user);}
-    else{setTimeout(()=>initApp(user),300);}
+  if(btn){ btn.textContent='⏳ Verificando...'; btn.disabled=true; }
+  const url=getScriptUrl();
+  if(!url){
+    // No Sheet — load local only
+    loadLocal();
+    if(btn){ btn.textContent='🚀 Entrar a DashQ'; btn.disabled=false; }
+    if(!STATE.config.empresa){ startOnboarding(user); }
+    else { localStorage.setItem('dq_session',JSON.stringify(user)); initApp(user); }
     return;
   }
-  fetch(scriptUrl+'?action=getUsuario&email='+encodeURIComponent(email))
-    .then(r=>r.json())
-    .then(data=>{
-      if(btn){btn.textContent='🚀 Entrar a DashQ';btn.disabled=false;}
-      if(data&&data.email){
-        toast('✅ Bienvenido/a de vuelta, '+nombre.split(' ')[0]);
-        if(!STATE.config.empresa) startOnboarding(user);
-        else initApp(user);
-      }else{
-        saveToSheets('saveUsuario',{nombre,email,rol:'admin'});
-        toast('👋 Primera vez — cuéntanos sobre tu empresa');
-        setTimeout(()=>startOnboarding(user),400);
+  try{
+    toast('🔍 Verificando...');
+    const data=await callSheets('getUserData',{email});
+    if(btn){ btn.textContent='🚀 Entrar a DashQ'; btn.disabled=false; }
+    if(data?.ok && data.exists){
+      // User exists — load all data from Sheets
+      if(data.config) STATE.config={...STATE.config,...data.config};
+      if(data.dofa) STATE.dofa=data.dofa;
+      if(data.okrs?.length) STATE.okrs=data.okrs;
+      if(data.ventas?.length){
+        // Merge: keep local ventas not yet in Sheets + Sheet ventas
+        const sheetIds=new Set(data.ventas.map(v=>String(v.id)));
+        const localOnly=STATE.ventas.filter(v=>!sheetIds.has(String(v.id)));
+        STATE.ventas=[...data.ventas,...localOnly];
       }
-    })
-    .catch(()=>{
-      if(btn){btn.textContent='🚀 Entrar a DashQ';btn.disabled=false;}
-      if(!STATE.config.empresa) startOnboarding(user);
-      else{toast('⚠️ Sin conexión — entrando con datos locales');setTimeout(()=>initApp(user),300);}
-    });
+      if(data.user?.nombre||data.user?.name) user.name=data.user.nombre||data.user.name;
+      STATE.user=user;
+      saveLocal();
+      localStorage.setItem('dq_session',JSON.stringify(user));
+      toast('✅ Bienvenido/a de vuelta, '+nombre.split(' ')[0],'success');
+      setTimeout(()=>initApp(user),300);
+    } else {
+      // New user
+      loadLocal();
+      localStorage.setItem('dq_session',JSON.stringify(user));
+      callSheets('saveUsuario',{nombre,email,rol:'admin'});
+      toast('👋 Primera vez — cuéntanos sobre tu empresa');
+      setTimeout(()=>startOnboarding(user),300);
+    }
+  }catch(err){
+    if(btn){ btn.textContent='🚀 Entrar a DashQ'; btn.disabled=false; }
+    loadLocal();
+    localStorage.setItem('dq_session',JSON.stringify(user));
+    if(!STATE.config.empresa) startOnboarding(user);
+    else{ toast('⚠️ Sin conexión — datos locales'); setTimeout(()=>initApp(user),300); }
+  }
 }
 
 function initGoogleAuth(){
   const clientId=document.getElementById('inClientId')?.value.trim();
   const scriptUrl=document.getElementById('inScriptUrl')?.value.trim();
-  if(!clientId){toast('⚠️ Ingresa el Google Client ID');return;}
+  if(!clientId){ toast('⚠️ Ingresa el Client ID','error'); return; }
   if(scriptUrl) localStorage.setItem('dq_script_url',scriptUrl);
-  if(typeof google==='undefined'){toast('❌ Google Identity no cargó');return;}
+  if(typeof google==='undefined'){ toast('❌ Google Identity no cargó','error'); return; }
   google.accounts.id.initialize({client_id:clientId,callback:handleGoogleLogin});
   google.accounts.id.prompt();
 }
-function handleGoogleLogin(response){
+
+async function handleGoogleLogin(response){
   try{
     const base64=response.credential.split('.')[1].replace(/-/g,'+').replace(/_/g,'/');
-    const data=JSON.parse(atob(base64));
-    const nombre=data.name||data.email;
-    const email=data.email;
-    const initials=(nombre).split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
-    const user={name:nombre,email,initials,picture:data.picture||''};
-    MODE='real'; STATE=EMPTY_STATE(); loadLocal();
-    STATE.user=user;
+    const d=JSON.parse(atob(base64));
+    const user={name:d.name||d.email,email:d.email,
+      initials:(d.name||'U').split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase(),
+      picture:d.picture||''};
+    STATE=EMPTY_STATE(); STATE.user=user;
     localStorage.setItem('dq_session',JSON.stringify(user));
-    if(!STATE.config.empresa) startOnboarding(user);
-    else initApp(user);
-  }catch(e){toast('❌ Error al procesar login');}
+    const data=await callSheets('getUserData',{email:d.email});
+    if(data?.ok && data.exists){
+      if(data.config) STATE.config={...STATE.config,...data.config};
+      if(data.dofa) STATE.dofa=data.dofa;
+      if(data.okrs?.length) STATE.okrs=data.okrs;
+      if(data.ventas?.length) STATE.ventas=data.ventas;
+      saveLocal(); initApp(user);
+    } else {
+      startOnboarding(user);
+    }
+  }catch(e){ toast('❌ Error en login','error'); }
 }
 
 function logout(){
   localStorage.removeItem('dq_session');
-  MODE='none'; STATE=EMPTY_STATE();
-  Object.keys(charts).forEach(k=>{if(charts[k])charts[k].destroy();});
-  charts={};
+  STATE=EMPTY_STATE();
+  Object.keys(charts).forEach(k=>{ if(charts[k]){ charts[k].destroy(); delete charts[k]; }});
+  CF={vendedor:null,producto:null,zona:null};
   showScreen('scLogin');
   toast('👋 Sesión cerrada');
 }
 
 // ══════════════════════════════════════════════
-// ONBOARDING (solo modo real, 2 pasos)
+// ONBOARDING (2 pasos)
 // ══════════════════════════════════════════════
 function startOnboarding(user){
   showScreen('scOnboarding');
   setTimeout(()=>{
-    const ni=document.getElementById('ob_nombre');
-    const ei=document.getElementById('ob_email');
-    if(ni) ni.value=user?.name||'';
-    if(ei) ei.value=user?.email||'';
+    const ni=document.getElementById('ob_nombre'); if(ni) ni.value=user?.name||'';
+    const ei=document.getElementById('ob_email'); if(ei) ei.value=user?.email||'';
   },100);
 }
 
@@ -1440,8 +1415,8 @@ function obNext(step){
   if(step===2){
     const nombre=document.getElementById('ob_nombre')?.value.trim();
     const email=document.getElementById('ob_email')?.value.trim();
-    if(!nombre){toast('⚠️ Ingresa tu nombre');return;}
-    if(!email||!email.includes('@')){toast('⚠️ Correo inválido');return;}
+    if(!nombre){ toast('⚠️ Ingresa tu nombre','error'); return; }
+    if(!email||!email.includes('@')){ toast('⚠️ Correo inválido','error'); return; }
     STATE.user={...STATE.user,name:nombre,email,
       initials:nombre.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase()};
     localStorage.setItem('dq_session',JSON.stringify(STATE.user));
@@ -1455,19 +1430,20 @@ function obNext(step){
 
 function obFinish(){
   const emp=document.getElementById('ob_emp')?.value.trim();
-  if(!emp){toast('⚠️ Ingresa el nombre de la empresa');return;}
+  if(!emp){ toast('⚠️ Ingresa el nombre de la empresa','error'); return; }
   STATE.config={
     empresa:emp,
     nit:document.getElementById('ob_nit')?.value.trim()||'',
     sector:document.getElementById('ob_sec')?.value.trim()||'',
     tamano:document.getElementById('ob_tam')?.value||'',
     ciudad:document.getElementById('ob_ciu')?.value.trim()||'Colombia',
-    meta:50000000,color:'#00E5A0',mision:'',vision:''
+    meta:50000000, color:'#00E5A0', mision:'', vision:''
   };
+  STATE.productos=[]; STATE.vendedores=[];
   saveLocal();
-  saveToSheets('saveUsuario',{nombre:STATE.user?.name,email:STATE.user?.email,rol:'admin'});
-  saveToSheets('saveConfig',{config:STATE.config});
-  toast('✅ ¡DashQ configurado!');
+  callSheets('saveUsuario',{nombre:STATE.user?.name,email:STATE.user?.email,rol:'admin'});
+  callSheets('saveConfig',{config:STATE.config});
+  toast('✅ ¡DashQ configurado! Personaliza en ⚙️ Config','success');
   setTimeout(()=>initApp(STATE.user),500);
 }
 
@@ -1475,10 +1451,10 @@ function obFinish(){
 // INIT APP
 // ══════════════════════════════════════════════
 function initApp(user){
-  const d=D();
   showScreen('scApp');
+  // Sidebar
   const sb_n=document.getElementById('sb_name'); if(sb_n) sb_n.textContent=user.name||'';
-  const sb_e=document.getElementById('sb_empresa'); if(sb_e) sb_e.textContent=(d.config.empresa||'Mi Empresa').split(' ')[0];
+  const sb_e=document.getElementById('sb_empresa'); if(sb_e) sb_e.textContent=(STATE.config.empresa||'Mi empresa').split(' ')[0];
   ['sb_avatar','cfg_avatar'].forEach(id=>{
     const av=document.getElementById(id); if(!av) return;
     if(user.picture) av.innerHTML='<img src="'+user.picture+'" style="width:100%;height:100%;object-fit:cover;border-radius:50%;" alt=""/>';
@@ -1486,17 +1462,14 @@ function initApp(user){
   });
   const cn=document.getElementById('cfg_name'); if(cn) cn.textContent=user.name;
   const ce=document.getElementById('cfg_email'); if(ce) ce.textContent=user.email;
-  // Load saved mistral key into config field
-  const mkf=document.getElementById('cfg_mistral_key');
-  if(mkf) mkf.value=getMistralKey()?'••••••••••••':'';
   setTimeout(()=>{
     initCharts();
     syncProductosToForm();
     syncVendedoresToForm();
     renderOKRs();
     renderVentasTable();
-    renderRecentVentas();
     updateKPIs();
+    updateSyncBadge();
     setDateRange('mes');
   },150);
   registerPWA();
@@ -1521,15 +1494,17 @@ function goTab(name){
   const ttl=document.getElementById('topbar_title'); if(ttl) ttl.textContent=titles[name]||name;
   if(name==='contexto') loadContextoFields();
   if(name==='config') loadCfgFields();
-  if(name==='analisis') updateAnalisisContext();
+  if(name==='analisis') updateAnalisisCtx();
+  if(name==='ventas'){
+    const vf=document.getElementById('v_fecha'); if(vf&&!vf.value) vf.value=today();
+  }
 }
 
-function updateAnalisisContext(){
-  const d=D();
-  const totalV=d.ventas.reduce((s,v)=>s+v.monto,0);
-  const all=d.okrs.flatMap(o=>o.krs);
+function updateAnalisisCtx(){
+  const totalV=STATE.ventas.reduce((s,v)=>s+v.monto,0);
+  const all=STATE.okrs.flatMap(o=>o.krs);
   const avg=all.length?Math.round(all.reduce((s,k)=>s+k.avance,0)/all.length):0;
-  const ie=document.getElementById('ia_emp'); if(ie) ie.textContent=d.config.empresa||'—';
+  const ie=document.getElementById('ia_emp'); if(ie) ie.textContent=STATE.config.empresa||'—';
   const iv=document.getElementById('ia_ven'); if(iv) iv.textContent='$'+fmt(totalV);
   const io=document.getElementById('ia_okr'); if(io) io.textContent=avg+'% promedio';
 }
@@ -1546,11 +1521,10 @@ function setDateRange(range){
   else if(range==='tri') from=new Date(now.getFullYear(),now.getMonth()-2,1);
   else if(range==='sem') from=new Date(now.getFullYear(),now.getMonth()-5,1);
   else if(range==='anio') from=new Date(now.getFullYear(),0,1);
-  const fromStr=from.toISOString().split('T')[0];
-  const toStr=now.toISOString().split('T')[0];
-  const df=document.getElementById('date_from'); if(df) df.value=fromStr;
-  const dt=document.getElementById('date_to'); if(dt) dt.value=toStr;
-  STATE.dateFrom=fromStr; STATE.dateTo=toStr;
+  STATE.dateFrom=from.toISOString().split('T')[0];
+  STATE.dateTo=now.toISOString().split('T')[0];
+  const df=document.getElementById('date_from'); if(df) df.value=STATE.dateFrom;
+  const dt=document.getElementById('date_to'); if(dt) dt.value=STATE.dateTo;
   updateKPIs();
 }
 
@@ -1564,27 +1538,23 @@ function applyCustomRange(){
 }
 
 function getFilteredVentas(){
-  const ventas=D().ventas;
-  if(!STATE.dateFrom||!STATE.dateTo) return ventas;
-  return ventas.filter(v=>{
-    const d=v.fecha||''; return d>=STATE.dateFrom&&d<=STATE.dateTo;
-  });
+  if(!STATE.dateFrom||!STATE.dateTo) return STATE.ventas;
+  return STATE.ventas.filter(v=>{const d=v.fecha||'';return d>=STATE.dateFrom&&d<=STATE.dateTo;});
 }
 
 // ══════════════════════════════════════════════
 // KPIs
 // ══════════════════════════════════════════════
 function updateKPIs(){
-  const d=D();
   const filtered=getFilteredVentas();
   const totalV=filtered.reduce((s,v)=>s+v.monto,0);
   const pedidos=filtered.length;
-  const meta=d.config.meta||85000000;
+  const meta=STATE.config.meta||50000000;
   const pct=Math.round(totalV/meta*100);
   const kv=document.getElementById('kpi_ventas'); if(kv) kv.textContent='$'+fmt(totalV);
   const kp=document.getElementById('kpi_pedidos'); if(kp) kp.textContent=pedidos;
   const km=document.getElementById('kpi_meta'); if(km) km.textContent=pct+'%';
-  const all=d.okrs.flatMap(o=>o.krs);
+  const all=STATE.okrs.flatMap(o=>o.krs);
   const avgOKR=all.length?Math.round(all.reduce((s,k)=>s+k.avance,0)/all.length):0;
   const ks=document.getElementById('kpi_okrs'); if(ks) ks.innerHTML=getSemaforo(avgOKR).ico+' '+avgOKR+'%';
   const falta=meta-totalV;
@@ -1592,20 +1562,26 @@ function updateKPIs(){
   if(metaEl) metaEl.innerHTML=falta>0
     ?'<span class="delta warn">⚡ Faltan $'+fmt(falta)+'</span>'
     :'<span class="delta up">✓ Meta superada</span>';
-  const badge=document.getElementById('sb_okr_badge'); if(badge) badge.textContent=avgOKR+'%';
   [['kf_ventas',Math.min(100,pct)],['kf_pedidos',Math.min(100,pedidos>0?Math.round(pedidos/Math.max(20,pedidos)*100):0)],
    ['kf_meta',Math.min(100,pct)],['kf_okrs',avgOKR]
   ].forEach(([id,w])=>{const el=document.getElementById(id);if(el)el.style.width=w+'%';});
+  const badge=document.getElementById('sb_okr_badge'); if(badge) badge.textContent=avgOKR+'%';
   renderRecentVentas(filtered.slice(0,8));
-  if(charts.ventas||charts.prod||charts.vend||charts.zona) updateChartsData(filtered);
+  if(Object.keys(charts).length) updateChartsData(filtered);
 }
 
 // ══════════════════════════════════════════════
-// CHARTS
+// SEMÁFORO
 // ══════════════════════════════════════════════
-// Cross-filter state
-let CF = {vendedor:null, producto:null, zona:null};
+function getSemaforo(pct){
+  if(pct>=70) return {ico:'🟢',color:'var(--em)'};
+  if(pct>=40) return {ico:'🟡',color:'var(--amber)'};
+  return {ico:'🔴',color:'var(--rose)'};
+}
 
+// ══════════════════════════════════════════════
+// CHARTS + CROSS-FILTER
+// ══════════════════════════════════════════════
 function getCrossFiltered(){
   let v=getFilteredVentas();
   if(CF.vendedor) v=v.filter(x=>x.vendedor===CF.vendedor);
@@ -1621,205 +1597,249 @@ function applyCrossFilter(){
   const kp=document.getElementById('kpi_pedidos'); if(kp) kp.textContent=v.length;
   renderRecentVentas(v.slice(0,8));
   updateChartsData(v);
+  // Filter badge
   const active=[CF.vendedor,CF.producto,CF.zona].filter(Boolean);
   const badge=document.getElementById('filter_badge');
-  if(badge){badge.textContent=active.length?'🔍 '+active.join(' · '):'';badge.style.display=active.length?'inline-flex':'none';}
+  if(badge){
+    if(active.length){
+      badge.textContent='🔍 '+active.join(' · ')+'  ✕';
+      badge.style.display='inline-flex';
+    } else {
+      badge.style.display='none';
+      updateKPIs(); // restore full KPIs
+    }
+  }
 }
 
 window.clearChartFilters=function(){
   CF={vendedor:null,producto:null,zona:null};
-  updateKPIs();
   const badge=document.getElementById('filter_badge'); if(badge) badge.style.display='none';
+  // Reset bar colors
+  if(charts.vend) charts.vend.data.datasets[0].backgroundColor=
+    (charts.vend.data.labels||[]).map(()=>'rgba(0,201,167,.45)');
+  if(charts.zona) charts.zona.data.datasets[0].backgroundColor=
+    (charts.zona.data.labels||[]).map(()=>'rgba(0,201,167,.45)');
+  if(charts.vend) charts.vend.update('none');
+  if(charts.zona) charts.zona.update('none');
+  updateKPIs();
   toast('🔄 Filtros limpiados');
 };
 
 function updateChartsData(filtered){
-  // Line chart - group by month
-  if(charts.ventas){
-    const byM={};
-    filtered.forEach(v=>{const m=(v.fecha||'').substring(0,7);byM[m]=(byM[m]||0)+v.monto;});
-    const labels=Object.keys(byM).sort();
-    if(labels.length){
-      charts.ventas.data.labels=labels;
-      charts.ventas.data.datasets[0].data=labels.map(m=>byM[m]);
-      charts.ventas.update('active');
-    }
+  if(!filtered) return;
+  const byM={};
+  filtered.forEach(v=>{const m=(v.fecha||'').substring(0,7);byM[m]=(byM[m]||0)+v.monto;});
+  const mLabels=Object.keys(byM).sort();
+  if(charts.ventas&&mLabels.length){
+    charts.ventas.data.labels=mLabels;
+    charts.ventas.data.datasets[0].data=mLabels.map(m=>byM[m]);
+    charts.ventas.update('active');
   }
-  // Donut - by product
-  if(charts.prod){
-    const byP={};
-    filtered.forEach(v=>{byP[v.producto]=(byP[v.producto]||0)+v.monto;});
-    const entries=Object.entries(byP);
-    if(entries.length){
-      charts.prod.data.labels=entries.map(e=>e[0]);
-      charts.prod.data.datasets[0].data=entries.map(e=>e[1]);
-      charts.prod.update('active');
-    }
+  const byP={};
+  filtered.forEach(v=>{byP[v.producto]=(byP[v.producto]||0)+v.monto;});
+  const pEntries=Object.entries(byP);
+  if(charts.prod&&pEntries.length){
+    charts.prod.data.labels=pEntries.map(e=>e[0]);
+    charts.prod.data.datasets[0].data=pEntries.map(e=>e[1]);
+    charts.prod.update('active');
   }
-  // Vendedores bars
-  if(charts.vend){
-    const byV={};
-    filtered.forEach(v=>{byV[v.vendedor]=(byV[v.vendedor]||0)+v.monto;});
-    const entries=Object.entries(byV).sort((a,b)=>b[1]-a[1]);
-    if(entries.length){
-      charts.vend.data.labels=entries.map(e=>e[0]);
-      charts.vend.data.datasets[0].data=entries.map(e=>e[1]);
-      charts.vend.data.datasets[0].backgroundColor=entries.map(e=>CF.vendedor===e[0]?'#00C9A7':'rgba(0,201,167,.4)');
-      charts.vend.update('active');
-    }
+  const byV={};
+  filtered.forEach(v=>{byV[v.vendedor]=(byV[v.vendedor]||0)+v.monto;});
+  const vEntries=Object.entries(byV).sort((a,b)=>b[1]-a[1]);
+  if(charts.vend&&vEntries.length){
+    charts.vend.data.labels=vEntries.map(e=>e[0]);
+    charts.vend.data.datasets[0].data=vEntries.map(e=>e[1]);
+    charts.vend.data.datasets[0].backgroundColor=vEntries.map(e=>CF.vendedor===e[0]?'#00C9A7':'rgba(0,201,167,.45)');
+    charts.vend.update('active');
   }
-  // Zonas bars
-  if(charts.zona){
-    const byZ={};
-    filtered.forEach(v=>{byZ[v.zona]=(byZ[v.zona]||0)+v.monto;});
-    const entries=Object.entries(byZ);
-    if(entries.length){
-      charts.zona.data.labels=entries.map(e=>e[0]);
-      charts.zona.data.datasets[0].data=entries.map(e=>e[1]);
-      charts.zona.data.datasets[0].backgroundColor=entries.map(e=>CF.zona===e[0]?'#00C9A7':'rgba(0,201,167,.4)');
-      charts.zona.update('active');
-    }
+  const byZ={};
+  filtered.forEach(v=>{byZ[v.zona]=(byZ[v.zona]||0)+v.monto;});
+  const zEntries=Object.entries(byZ);
+  if(charts.zona&&zEntries.length){
+    charts.zona.data.labels=zEntries.map(e=>e[0]);
+    charts.zona.data.datasets[0].data=zEntries.map(e=>e[1]);
+    charts.zona.data.datasets[0].backgroundColor=zEntries.map(e=>CF.zona===e[0]?'#00C9A7':'rgba(0,201,167,.45)');
+    charts.zona.update('active');
   }
 }
 
-function initCharts(){
-  const d=D();
-  const gc='rgba(48,54,61,0.6)';
-  const tt={backgroundColor:'#1C2333',borderColor:'#30363D',borderWidth:1,
-    titleColor:'#F0F6FF',bodyColor:'#A8BFDA',padding:10,cornerRadius:8,displayColors:true};
-  const sx={x:{grid:{color:gc},ticks:{color:'#768390',font:{size:11}}},
-    y:{grid:{color:gc},ticks:{color:'#768390',font:{size:11},
-      callback:v=>v>=1000000?'$'+Math.round(v/1000000)+'M':v>=1000?'$'+Math.round(v/1000)+'K':'$'+v}}};
+function buildChartData(){
+  const byM={},byP={},byV={},byZ={};
+  STATE.ventas.forEach(v=>{
+    const m=(v.fecha||'').substring(0,7);
+    byM[m]=(byM[m]||0)+v.monto;
+    byP[v.producto]=(byP[v.producto]||0)+v.monto;
+    byV[v.vendedor]=(byV[v.vendedor]||0)+v.monto;
+    byZ[v.zona]=(byZ[v.zona]||0)+v.monto;
+  });
+  return {
+    meses:{labels:Object.keys(byM).sort(),data:v=>Object.keys(byM).sort().map(m=>byM[m])},
+    prod:Object.entries(byP),
+    vend:Object.entries(byV).sort((a,b)=>b[1]-a[1]),
+    zona:Object.entries(byZ),
+  };
+}
 
-  // 1. Line — ventas por mes
+function initCharts(){
+  const gc='rgba(48,54,61,0.5)';
+  const tt={backgroundColor:'#1C2333',borderColor:'#30363D',borderWidth:1,
+    titleColor:'#F0F6FF',bodyColor:'#A8BFDA',padding:12,cornerRadius:8,
+    displayColors:true,boxPadding:4};
+  const sx={
+    x:{grid:{color:gc},ticks:{color:'#768390',font:{size:11}}},
+    y:{grid:{color:gc},ticks:{color:'#768390',font:{size:11},
+      callback:v=>v>=1000000?'$'+Math.round(v/1000000)+'M':v>=1000?'$'+Math.round(v/1000)+'K':'$'+v}}
+  };
+  const cd=buildChartData();
+
+  // 1. LINE — ventas tendencia
   const ctx1=document.getElementById('ch_ventas')?.getContext('2d');
   if(ctx1){
     if(charts.ventas) charts.ventas.destroy();
-    const byM={};
-    d.ventas.forEach(v=>{const m=(v.fecha||'').substring(0,7);byM[m]=(byM[m]||0)+v.monto;});
-    const labels=MODE==='demo'?DEMO_MESES.labels:Object.keys(byM).sort();
-    const data=MODE==='demo'?DEMO_MESES.ventas:labels.map(m=>byM[m]);
     charts.ventas=new Chart(ctx1,{type:'line',
-      data:{labels,datasets:[{label:'Ventas',data,
-        borderColor:'#00C9A7',backgroundColor:'rgba(0,201,167,.08)',
-        tension:.4,fill:true,pointBackgroundColor:'#00C9A7',
-        pointRadius:5,pointHoverRadius:9,pointHoverBackgroundColor:'#fff',
-        pointHoverBorderColor:'#00C9A7',pointHoverBorderWidth:2}]},
+      data:{labels:cd.meses.labels,datasets:[{
+        label:'Ventas COP',
+        data:cd.meses.labels.map(m=>STATE.ventas.filter(v=>v.fecha?.startsWith(m)).reduce((s,v)=>s+v.monto,0)),
+        borderColor:'#00C9A7',backgroundColor:'rgba(0,201,167,.07)',
+        tension:.45,fill:true,
+        pointBackgroundColor:'#00C9A7',pointBorderColor:'#0A1628',pointBorderWidth:2,
+        pointRadius:5,pointHoverRadius:9,
+        pointHoverBackgroundColor:'#fff',pointHoverBorderColor:'#00C9A7',pointHoverBorderWidth:2,
+      }]},
       options:{responsive:true,maintainAspectRatio:false,
         interaction:{mode:'index',intersect:false},
-        plugins:{legend:{display:false},tooltip:{...tt,callbacks:{label:c=>' $'+fmt(c.parsed.y)+' COP'}}},
+        animation:{duration:800,easing:'easeInOutQuart'},
+        plugins:{legend:{display:false},tooltip:{...tt,
+          callbacks:{
+            title:c=>c[0].label,
+            label:c=>'  Ventas: $'+fmt(c.parsed.y),
+            afterLabel:c=>{
+              const mes=cd.meses.labels[c.dataIndex];
+              const ventasMes=STATE.ventas.filter(v=>v.fecha?.startsWith(mes));
+              return '  Pedidos: '+ventasMes.length;
+            }
+          }}},
         scales:sx}
     });
   }
 
-  // 2. Donut — productos (click = cross-filter)
+  // 2. DONUT — productos (click=filter)
   const ctx2=document.getElementById('ch_productos')?.getContext('2d');
   if(ctx2){
     if(charts.prod) charts.prod.destroy();
-    const byP={};
-    d.ventas.forEach(v=>{byP[v.producto]=(byP[v.producto]||0)+v.monto;});
-    const entries=Object.entries(byP);
+    const COLORS=['#00C9A7','#3B82F6','#8B5CF6','#F97316','#EF4444','#6B7280','#F59E0B'];
     charts.prod=new Chart(ctx2,{type:'doughnut',
-      data:{labels:entries.map(e=>e[0]),datasets:[{
-        data:entries.map(e=>e[1]),
-        backgroundColor:['#00C9A7','#3B82F6','#8B5CF6','#F97316','#EF4444','#6B7280','#F59E0B'],
-        hoverOffset:14,borderWidth:2,borderColor:'#0F1F3D'}]},
-      options:{responsive:true,maintainAspectRatio:false,cutout:'65%',
-        plugins:{legend:{position:'right',labels:{color:'#A8BFDA',font:{size:11},padding:10,usePointStyle:true}},
-          tooltip:{...tt,callbacks:{label:c=>' '+c.label+': $'+fmt(c.parsed)+' ('+Math.round(c.parsed/c.dataset.data.reduce((a,b)=>a+b,0)*100)+'%)'}}},
+      data:{labels:cd.prod.map(e=>e[0]),datasets:[{
+        data:cd.prod.map(e=>e[1]),
+        backgroundColor:COLORS,hoverOffset:18,
+        borderWidth:3,borderColor:'#0A1628',
+        hoverBorderColor:'#fff',
+      }]},
+      options:{responsive:true,maintainAspectRatio:false,cutout:'62%',
+        animation:{animateRotate:true,duration:900},
+        plugins:{
+          legend:{position:'right',labels:{color:'#A8BFDA',font:{size:11},padding:12,usePointStyle:true,pointStyleWidth:10}},
+          tooltip:{...tt,callbacks:{
+            label:c=>{
+              const total=c.dataset.data.reduce((a,b)=>a+b,0);
+              return ' '+c.label+': $'+fmt(c.parsed)+' ('+Math.round(c.parsed/total*100)+'%)';
+            }
+          }}},
         onClick:(e,els)=>{
           if(!els.length){CF.producto=null;}
-          else{const p=entries[els[0].index]?.[0];CF.producto=CF.producto===p?null:p;toast(CF.producto?'🔍 '+CF.producto:'🔄 Filtro limpiado');}
+          else{const p=cd.prod[els[0].index]?.[0];CF.producto=CF.producto===p?null:p;
+            toast(CF.producto?'🔍 '+CF.producto:'🔄 Filtro limpiado');}
           applyCrossFilter();
         }}
     });
   }
 
-  // 3. Horizontal bars — vendedores (click = cross-filter)
+  // 3. H-BAR — vendedores (click=filter)
   const ctx3=document.getElementById('ch_vendedores')?.getContext('2d');
   if(ctx3){
     if(charts.vend) charts.vend.destroy();
-    const byV={};
-    d.ventas.forEach(v=>{byV[v.vendedor]=(byV[v.vendedor]||0)+v.monto;});
-    const entries=Object.entries(byV).sort((a,b)=>b[1]-a[1]);
     charts.vend=new Chart(ctx3,{type:'bar',
-      data:{labels:entries.map(e=>e[0]),datasets:[{
-        data:entries.map(e=>e[1]),
-        backgroundColor:entries.map(e=>CF.vendedor===e[0]?'#00C9A7':'rgba(0,201,167,.4)'),
-        hoverBackgroundColor:'#00C9A7',borderRadius:6,borderSkipped:false}]},
+      data:{labels:cd.vend.map(e=>e[0]),datasets:[{
+        data:cd.vend.map(e=>e[1]),
+        backgroundColor:cd.vend.map(e=>CF.vendedor===e[0]?'#00C9A7':'rgba(0,201,167,.45)'),
+        hoverBackgroundColor:'#00C9A7',
+        borderRadius:6,borderSkipped:false,
+        borderWidth:0,
+      }]},
       options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+        animation:{duration:700},
         interaction:{mode:'index',intersect:false},
-        plugins:{legend:{display:false},tooltip:{...tt,callbacks:{label:c=>' $'+fmt(c.parsed.x)+' COP'}}},
-        scales:{x:sx.x,y:{grid:{display:false},ticks:{color:'#CDD9E5',font:{size:11}}}},
+        plugins:{legend:{display:false},tooltip:{...tt,
+          callbacks:{label:c=>' $'+fmt(c.parsed.x)+' COP'}}},
+        scales:{x:{...sx.x,grid:{color:gc}},y:{grid:{display:false},ticks:{color:'#CDD9E5',font:{size:11}}}},
         onClick:(e,els)=>{
           if(!els.length){CF.vendedor=null;}
-          else{const v=entries[els[0].index]?.[0];CF.vendedor=CF.vendedor===v?null:v;toast(CF.vendedor?'🔍 '+CF.vendedor:'🔄 Filtro limpiado');}
-          if(charts.vend){charts.vend.data.datasets[0].backgroundColor=entries.map(e=>CF.vendedor===e[0]?'#00C9A7':'rgba(0,201,167,.35)');charts.vend.update('none');}
+          else{const v=cd.vend[els[0].index]?.[0];CF.vendedor=CF.vendedor===v?null:v;
+            toast(CF.vendedor?'🔍 '+CF.vendedor:'🔄 Filtro limpiado');}
+          if(charts.vend){
+            charts.vend.data.datasets[0].backgroundColor=cd.vend.map(e=>CF.vendedor===e[0]?'#00C9A7':'rgba(0,201,167,.35)');
+            charts.vend.update('none');
+          }
           applyCrossFilter();
         }}
     });
   }
 
-  // 4. Vertical bars — zonas (click = cross-filter)
+  // 4. V-BAR — zonas (click=filter)
   const ctx4=document.getElementById('ch_zonas')?.getContext('2d');
   if(ctx4){
     if(charts.zona) charts.zona.destroy();
-    const byZ={};
-    d.ventas.forEach(v=>{byZ[v.zona]=(byZ[v.zona]||0)+v.monto;});
-    const entries=Object.entries(byZ);
     charts.zona=new Chart(ctx4,{type:'bar',
-      data:{labels:entries.map(e=>e[0]),datasets:[{
-        data:entries.map(e=>e[1]),
-        backgroundColor:entries.map(e=>CF.zona===e[0]?'#00C9A7':'rgba(0,201,167,.4)'),
-        hoverBackgroundColor:'#00C9A7',borderRadius:6,borderSkipped:false}]},
+      data:{labels:cd.zona.map(e=>e[0]),datasets:[{
+        data:cd.zona.map(e=>e[1]),
+        backgroundColor:cd.zona.map(e=>CF.zona===e[0]?'#00C9A7':'rgba(0,201,167,.45)'),
+        hoverBackgroundColor:'#00C9A7',
+        borderRadius:6,borderSkipped:false,borderWidth:0,
+      }]},
       options:{responsive:true,maintainAspectRatio:false,
+        animation:{duration:700},
         interaction:{mode:'index',intersect:false},
-        plugins:{legend:{display:false},tooltip:{...tt,callbacks:{label:c=>' $'+fmt(c.parsed.y)+' COP'}}},
+        plugins:{legend:{display:false},tooltip:{...tt,
+          callbacks:{label:c=>' $'+fmt(c.parsed.y)+' COP'}}},
         scales:sx,
         onClick:(e,els)=>{
           if(!els.length){CF.zona=null;}
-          else{const z=entries[els[0].index]?.[0];CF.zona=CF.zona===z?null:z;toast(CF.zona?'🔍 Zona: '+CF.zona:'🔄 Filtro limpiado');}
-          if(charts.zona){charts.zona.data.datasets[0].backgroundColor=entries.map(e=>CF.zona===e[0]?'#00C9A7':'rgba(0,201,167,.35)');charts.zona.update('none');}
+          else{const z=cd.zona[els[0].index]?.[0];CF.zona=CF.zona===z?null:z;
+            toast(CF.zona?'🔍 Zona: '+CF.zona:'🔄 Filtro limpiado');}
+          if(charts.zona){
+            charts.zona.data.datasets[0].backgroundColor=cd.zona.map(e=>CF.zona===e[0]?'#00C9A7':'rgba(0,201,167,.35)');
+            charts.zona.update('none');
+          }
           applyCrossFilter();
         }}
     });
   }
-}
-
-// ══════════════════════════════════════════════
-// SEMÁFORO
-// ══════════════════════════════════════════════
-function getSemaforo(pct){
-  if(pct>=70) return {ico:'🟢',color:'var(--em)'};
-  if(pct>=40) return {ico:'🟡',color:'var(--amber)'};
-  return {ico:'🔴',color:'var(--rose)'};
 }
 
 // ══════════════════════════════════════════════
 // OKRs
 // ══════════════════════════════════════════════
 function generarOKRsIA(){
-  document.getElementById('okr_ia_input').style.display='block';
+  const box=document.getElementById('okr_ia_input');
+  if(box){ box.style.display=box.style.display==='none'?'block':'none'; }
   document.getElementById('inp_obj')?.focus();
 }
 
 async function ejecutarIAOKR(){
-  if(MODE==='demo'){toast('ℹ️ El demo no llama a la IA');return;}
   const obj=document.getElementById('inp_obj')?.value.trim();
-  if(!obj){toast('⚠️ Escribe un Objective');return;}
+  if(!obj){ toast('⚠️ Escribe un Objective','error'); return; }
   const apiKey=getMistralKey();
-  if(!apiKey){toast('⚠️ Configura tu API Key de Mistral en ⚙️ Config');return;}
-  const d=D();
+  if(!apiKey){ toast('⚠️ Configura tu API Key en ⚙️ Config','error'); return; }
   const btn=document.querySelector('[onclick="ejecutarIAOKR()"]');
-  if(btn){btn.textContent='⏳ Generando...';btn.disabled=true;}
+  if(btn){ btn.textContent='⏳ Generando...'; btn.disabled=true; }
   try{
     const res=await fetch('https://api.mistral.ai/v1/chat/completions',{
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
-      body:JSON.stringify({model:'mistral-large-latest',max_tokens:400,temperature:.7,
+      body:JSON.stringify({model:'mistral-large-latest',max_tokens:500,temperature:.7,
         messages:[
-          {role:'system',content:'Experto en OKRs según John Doerr. Responde SOLO JSON.'},
-          {role:'user',content:'Empresa: '+d.config.empresa+' | Sector: '+d.config.sector+' | Objective: '+obj+' | Meta mensual: $'+fmt(d.config.meta)+'\nPropón 3 Key Results cuantitativos y medibles.\nJSON: {"keyResults":[{"texto":"...","meta":0,"unidad":"..."}]}'}
+          {role:'system',content:'Experto en OKRs según John Doerr. Responde SOLO JSON sin texto adicional.'},
+          {role:'user',content:'Empresa: '+STATE.config.empresa+' | Sector: '+STATE.config.sector+'\nObjective: '+obj+'\nMeta mensual: $'+fmt(STATE.config.meta)+'\nFortalezas: '+STATE.dofa.fortalezas+'\nPropón exactamente 3 Key Results cuantitativos.\nJSON: {"keyResults":[{"texto":"...","meta":0,"unidad":"..."}]}'}
         ]})
     });
     const data=await res.json();
@@ -1827,154 +1847,122 @@ async function ejecutarIAOKR(){
     const text=data.choices?.[0]?.message?.content||'{}';
     const clean=text.replace(/```json\n?|```/g,'').trim();
     let result;
-    try{result=JSON.parse(clean);}
-    catch(pe){const m=clean.match(/\{[\s\S]*\}/);if(m)result=JSON.parse(m[0]);else throw new Error('JSON inválido');}
-    const krs=(result.keyResults||[]).map((k,i)=>({id:Date.now()+i,texto:k.texto,meta:k.meta||100,avance:0,unidad:k.unidad||'%',linkedToVentas:false}));
+    try{ result=JSON.parse(clean); }
+    catch(pe){ const m=clean.match(/\{[\s\S]*\}/); if(m) result=JSON.parse(m[0]); else throw new Error('JSON inválido'); }
+    const krs=(result.keyResults||[]).map((k,i)=>({
+      id:Date.now()+i, texto:k.texto, meta:Number(k.meta)||100,
+      avance:0, unidad:k.unidad||'%', linkedToVentas:false
+    }));
     STATE.okrs.push({id:Date.now(),objective:obj,krs});
     saveLocal();
     document.getElementById('okr_ia_input').style.display='none';
     document.getElementById('inp_obj').value='';
     renderOKRs(); updateKPIs();
-    toast('✅ OKR creado con '+krs.length+' Key Results');
+    toast('✅ OKR creado con '+krs.length+' Key Results','success');
   }catch(e){
     const msg=e.message||'';
-    if(msg.includes('401')||msg.toLowerCase().includes('unauthorized')) toast('❌ API Key inválida');
-    else if(msg.includes('429')) toast('❌ Límite de Mistral alcanzado');
-    else toast('❌ '+msg);
+    if(msg.includes('401')||msg.toLowerCase().includes('unauthorized')) toast('❌ API Key inválida','error');
+    else if(msg.includes('429')) toast('❌ Límite de Mistral alcanzado','error');
+    else toast('❌ '+msg,'error');
   }finally{
-    if(btn){btn.textContent='🤖 Generar Key Results';btn.disabled=false;}
+    if(btn){ btn.textContent='🤖 Generar Key Results'; btn.disabled=false; }
   }
 }
 
 function renderOKRs(){
-  const d=D();
-  const container=document.getElementById('okrs_list');
-  if(!container) return;
-  if(!d.okrs.length){
-    container.innerHTML='<div class="empty"><div class="empty-icon">🎯</div><p>Sin OKRs.<br/>Usa "🤖 IA propone KRs" o agrega uno manualmente.</p></div>';
+  const container=document.getElementById('okrs_list'); if(!container) return;
+  if(!STATE.okrs.length){
+    container.innerHTML='<div class="empty"><div class="empty-icon">🎯</div><p>Sin OKRs definidos.<br/>Usa "🤖 IA propone KRs" o agrega manualmente.</p></div>';
     return;
   }
-  const totalV=d.ventas.reduce((s,v)=>s+v.monto,0);
-  if(MODE==='real') d.okrs.forEach(o=>o.krs.forEach(k=>{if(k.linkedToVentas&&k.meta>0)k.avance=Math.min(100,Math.round(totalV/k.meta*100));}));
-  container.innerHTML=d.okrs.map((okr,oi)=>{
+  const totalV=STATE.ventas.reduce((s,v)=>s+v.monto,0);
+  STATE.okrs.forEach(o=>o.krs.forEach(k=>{if(k.linkedToVentas&&k.meta>0) k.avance=Math.min(100,Math.round(totalV/k.meta*100));}));
+  container.innerHTML=STATE.okrs.map((okr,oi)=>{
     const avg=Math.round(okr.krs.reduce((s,k)=>s+k.avance,0)/okr.krs.length);
     const sem=getSemaforo(avg);
-    const editable=MODE==='real';
     return '<div class="okr-card">'+
       '<div class="okr-top">'+
         '<div class="okr-num">O'+(oi+1)+'</div>'+
-        '<div class="okr-obj"'+(editable?' onclick="editOKRObj('+okr.id+')" style="cursor:pointer;" title="Clic para editar"':'')+'>'+esc(okr.objective)+(editable?' ✏️':'')+'</div>'+
+        '<div class="okr-obj" onclick="editOKRObj('+okr.id+')" style="cursor:pointer;" title="Clic para editar">'+esc(okr.objective)+' ✏️</div>'+
         '<div class="okr-pct" style="color:'+sem.color+';">'+sem.ico+' '+avg+'%</div>'+
-        (editable?'<button onclick="deleteOKR('+okr.id+')" style="background:none;border:none;color:var(--rose);cursor:pointer;font-size:.9rem;padding:0 4px;">🗑</button>':'')+
+        '<button onclick="deleteOKR('+okr.id+')" style="background:none;border:none;color:var(--rose);cursor:pointer;font-size:.9rem;padding:0 4px;">🗑</button>'+
       '</div>'+
       okr.krs.map(kr=>{
         const s=getSemaforo(kr.avance);
         return '<div class="kr-block">'+
           '<div class="kr-row"><span class="kr-sem">'+s.ico+'</span>'+
-          '<span class="kr-txt"'+(editable?' onclick="editKRText('+okr.id+','+kr.id+')" style="cursor:pointer;" title="Editar"':'')+'>'+esc(kr.texto)+(editable?' ✏️':'')+'</span>'+
+          '<span class="kr-txt" onclick="editKRText('+okr.id+','+kr.id+')" style="cursor:pointer;">'+esc(kr.texto)+' ✏️</span>'+
           '<span class="kr-pct">'+kr.avance+'%</span></div>'+
           '<div class="bar"><div class="bar-fill" style="width:'+kr.avance+'%;background:'+s.color+';transition:width .6s;"></div></div>'+
           '<div class="kr-meta" style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">'+
-            '<span>Meta: '+(editable?'<span onclick="editKRMeta('+okr.id+','+kr.id+')" style="cursor:pointer;color:var(--em);text-decoration:underline dotted;">':'')+
+            '<span>Meta: <span onclick="editKRMeta('+okr.id+','+kr.id+')" style="cursor:pointer;color:var(--em);text-decoration:underline dotted;">'+
             (typeof kr.meta==='number'&&kr.meta>1000?'$'+fmt(kr.meta):kr.meta)+' '+(kr.unidad||'')+
-            (editable?'</span>':'')+
-          '</span>'+
-          (editable&&!kr.linkedToVentas?'<label style="font-size:.75rem;color:var(--mute);display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" onchange="linkKRToVentas('+okr.id+','+kr.id+',this.checked)" style="accent-color:var(--em);"/> vincular a ventas</label>':'')+
-          (kr.linkedToVentas?'<span style="font-size:.7rem;background:rgba(0,229,160,.12);color:var(--em);padding:1px 6px;border-radius:6px;">🔗 Auto-ventas</span>':'')+
+            '</span></span>'+
+            (kr.linkedToVentas
+              ?'<span style="font-size:.7rem;background:rgba(0,229,160,.12);color:var(--em);padding:1px 8px;border-radius:6px;border:1px solid rgba(0,229,160,.3);">🔗 Auto-ventas</span>'
+              :'<label style="font-size:.75rem;color:var(--mute);display:flex;align-items:center;gap:4px;cursor:pointer;"><input type="checkbox" onchange="linkKRToVentas('+okr.id+','+kr.id+',this.checked)" style="accent-color:var(--em);"/> vincular a ventas</label>')+
           '</div>'+
-          (editable&&!kr.linkedToVentas?'<input type="range" class="slider" min="0" max="100" value="'+kr.avance+'" oninput="updateKR('+okr.id+','+kr.id+',this.value)"/>':
-           kr.linkedToVentas?'<div style="font-size:.78rem;color:var(--mute);margin-top:4px;">📊 Calculado desde ventas</div>':'')+
+          (!kr.linkedToVentas?'<input type="range" class="slider" min="0" max="100" value="'+kr.avance+'" oninput="updateKR('+okr.id+','+kr.id+',this.value)"/>':
+           '<div style="font-size:.78rem;color:var(--mute);margin-top:4px;">📊 % calculado desde ventas registradas</div>')+
         '</div>';
       }).join('')+
     '</div>';
   }).join('');
-  updateOKRBadge();
-}
-
-function updateOKRBadge(){
-  const d=D();
-  const all=d.okrs.flatMap(o=>o.krs);
-  const avg=all.length?Math.round(all.reduce((s,k)=>s+k.avance,0)/all.length):0;
-  const badge=document.getElementById('sb_okr_badge'); if(badge) badge.textContent=avg+'%';
+  // Summary footer
+  const all=STATE.okrs.flatMap(o=>o.krs);
+  const globalAvg=all.length?Math.round(all.reduce((s,k)=>s+k.avance,0)/all.length):0;
+  const gs=getSemaforo(globalAvg);
+  container.innerHTML+='<div style="background:var(--card2);border-radius:var(--r);padding:12px 16px;margin-top:8px;display:flex;align-items:center;justify-content:space-between;">'+
+    '<span style="font-size:.82rem;color:var(--mute);">'+STATE.okrs.length+' objetivo(s) · '+all.length+' Key Results</span>'+
+    '<span style="font-size:1rem;font-weight:800;color:'+gs.color+';">'+gs.ico+' '+globalAvg+'% global</span>'+
+  '</div>';
+  const badge=document.getElementById('sb_okr_badge'); if(badge) badge.textContent=globalAvg+'%';
 }
 
 function updateKR(oId,kId,val){
-  const okr=STATE.okrs.find(o=>o.id===oId);
-  const kr=okr?.krs.find(k=>k.id===kId);
-  if(!kr) return;
-  kr.avance=parseInt(val);
-  saveLocal(); renderOKRs(); updateKPIs();
-}
-
-function deleteOKR(id){
-  STATE.okrs=STATE.okrs.filter(o=>o.id!==id);
-  saveLocal(); renderOKRs(); updateKPIs();
-  toast('🗑 OKR eliminado');
-}
-
-function editOKRObj(id){
-  const okr=STATE.okrs.find(o=>o.id===id); if(!okr) return;
-  const n=prompt('Editar Objective:',okr.objective);
-  if(n!==null&&n.trim()){okr.objective=n.trim();saveLocal();renderOKRs();}
-}
-
-function editKRText(oId,kId){
   const kr=STATE.okrs.find(o=>o.id===oId)?.krs.find(k=>k.id===kId); if(!kr) return;
-  const n=prompt('Editar Key Result:',kr.texto);
-  if(n!==null&&n.trim()){kr.texto=n.trim();saveLocal();renderOKRs();}
+  kr.avance=parseInt(val); saveLocal(); renderOKRs(); updateKPIs();
 }
-
-function editKRMeta(oId,kId){
-  const kr=STATE.okrs.find(o=>o.id===oId)?.krs.find(k=>k.id===kId); if(!kr) return;
-  const n=prompt('Nueva meta:',kr.meta);
-  if(n!==null&&!isNaN(parseFloat(n))){kr.meta=parseFloat(n);saveLocal();renderOKRs();}
-}
-
-function linkKRToVentas(oId,kId,linked){
-  const kr=STATE.okrs.find(o=>o.id===oId)?.krs.find(k=>k.id===kId); if(!kr) return;
-  kr.linkedToVentas=linked; if(!linked) kr.avance=0;
-  saveLocal(); renderOKRs(); updateKPIs();
-  toast(linked?'🔗 Vinculado a ventas':'✅ Modo manual');
-}
-
-function openAddOKR(){ document.getElementById('modalOKR').classList.add('open'); }
-function closeModal(){ document.getElementById('modalOKR').classList.remove('open'); }
+function deleteOKR(id){ STATE.okrs=STATE.okrs.filter(o=>o.id!==id); saveLocal(); renderOKRs(); updateKPIs(); toast('🗑 OKR eliminado'); }
+function editOKRObj(id){ const o=STATE.okrs.find(x=>x.id===id); if(!o) return; const n=prompt('Objective:',o.objective); if(n?.trim()){o.objective=n.trim();saveLocal();renderOKRs();} }
+function editKRText(oId,kId){ const k=STATE.okrs.find(o=>o.id===oId)?.krs.find(k=>k.id===kId); if(!k) return; const n=prompt('Key Result:',k.texto); if(n?.trim()){k.texto=n.trim();saveLocal();renderOKRs();} }
+function editKRMeta(oId,kId){ const k=STATE.okrs.find(o=>o.id===oId)?.krs.find(k=>k.id===kId); if(!k) return; const n=prompt('Meta:',k.meta); if(n!==null&&!isNaN(parseFloat(n))){k.meta=parseFloat(n);saveLocal();renderOKRs();} }
+function linkKRToVentas(oId,kId,linked){ const k=STATE.okrs.find(o=>o.id===oId)?.krs.find(k=>k.id===kId); if(!k) return; k.linkedToVentas=linked; if(!linked) k.avance=0; saveLocal(); renderOKRs(); updateKPIs(); toast(linked?'🔗 Vinculado a ventas':'✅ Modo manual'); }
+function openAddOKR(){ document.getElementById('modalOKR')?.classList.add('open'); }
+function closeModal(){ document.getElementById('modalOKR')?.classList.remove('open'); }
 function saveNewOKR(){
-  const obj=document.getElementById('new_obj')?.value.trim();
-  if(!obj){toast('⚠️ Escribe un Objective');return;}
-  const krs=Array.from(document.querySelectorAll('.new_kr_txt'))
-    .filter(i=>i.value.trim())
+  const obj=document.getElementById('new_obj')?.value.trim(); if(!obj){toast('⚠️ Escribe un Objective','error');return;}
+  const krs=Array.from(document.querySelectorAll('.new_kr_txt')).filter(i=>i.value.trim())
     .map((i,idx)=>({id:Date.now()+idx,texto:i.value.trim(),meta:100,avance:0,unidad:'%',linkedToVentas:false}));
   if(!krs.length) krs.push({id:Date.now(),texto:'Key Result 1',meta:100,avance:0,unidad:'%',linkedToVentas:false});
   STATE.okrs.push({id:Date.now(),objective:obj,krs});
   saveLocal(); renderOKRs(); updateKPIs(); closeModal();
-  toast('✅ OKR creado');
+  toast('✅ OKR creado','success');
 }
 
 // ══════════════════════════════════════════════
 // VENTAS
 // ══════════════════════════════════════════════
 function registrarVenta(){
-  if(MODE==='demo'){toast('ℹ️ El demo no registra ventas reales');return;}
   const fecha=document.getElementById('v_fecha')?.value;
   const vendedor=document.getElementById('v_vendedor')?.value;
   const producto=document.getElementById('v_producto')?.value;
   const zona=document.getElementById('v_zona')?.value;
   const monto=parseFloat(document.getElementById('v_monto')?.value);
-  if(!fecha||!vendedor||!producto||!zona||!monto){toast('⚠️ Completa todos los campos');return;}
+  if(!fecha||!vendedor||!producto||!zona||!monto){ toast('⚠️ Completa todos los campos','error'); return; }
   const venta={
     id:Date.now(), fecha, vendedor, producto, zona,
     unidades:parseInt(document.getElementById('v_uni')?.value)||1,
     monto, estado:document.getElementById('v_estado')?.value||'Entregado',
   };
   STATE.ventas.unshift(venta);
-  saveLocal(); // persist to localStorage
-  // Reset form
+  saveLocal();
   ['v_producto','v_zona','v_uni','v_monto'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
   renderVentasTable();
   renderOKRs();
   updateKPIs();
-  toast('✅ Venta registrada — $'+fmt(monto));
+  updateSyncBadge();
+  toast('✅ $'+fmt(monto)+' registrado — sincroniza cuando tengas conexión','success');
 }
 
 function estadoBadge(e){
@@ -1983,29 +1971,29 @@ function estadoBadge(e){
 }
 
 function renderVentasTable(){
-  const d=D();
   const tb=document.getElementById('tb_ventas_full'); if(!tb) return;
-  const vc=document.getElementById('v_count'); if(vc) vc.textContent=d.ventas.length+' registros';
-  if(!d.ventas.length){
-    tb.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--mute);padding:24px;">'+
-      (MODE==='demo'?'Datos demo':'Sin ventas registradas. Registra la primera.')+
-      '</td></tr>'; return;
+  const vc=document.getElementById('v_count'); if(vc) vc.textContent=STATE.ventas.length+' registros';
+  if(!STATE.ventas.length){
+    tb.innerHTML='<tr><td colspan="8" style="text-align:center;color:var(--mute);padding:28px;">Sin ventas registradas. ¡Registra la primera!</td></tr>'; return;
   }
-  tb.innerHTML=d.ventas.map(v=>'<tr>'+
+  const synced=getSyncedIds();
+  tb.innerHTML=STATE.ventas.map(v=>'<tr>'+
     '<td>'+v.fecha+'</td><td>'+esc(v.vendedor)+'</td><td>'+esc(v.producto)+'</td>'+
     '<td>'+esc(v.zona)+'</td><td class="num">'+v.unidades+'</td>'+
     '<td class="num">$'+fmt(v.monto)+'</td><td>'+estadoBadge(v.estado)+'</td>'+
-    (MODE==='real'?'<td><button onclick="deleteVenta('+v.id+')" style="background:none;border:none;color:var(--rose);cursor:pointer;font-size:.9rem;">🗑</button></td>':'<td></td>')+
+    '<td style="text-align:center;">'+
+      (synced.has(String(v.id))?'<span style="font-size:.7rem;color:var(--em);">✓ Sync</span>':
+       '<span style="font-size:.7rem;color:var(--mute);">● Local</span>')+
+      ' <button onclick="deleteVenta('+v.id+')" style="background:none;border:none;color:var(--rose);cursor:pointer;font-size:.9rem;margin-left:4px;">🗑</button>'+
+    '</td>'+
   '</tr>').join('');
 }
 
 function renderRecentVentas(filtered){
-  const d=D();
   const tb=document.getElementById('tb_recent'); if(!tb) return;
-  const ventas=filtered||(d.ventas.slice(0,8));
+  const ventas=filtered||(STATE.ventas.slice(0,8));
   if(!ventas.length){
-    tb.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--mute);padding:20px;">Sin ventas en el período</td></tr>';
-    return;
+    tb.innerHTML='<tr><td colspan="7" style="text-align:center;color:var(--mute);padding:20px;">Sin ventas en el período seleccionado</td></tr>'; return;
   }
   tb.innerHTML=ventas.map(v=>'<tr>'+
     '<td>'+v.fecha+'</td><td>'+esc(v.vendedor)+'</td><td>'+esc(v.producto)+'</td>'+
@@ -2016,7 +2004,10 @@ function renderRecentVentas(filtered){
 
 function deleteVenta(id){
   STATE.ventas=STATE.ventas.filter(v=>v.id!==id);
-  saveLocal(); renderVentasTable(); updateKPIs();
+  // Also remove from synced if it was there
+  const ex=getSyncedIds(); ex.delete(String(id));
+  localStorage.setItem('dq_synced_ids',JSON.stringify([...ex]));
+  saveLocal(); renderVentasTable(); updateKPIs(); updateSyncBadge();
   toast('🗑 Eliminada');
 }
 
@@ -2024,41 +2015,42 @@ function deleteVenta(id){
 // ANÁLISIS IA
 // ══════════════════════════════════════════════
 async function generarAnalisis(){
-  if(MODE==='demo'){toast('ℹ️ Configura tu API Key en ⚙️ Config para usar el análisis real');return;}
   const apiKey=getMistralKey();
-  if(!apiKey){toast('⚠️ Configura tu API Key de Mistral en ⚙️ Config');return;}
-  const d=D();
+  if(!apiKey){ toast('⚠️ Configura tu API Key de Mistral en ⚙️ Config','error'); return; }
   const loading=document.getElementById('ia_loading');
   const result=document.getElementById('ia_result');
   if(loading) loading.style.display='flex';
   if(result) result.style.display='none';
-  const all=d.okrs.flatMap(o=>o.krs);
+  const all=STATE.okrs.flatMap(o=>o.krs);
   const avgOKR=all.length?Math.round(all.reduce((s,k)=>s+k.avance,0)/all.length):0;
-  const totalV=d.ventas.reduce((s,v)=>s+v.monto,0);
-  const pct=Math.round(totalV/(d.config.meta||1)*100);
-  const prompt='Analiza estratégicamente: '+d.config.empresa+' ('+d.config.sector+', '+d.config.ciudad+').\n'+
-    'Ventas: $'+fmt(totalV)+' COP ('+pct+'% de $'+fmt(d.config.meta)+')\n'+
+  const totalV=STATE.ventas.reduce((s,v)=>s+v.monto,0);
+  const pct=Math.round(totalV/(STATE.config.meta||1)*100);
+  const prompt='Análisis estratégico:\nEmpresa: '+STATE.config.empresa+' ('+STATE.config.sector+', '+STATE.config.ciudad+')\n'+
+    'Ventas: $'+fmt(totalV)+' COP ('+pct+'% de meta $'+fmt(STATE.config.meta)+')\n'+
     'OKRs: '+avgOKR+'% promedio\n'+
-    'DOFA — Fortalezas: '+d.dofa.fortalezas+'\nOportunidades: '+d.dofa.oportunidades+'\n'+
-    'Debilidades: '+d.dofa.debilidades+'\nAmenazas: '+d.dofa.amenazas+'\n\n'+
-    'Responde SOLO JSON: {"estado":"...","oportunidades":["...","...","..."],"alertas":["...","...","..."],"recomendaciones":["...","...","..."],"pasos":["...","...","..."]}';
+    'Fortalezas: '+(STATE.dofa.fortalezas||'No definidas')+'\n'+
+    'Oportunidades: '+(STATE.dofa.oportunidades||'No definidas')+'\n'+
+    'Debilidades: '+(STATE.dofa.debilidades||'No definidas')+'\n'+
+    'Amenazas: '+(STATE.dofa.amenazas||'No definidas')+'\n\n'+
+    'Responde SOLO JSON:\n{"estado":"...","oportunidades":["...","...","..."],"alertas":["...","...","..."],"recomendaciones":["...","...","..."],"pasos":["...","...","..."]}';
   try{
     const res=await fetch('https://api.mistral.ai/v1/chat/completions',{
       method:'POST',
       headers:{'Content-Type':'application/json','Authorization':'Bearer '+apiKey},
       body:JSON.stringify({model:'mistral-large-latest',max_tokens:900,temperature:.7,
         messages:[
-          {role:'system',content:'Eres consultor estratégico senior latinoamericano. Directo y accionable. Responde SOLO JSON sin texto adicional ni backticks.'},
+          {role:'system',content:'Eres consultor estratégico senior latinoamericano. Directo, específico y accionable. Responde SOLO JSON sin texto adicional ni backticks.'},
           {role:'user',content:prompt}
         ]})
     });
     const data=await res.json();
     if(data.error) throw new Error(data.error.message||'Error Mistral');
-    const text=data.choices?.[0]?.message?.content||'{}';
+    if(!data.choices?.[0]?.message?.content) throw new Error('Respuesta inesperada');
+    const text=data.choices[0].message.content;
     const clean=text.replace(/```json\n?|```/g,'').trim();
     let parsed;
-    try{parsed=JSON.parse(clean);}
-    catch(pe){const m=clean.match(/\{[\s\S]*\}/);if(m)parsed=JSON.parse(m[0]);else throw new Error('Respuesta no válida');}
+    try{ parsed=JSON.parse(clean); }
+    catch(pe){ const m=clean.match(/\{[\s\S]*\}/); if(m) parsed=JSON.parse(m[0]); else throw new Error('JSON inválido'); }
     if(loading) loading.style.display='none';
     if(result) result.style.display='block';
     const ie=document.getElementById('ia_estado'); if(ie) ie.innerHTML=esc(parsed.estado||'');
@@ -2066,85 +2058,83 @@ async function generarAnalisis(){
     renderIAList('ia_alertas',parsed.alertas||[],'var(--rose)','⚠️');
     renderIAList('ia_recomendaciones',parsed.recomendaciones||[],'var(--blue)','💡');
     renderIAList('ia_pasos',parsed.pasos||[],'var(--amber)','📋');
+    toast('✅ Análisis generado','success');
   }catch(e){
     if(loading) loading.style.display='none';
     const msg=e.message||'';
-    if(msg.includes('401')||msg.toLowerCase().includes('unauthorized')) toast('❌ API Key inválida — verifica en console.mistral.ai');
-    else if(msg.includes('429')) toast('❌ Límite de Mistral alcanzado');
-    else toast('❌ '+msg);
+    if(msg.includes('401')||msg.toLowerCase().includes('unauthorized')) toast('❌ API Key inválida — verifica en console.mistral.ai','error');
+    else if(msg.includes('429')) toast('❌ Límite de Mistral alcanzado — espera un momento','error');
+    else toast('❌ '+msg,'error');
   }
 }
 
 function renderIAList(id,items,color,icon){
   const el=document.getElementById(id); if(!el) return;
   el.innerHTML=items.map((item,i)=>
-    '<div class="ia-item"><div class="ia-n" style="background:'+color+';color:#000;">'+(i+1)+'</div><span>'+esc(item)+'</span></div>'
+    '<div class="ia-item"><div class="ia-n" style="background:'+color+';color:#000;font-weight:800;">'+(i+1)+'</div><span>'+esc(item)+'</span></div>'
   ).join('');
 }
 
 function exportarAnalisisPDF(){
-  const d=D();
   const fecha=new Date().toLocaleDateString('es-CO',{year:'numeric',month:'long',day:'numeric'});
-  const totalV=d.ventas.reduce((s,v)=>s+v.monto,0);
-  const all=d.okrs.flatMap(o=>o.krs);
+  const totalV=STATE.ventas.reduce((s,v)=>s+v.monto,0);
+  const all=STATE.okrs.flatMap(o=>o.krs);
   const avgOKR=all.length?Math.round(all.reduce((s,k)=>s+k.avance,0)/all.length):0;
   const narrativa=document.getElementById('ia_estado')?.textContent||'';
   const sem=getSemaforo(avgOKR);
   const html='<!DOCTYPE html><html><head><meta charset="UTF-8"/><style>'+
-    'body{font-family:Georgia,serif;max-width:800px;margin:40px auto;color:#1a1a2e;font-size:14px;}'+
-    'h1{color:#0A1628;font-size:1.5rem;border-bottom:3px solid #00E5A0;padding-bottom:10px;}'+
-    'h2{color:#0A1628;font-size:1rem;margin-top:20px;border-left:4px solid #00E5A0;padding-left:10px;}'+
-    '.sem{padding:12px;border-radius:8px;background:#f0f9f6;margin:12px 0;font-weight:700;}'+
-    '.dofa{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;}'+
-    '.dc{padding:12px;border-radius:8px;font-size:.9rem;white-space:pre-wrap;}'+
+    'body{font-family:Georgia,serif;max-width:820px;margin:40px auto;color:#1a1a2e;font-size:14px;line-height:1.6;}'+
+    'h1{color:#0A1628;font-size:1.6rem;border-bottom:3px solid #00E5A0;padding-bottom:10px;margin-bottom:20px;}'+
+    'h2{color:#0A1628;font-size:1rem;margin:24px 0 10px;border-left:4px solid #00E5A0;padding-left:10px;}'+
+    '.meta{color:#666;font-size:.9rem;margin-bottom:20px;}'+
+    '.sem{padding:14px;border-radius:8px;background:#f0faf5;font-weight:700;font-size:1.1rem;margin-bottom:16px;}'+
+    '.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:12px 0;}'+
+    '.dc{padding:14px;border-radius:8px;font-size:.9rem;white-space:pre-wrap;}'+
     '.bar{height:8px;background:#e0e0e0;border-radius:4px;margin:4px 0 8px;}'+
     '.bf{height:100%;border-radius:4px;background:#00E5A0;}'+
-    'footer{margin-top:40px;font-size:.75rem;color:#888;border-top:1px solid #ccc;padding-top:10px;}'+
+    'footer{margin-top:48px;font-size:.78rem;color:#999;border-top:1px solid #ddd;padding-top:12px;text-align:center;}'+
     '@media print{body{margin:16px;}}'+
     '</style></head><body>'+
-    '<h1>📊 DashQ — Reporte Ejecutivo</h1>'+
-    '<p><b>'+esc(d.config.empresa)+'</b> · NIT: '+(d.config.nit||'—')+' · '+esc(d.config.sector)+' · '+esc(d.config.ciudad)+'</p>'+
-    '<p>Fecha: '+fecha+'</p>'+
-    '<h2>Estado Estratégico</h2>'+
-    '<div class="sem">'+sem.ico+' OKRs: '+avgOKR+'%'+(narrativa?'<br><br>'+esc(narrativa):'')+'</div>'+
-    '<h2>Ventas del período</h2>'+
-    '<p>Total: <b>$'+fmt(totalV)+'</b> · Meta: $'+fmt(d.config.meta)+' · Cumplimiento: '+Math.round(totalV/(d.config.meta||1)*100)+'%</p>'+
-    '<h2>OKRs</h2>'+
-    d.okrs.map(o=>{
+    '<h1>📊 DashQ — Reporte Ejecutivo Estratégico</h1>'+
+    '<div class="meta"><b>'+esc(STATE.config.empresa)+'</b> · NIT: '+(STATE.config.nit||'—')+' · '+esc(STATE.config.sector)+' · '+esc(STATE.config.ciudad)+'<br>Generado: '+fecha+'</div>'+
+    '<h2>Estado Estratégico General</h2>'+
+    '<div class="sem">'+sem.ico+' Promedio OKRs: '+avgOKR+'%'+(narrativa?'<br><br><span style="font-weight:normal;font-size:.95rem;">'+esc(narrativa)+'</span>':'')+'</div>'+
+    '<h2>Desempeño Comercial</h2>'+
+    '<p>Ventas totales: <b>$'+fmt(totalV)+'</b> COP · Meta: $'+fmt(STATE.config.meta)+' · Cumplimiento: <b>'+Math.round(totalV/(STATE.config.meta||1)*100)+'%</b></p>'+
+    (STATE.ventas.length?'<p>Registros: '+STATE.ventas.length+' ventas</p>':'')+
+    '<h2>Objectives y Key Results</h2>'+
+    STATE.okrs.map(o=>{
       const avg=o.krs.length?Math.round(o.krs.reduce((s,k)=>s+k.avance,0)/o.krs.length):0;
       return '<p><b>'+esc(o.objective)+'</b> — '+avg+'%</p>'+
         o.krs.map(k=>'<p style="margin:2px 0 0 16px;font-size:.9rem;">'+esc(k.texto)+' ('+k.avance+'%)<div class="bar"><div class="bf" style="width:'+k.avance+'%"></div></div></p>').join('');
     }).join('')+
-    '<h2>DOFA</h2><div class="dofa">'+
-    '<div class="dc" style="background:#f0faf5;"><b>💪 Fortalezas</b><br>'+(d.dofa.fortalezas||'—')+'</div>'+
-    '<div class="dc" style="background:#f0f5ff;"><b>🚀 Oportunidades</b><br>'+(d.dofa.oportunidades||'—')+'</div>'+
-    '<div class="dc" style="background:#fffbf0;"><b>⚠️ Debilidades</b><br>'+(d.dofa.debilidades||'—')+'</div>'+
-    '<div class="dc" style="background:#fff5f5;"><b>🔴 Amenazas</b><br>'+(d.dofa.amenazas||'—')+'</div>'+
+    '<h2>Análisis DOFA</h2><div class="grid2">'+
+    '<div class="dc" style="background:#f0faf5;"><b>💪 Fortalezas</b><br>'+(STATE.dofa.fortalezas||'—')+'</div>'+
+    '<div class="dc" style="background:#f0f5ff;"><b>🚀 Oportunidades</b><br>'+(STATE.dofa.oportunidades||'—')+'</div>'+
+    '<div class="dc" style="background:#fffbf0;"><b>⚠️ Debilidades</b><br>'+(STATE.dofa.debilidades||'—')+'</div>'+
+    '<div class="dc" style="background:#fff5f5;"><b>🔴 Amenazas</b><br>'+(STATE.dofa.amenazas||'—')+'</div>'+
     '</div>'+
-    '<footer>DashQ · '+esc(d.config.empresa)+' · CUC Posgrado · Sesión 4 · '+fecha+'</footer>'+
+    '<footer>DashQ · '+esc(STATE.config.empresa)+' · CUC Posgrado · '+fecha+'</footer>'+
     '</body></html>';
   const blob=new Blob([html],{type:'text/html'});
   const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');
-  a.href=url; a.target='_blank'; a.rel='noopener';
+  const a=document.createElement('a'); a.href=url; a.target='_blank'; a.rel='noopener';
   document.body.appendChild(a); a.click();
-  setTimeout(()=>{document.body.removeChild(a);URL.revokeObjectURL(url);},1000);
-  toast('📄 Reporte abierto — Ctrl+P para PDF');
+  setTimeout(()=>{ document.body.removeChild(a); URL.revokeObjectURL(url); },1000);
+  toast('📄 Reporte abierto — Ctrl+P para PDF','success');
 }
 
 // ══════════════════════════════════════════════
 // CONTEXTO
 // ══════════════════════════════════════════════
 function loadContextoFields(){
-  const d=D();
   const map={ctx_mis:'mision',ctx_vis:'vision'};
-  Object.entries(map).forEach(([id,key])=>{const el=document.getElementById(id);if(el)el.value=d.config[key]||'';});
+  Object.entries(map).forEach(([id,k])=>{const el=document.getElementById(id);if(el)el.value=STATE.config[k]||'';});
   const dmap={ctx_for:'fortalezas',ctx_opp:'oportunidades',ctx_deb:'debilidades',ctx_ame:'amenazas'};
-  Object.entries(dmap).forEach(([id,key])=>{const el=document.getElementById(id);if(el)el.value=d.dofa[key]||'';});
+  Object.entries(dmap).forEach(([id,k])=>{const el=document.getElementById(id);if(el)el.value=STATE.dofa[k]||'';});
 }
 
 function saveContexto(){
-  if(MODE==='demo'){toast('ℹ️ El demo no guarda cambios');return;}
   STATE.config.mision=document.getElementById('ctx_mis')?.value||'';
   STATE.config.vision=document.getElementById('ctx_vis')?.value||'';
   STATE.dofa={
@@ -2154,32 +2144,28 @@ function saveContexto(){
     amenazas:document.getElementById('ctx_ame')?.value||'',
   };
   saveLocal();
-  saveToSheets('saveContexto',{dofa:STATE.dofa,config:STATE.config});
-  toast('✅ Contexto guardado');
+  callSheets('saveContexto',{dofa:STATE.dofa,config:STATE.config});
+  toast('✅ Contexto guardado','success');
 }
 
 // ══════════════════════════════════════════════
 // CONFIG
 // ══════════════════════════════════════════════
 function loadCfgFields(){
-  const d=D();
   const map={cfg_emp:'empresa',cfg_nit:'nit',cfg_sec:'sector',cfg_ciu:'ciudad'};
-  Object.entries(map).forEach(([id,key])=>{const el=document.getElementById(id);if(el)el.value=d.config[key]||'';});
-  const cm=document.getElementById('cfg_meta'); if(cm) cm.value=d.config.meta||'';
-  const cc=document.getElementById('cfg_col'); if(cc) cc.value=d.config.color||'#00E5A0';
-  const sw=document.getElementById('cfg_sw'); if(sw) sw.style.background=d.config.color||'#00E5A0';
-  const ct=document.getElementById('cfg_tam'); if(ct) ct.value=d.config.tamano||'';
-  const cs=document.getElementById('cfg_script'); if(cs) cs.value=localStorage.getItem('dq_script_url')||'';
-  const mk=document.getElementById('cfg_mistral_key'); if(mk) mk.value=getMistralKey()?'••••••••••••':'';
-  // Render lists (only real mode)
+  Object.entries(map).forEach(([id,k])=>{const el=document.getElementById(id);if(el)el.value=STATE.config[k]||'';});
+  const cm=document.getElementById('cfg_meta'); if(cm) cm.value=STATE.config.meta||'';
+  const cc=document.getElementById('cfg_col'); if(cc) cc.value=STATE.config.color||'#00E5A0';
+  const sw=document.getElementById('cfg_sw'); if(sw) sw.style.background=STATE.config.color||'#00E5A0';
+  const ct=document.getElementById('cfg_tam'); if(ct) ct.value=STATE.config.tamano||'';
+  const cs=document.getElementById('cfg_script'); if(cs) cs.value=getScriptUrl();
+  const mk=document.getElementById('cfg_mistral_key'); if(mk) mk.placeholder=getMistralKey()?'••••••••••••':'sk-...';
   if(!STATE.productos) STATE.productos=[];
   if(!STATE.vendedores) STATE.vendedores=[];
-  renderProductos();
-  renderVendedores();
+  renderProductos(); renderVendedores();
 }
 
 function saveConfig(){
-  if(MODE==='demo'){toast('ℹ️ El demo no guarda cambios');return;}
   STATE.config.empresa=document.getElementById('cfg_emp')?.value||STATE.config.empresa;
   STATE.config.nit=document.getElementById('cfg_nit')?.value||'';
   STATE.config.sector=document.getElementById('cfg_sec')?.value||'';
@@ -2189,133 +2175,108 @@ function saveConfig(){
   STATE.config.color=document.getElementById('cfg_col')?.value||STATE.config.color;
   const sb=document.getElementById('sb_empresa'); if(sb) sb.textContent=STATE.config.empresa.split(' ')[0];
   saveLocal();
-  saveToSheets('saveConfig',{config:STATE.config});
-  toast('✅ Configuración guardada');
+  callSheets('saveConfig',{config:STATE.config});
+  toast('✅ Configuración guardada','success');
 }
 
 function saveScriptUrl(){
   const url=document.getElementById('cfg_script')?.value.trim();
-  if(!url){toast('⚠️ Ingresa la URL');return;}
+  if(!url){ toast('⚠️ Ingresa la URL','error'); return; }
   localStorage.setItem('dq_script_url',url);
   toast('✅ URL guardada — prueba la conexión');
 }
 
 async function testConnection(){
-  const url=localStorage.getItem('dq_script_url');
-  if(!url){toast('⚠️ Configura la URL primero');return;}
+  const url=getScriptUrl(); if(!url){ toast('⚠️ Configura la URL primero','error'); return; }
   try{
-    const r=await fetch(url+'?action=ping');
-    const d=await r.json();
-    toast(d.ok?'✅ Conectado · '+(d.empresa||'OK'):'⚠️ Error en la respuesta');
-  }catch(e){toast('❌ No se pudo conectar');}
+    const r=await fetch(url+'?action=ping'); const d=await r.json();
+    toast(d.ok?'✅ Conectado · '+(d.empresa||'OK'):'⚠️ Error en respuesta');
+  }catch(e){ toast('❌ No se pudo conectar','error'); }
 }
 
 // ── PRODUCTOS ─────────────────────────────────
 function renderProductos(){
-  const container=document.getElementById('lista_productos'); if(!container) return;
+  const c=document.getElementById('lista_productos'); if(!c) return;
   const prods=STATE.productos||[];
-  if(!prods.length){container.innerHTML='<span style="color:var(--mute);font-size:.82rem;">Sin productos. Agrega el primero.</span>';return;}
-  container.innerHTML=prods.map((p,i)=>
-    '<div style="display:flex;align-items:center;gap:6px;background:var(--ink3);border:1px solid var(--rim);border-radius:8px;padding:5px 10px;margin-bottom:4px;">'+
-      '<span style="font-size:.85rem;color:var(--white);flex:1;">📦 '+esc(p)+'</span>'+
+  if(!prods.length){c.innerHTML='<span style="color:var(--mute);font-size:.82rem;">Sin productos. Agrega el primero.</span>';syncProductosToForm();return;}
+  c.innerHTML=prods.map((p,i)=>
+    '<div style="display:flex;align-items:center;gap:6px;background:var(--ink3);border:1px solid var(--rim);border-radius:8px;padding:6px 10px;margin-bottom:5px;">'+
+      '<span style="flex:1;font-size:.85rem;color:var(--white);">📦 '+esc(p)+'</span>'+
       '<button onclick="editProducto('+i+')" style="background:none;border:none;color:var(--mute);cursor:pointer;">✏️</button>'+
       '<button onclick="deleteProducto('+i+')" style="background:none;border:none;color:var(--rose);cursor:pointer;">🗑</button>'+
     '</div>'
-  ).join('');
-  syncProductosToForm();
+  ).join(''); syncProductosToForm();
 }
 function addProducto(){
-  const inp=document.getElementById('inp_prod');
-  const val=inp?.value.trim();
-  if(!val){toast('⚠️ Escribe el nombre');return;}
+  const inp=document.getElementById('inp_prod'); const val=inp?.value.trim();
+  if(!val){ toast('⚠️ Escribe el nombre','error'); return; }
   if(!STATE.productos) STATE.productos=[];
-  if(STATE.productos.includes(val)){toast('⚠️ Ya existe');return;}
+  if(STATE.productos.includes(val)){ toast('⚠️ Ya existe'); return; }
   STATE.productos.push(val); inp.value='';
   saveLocal(); renderProductos(); toast('✅ "'+val+'" agregado');
 }
-function editProducto(i){
-  const n=prompt('Editar producto:',STATE.productos[i]);
-  if(n!==null&&n.trim()){STATE.productos[i]=n.trim();saveLocal();renderProductos();}
-}
-function deleteProducto(i){
-  if(!confirm('¿Eliminar "'+STATE.productos[i]+'"?')) return;
-  STATE.productos.splice(i,1); saveLocal(); renderProductos(); toast('🗑 Eliminado');
-}
+function editProducto(i){ const n=prompt('Editar:',STATE.productos[i]); if(n?.trim()){STATE.productos[i]=n.trim();saveLocal();renderProductos();} }
+function deleteProducto(i){ if(!confirm('¿Eliminar "'+STATE.productos[i]+'"?')) return; STATE.productos.splice(i,1);saveLocal();renderProductos();toast('🗑 Eliminado'); }
 function syncProductosToForm(){
   const sel=document.getElementById('v_producto'); if(!sel) return;
-  const d=D(); const prods=MODE==='demo'?d.productos:(STATE.productos||[]);
   const cur=sel.value;
-  sel.innerHTML='<option value="">Selecciona...</option>'+prods.map(p=>'<option'+(p===cur?' selected':'')+'>'+esc(p)+'</option>').join('');
+  sel.innerHTML='<option value="">Selecciona...</option>'+(STATE.productos||[]).map(p=>'<option'+(p===cur?' selected':'')+'>'+esc(p)+'</option>').join('');
 }
 
 // ── VENDEDORES ────────────────────────────────
 function renderVendedores(){
-  const container=document.getElementById('lista_vendedores'); if(!container) return;
+  const c=document.getElementById('lista_vendedores'); if(!c) return;
   const vends=STATE.vendedores||[];
-  if(!vends.length){container.innerHTML='<span style="color:var(--mute);font-size:.82rem;">Sin vendedores. Agrega el primero.</span>';return;}
-  container.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:.84rem;">'+
+  if(!vends.length){c.innerHTML='<span style="color:var(--mute);font-size:.82rem;">Sin vendedores. Agrega el primero.</span>';syncVendedoresToForm();return;}
+  c.innerHTML='<table style="width:100%;border-collapse:collapse;font-size:.84rem;">'+
     '<thead><tr>'+
-      '<th style="background:var(--ink3);padding:8px 12px;text-align:left;font-size:.7rem;font-weight:700;color:var(--mute);text-transform:uppercase;border-bottom:1px solid var(--rim);">Nombre</th>'+
-      '<th style="background:var(--ink3);padding:8px 12px;text-align:left;font-size:.7rem;font-weight:700;color:var(--mute);text-transform:uppercase;border-bottom:1px solid var(--rim);">Zona</th>'+
-      '<th style="background:var(--ink3);padding:8px 12px;text-align:center;font-size:.7rem;font-weight:700;color:var(--mute);text-transform:uppercase;border-bottom:1px solid var(--rim);">Acciones</th>'+
+    '<th style="background:var(--ink3);padding:8px 12px;text-align:left;font-size:.7rem;font-weight:700;color:var(--mute);text-transform:uppercase;border-bottom:1px solid var(--rim);">Nombre</th>'+
+    '<th style="background:var(--ink3);padding:8px 12px;text-align:left;font-size:.7rem;font-weight:700;color:var(--mute);text-transform:uppercase;border-bottom:1px solid var(--rim);">Zona</th>'+
+    '<th style="background:var(--ink3);padding:8px 12px;text-align:center;font-size:.7rem;font-weight:700;color:var(--mute);text-transform:uppercase;border-bottom:1px solid var(--rim);">Acciones</th>'+
     '</tr></thead><tbody>'+
     vends.map((v,i)=>'<tr>'+
-      '<td style="padding:9px 12px;border-bottom:1px solid rgba(30,53,96,.5);color:var(--white);">👤 '+esc(v.nombre)+'</td>'+
-      '<td style="padding:9px 12px;border-bottom:1px solid rgba(30,53,96,.5);color:var(--mute);">'+(v.zona||'—')+'</td>'+
-      '<td style="padding:9px 12px;border-bottom:1px solid rgba(30,53,96,.5);text-align:center;">'+
+      '<td style="padding:9px 12px;border-bottom:1px solid rgba(30,53,96,.4);color:var(--white);">👤 '+esc(v.nombre)+'</td>'+
+      '<td style="padding:9px 12px;border-bottom:1px solid rgba(30,53,96,.4);color:var(--mute);">'+(v.zona||'—')+'</td>'+
+      '<td style="padding:9px 12px;border-bottom:1px solid rgba(30,53,96,.4);text-align:center;">'+
         '<button onclick="editVendedor('+i+')" style="background:none;border:none;color:var(--blue);cursor:pointer;margin:0 4px;">✏️</button>'+
         '<button onclick="deleteVendedor('+i+')" style="background:none;border:none;color:var(--rose);cursor:pointer;margin:0 4px;">🗑</button>'+
       '</td></tr>').join('')+
-    '</tbody></table>';
-  syncVendedoresToForm();
+    '</tbody></table>'; syncVendedoresToForm();
 }
 function addVendedor(){
   const nombre=document.getElementById('inp_vend_nombre')?.value.trim();
   const zona=document.getElementById('inp_vend_zona')?.value.trim()||'Sin zona';
-  if(!nombre){toast('⚠️ Ingresa el nombre');return;}
+  if(!nombre){ toast('⚠️ Ingresa el nombre','error'); return; }
   if(!STATE.vendedores) STATE.vendedores=[];
-  if(STATE.vendedores.find(v=>v.nombre===nombre)){toast('⚠️ Ya existe');return;}
+  if(STATE.vendedores.find(v=>v.nombre===nombre)){ toast('⚠️ Ya existe'); return; }
   STATE.vendedores.push({nombre,zona});
   document.getElementById('inp_vend_nombre').value='';
   document.getElementById('inp_vend_zona').value='';
   saveLocal(); renderVendedores(); toast('✅ "'+nombre+'" agregado');
 }
-function editVendedor(i){
-  const v=STATE.vendedores[i];
-  const nombre=prompt('Nombre:',v.nombre); if(nombre===null) return;
-  const zona=prompt('Zona:',v.zona||''); if(zona===null) return;
-  STATE.vendedores[i]={nombre:nombre.trim()||v.nombre,zona:zona.trim()};
-  saveLocal(); renderVendedores(); toast('✅ Actualizado');
-}
-function deleteVendedor(i){
-  if(!confirm('¿Eliminar a "'+STATE.vendedores[i].nombre+'"?')) return;
-  STATE.vendedores.splice(i,1); saveLocal(); renderVendedores(); toast('🗑 Eliminado');
-}
+function editVendedor(i){ const v=STATE.vendedores[i]; const n=prompt('Nombre:',v.nombre); if(n===null) return; const z=prompt('Zona:',v.zona||''); if(z===null) return; STATE.vendedores[i]={nombre:n.trim()||v.nombre,zona:z.trim()}; saveLocal(); renderVendedores(); toast('✅ Actualizado'); }
+function deleteVendedor(i){ if(!confirm('¿Eliminar a "'+STATE.vendedores[i].nombre+'"?')) return; STATE.vendedores.splice(i,1); saveLocal(); renderVendedores(); toast('🗑 Eliminado'); }
 function syncVendedoresToForm(){
   const sel=document.getElementById('v_vendedor'); if(!sel) return;
-  const d=D(); const vends=MODE==='demo'?d.vendedores:(STATE.vendedores||[]);
   const cur=sel.value;
-  sel.innerHTML='<option value="">Selecciona...</option>'+vends.map(v=>'<option'+(v.nombre===cur?' selected':'')+'>'+esc(v.nombre)+'</option>').join('');
+  sel.innerHTML='<option value="">Selecciona...</option>'+(STATE.vendedores||[]).map(v=>'<option'+(v.nombre===cur?' selected':'')+'>'+esc(v.nombre)+'</option>').join('');
 }
 
 // ══════════════════════════════════════════════
 // PWA
 // ══════════════════════════════════════════════
 function registerPWA(){
-  const d=D();
-  const manifest={name:'DashQ · '+d.config.empresa,short_name:'DashQ',
+  const manifest={name:'DashQ · '+STATE.config.empresa,short_name:'DashQ',
     start_url:'./',display:'standalone',background_color:'#0A1628',
-    theme_color:d.config.color||'#00E5A0',
+    theme_color:STATE.config.color||'#00E5A0',
     icons:[{src:'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" fill="%230A1628" rx="20"/><text y=".9em" font-size="80">📊</text></svg>',sizes:'192x192',type:'image/svg+xml'}]};
   const blob=new Blob([JSON.stringify(manifest)],{type:'application/json'});
-  const mUrl=URL.createObjectURL(blob);
   let link=document.querySelector('link[rel="manifest"]');
   if(!link){link=document.createElement('link');link.rel='manifest';document.head.appendChild(link);}
-  link.href=mUrl;
+  link.href=URL.createObjectURL(blob);
   if('serviceWorker' in navigator){
-    const sw='self.addEventListener("install",e=>e.waitUntil(caches.open("dq-v1").then(c=>c.add("/"))));self.addEventListener("fetch",e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));';
-    const swB=new Blob([sw],{type:'application/javascript'});
-    navigator.serviceWorker.register(URL.createObjectURL(swB)).catch(()=>{});
+    const sw='self.addEventListener("install",e=>e.waitUntil(caches.open("dq-v2").then(c=>c.add("/"))));self.addEventListener("fetch",e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));';
+    navigator.serviceWorker.register(URL.createObjectURL(new Blob([sw],{type:'application/javascript'}))).catch(()=>{});
   }
 }
 
@@ -2323,25 +2284,40 @@ function registerPWA(){
 // INIT
 // ══════════════════════════════════════════════
 window.onload=()=>{
-  // Restore font size
   const fs=localStorage.getItem('dq_fontsize'); if(fs) document.documentElement.style.fontSize=fs+'px';
-  // Try restore real session (never restore demo)
   const saved=localStorage.getItem('dq_session');
   if(saved){
     try{
       const s=JSON.parse(saved);
-      if(s.email&&s.email!=='demo@dashq.app'){
-        MODE='real';
-        STATE=EMPTY_STATE();
-        loadLocal();
-        STATE.user=s;
+      if(s.email){
+        STATE=EMPTY_STATE(); loadLocal(); STATE.user=s;
         const ni=document.getElementById('inNombre'); if(ni) ni.value=s.name||'';
         const ei=document.getElementById('inEmail'); if(ei) ei.value=s.email||'';
-        if(STATE.config.empresa) initApp(s);
-        else startOnboarding(s);
+        // Auto-try to restore from Sheets
+        const url=getScriptUrl();
+        if(url){
+          callSheets('getUserData',{email:s.email}).then(data=>{
+            if(data?.ok&&data.exists){
+              if(data.config) STATE.config={...STATE.config,...data.config};
+              if(data.dofa) STATE.dofa=data.dofa;
+              if(data.okrs?.length) STATE.okrs=data.okrs;
+              if(data.ventas?.length){
+                const shIds=new Set(data.ventas.map(v=>String(v.id)));
+                const localOnly=STATE.ventas.filter(v=>!shIds.has(String(v.id)));
+                STATE.ventas=[...data.ventas,...localOnly];
+                saveLocal();
+              }
+            }
+            if(STATE.config.empresa) initApp(s);
+            else startOnboarding(s);
+          }).catch(()=>{ if(STATE.config.empresa) initApp(s); else startOnboarding(s); });
+        } else {
+          if(STATE.config.empresa) initApp(s);
+          else startOnboarding(s);
+        }
         return;
       }
-    }catch(e){localStorage.removeItem('dq_session');}
+    }catch(e){ localStorage.removeItem('dq_session'); }
   }
 };
 
