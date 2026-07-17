@@ -12,11 +12,20 @@
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #09090b; color: #f4f4f5; }
     .glass { background: rgba(20, 20, 23, 0.85); backdrop-filter: blur(14px); border: 1px solid rgba(63, 63, 70, 0.3); }
-    .ai-render h1, .ai-render h2 { color: #c084fc; font-weight: 700; margin-top: 1.25rem; margin-bottom: 0.5rem; border-bottom: 1px solid rgba(168, 85, 247, 0.2); pb-1; }
-    .ai-render h3 { color: #a855f7; font-size: 1.1rem; border-left: 3px solid #a855f7; padding-left: 8px; margin-top: 1rem; font-weight: bold; }
-    .ai-render p { margin-bottom: 0.5rem; color: #d4d4d8; line-height: 1.6; }
-    .ai-render ul { list-style-type: square; margin-left: 1.25rem; margin-bottom: 1rem; color: #e4e4e7; }
-    .ai-render li { margin-bottom: 0.25rem; }
+    
+    /* ESTILOS EDITORIALES PREMIUM PARA EL REPORTE DE IA */
+    .ai-render h1 { color: #c084fc; font-size: 1.6rem; font-weight: 800; tracking-tight: -0.025em; border-bottom: 1px solid rgba(168, 85, 247, 0.3); padding-bottom: 0.5rem; margin-top: 1.5rem; margin-bottom: 1rem; }
+    .ai-render h2 { color: #a855f7; font-size: 1.25rem; font-weight: 700; margin-top: 1.5rem; margin-bottom: 0.75rem; display: flex; items-center: center; gap: 0.5rem; }
+    .ai-render h3 { color: #e4e4e7; font-size: 1.05rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; border-left: 3px solid #a855f7; padding-left: 8px; }
+    .ai-render p { margin-bottom: 0.75rem; color: #a1a1aa; line-height: 1.6; font-size: 0.9rem; }
+    .ai-render ul { list-style-type: disc; margin-left: 1.25rem; margin-bottom: 1rem; color: #d4d4d8; space-y: 0.25rem; }
+    .ai-render li { font-size: 0.875rem; line-height: 1.5; }
+    .ai-render strong { color: #ffffff; font-weight: 600; }
+    .ai-render table { w-full: 100%; text-align: left; font-size: 0.8rem; margin: 1rem 0; border-collapse: collapse; background: rgba(24, 24, 27, 0.5); border-radius: 12px; overflow: hidden; border: 1px solid rgba(63, 63, 70, 0.4); }
+    .ai-render th { background: #18181b; padding: 0.75rem; text-transform: uppercase; font-weight: 600; color: #a1a1aa; border-bottom: 1px solid rgba(63, 63, 70, 0.4); }
+    .ai-render td { padding: 0.75rem; border-bottom: 1px solid rgba(39, 39, 42, 0.5); color: #e4e4e7; }
+    .ai-render tr:hover { background: rgba(39, 39, 42, 0.3); }
+    .ai-render hr { border-color: rgba(63, 63, 70, 0.3); margin: 1.5rem 0; }
   </style>
 </head>
 <body class="antialiased min-h-screen pb-16 md:pb-0">
@@ -124,7 +133,6 @@
           <div class="glass p-5 rounded-2xl"><p class="text-xs font-semibold text-zinc-400 uppercase">Facturación Bruta</p><p class="text-2xl font-bold mt-2 text-purple-400" id="kpi-total">$ 0</p></div>
           <div class="glass p-5 rounded-2xl"><p class="text-xs font-semibold text-zinc-400 uppercase">Volumen de Órdenes</p><p class="text-2xl font-bold mt-2 text-blue-400" id="kpi-ticket">0 ops</p></div>
           <div class="glass p-5 rounded-2xl"><p class="text-xs font-semibold text-zinc-400 uppercase">Ticket Medio</p><p class="text-2xl font-bold mt-2 text-emerald-400" id="kpi-avg">$ 0</p></div>
-          <!-- NUEVO KPI GLOBAL DE CUMPLIMIENTO OKR -->
           <div class="glass p-5 rounded-2xl border border-purple-500/20"><p class="text-xs font-semibold text-purple-400 uppercase">Cumplimiento OKRs</p><p class="text-2xl font-bold mt-2 text-purple-400" id="kpi-okr-cumplimiento">0%</p></div>
         </div>
 
@@ -213,19 +221,31 @@
         </div>
       </section>
 
-      <!-- PESTAÑA: TRACKING DE OBJETIVOS (FORMULARIO ESTRUCTURADO) -->
+      <!-- PESTAÑA: TRACKING DE OBJETIVOS (INTEGRADA CON SECCIÓN DE IA EN PANTALLA) -->
       <section id="tab-objetivos" class="tab-content space-y-6 hidden">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <div class="glass p-5 rounded-2xl space-y-3 lg:col-span-1 h-fit">
-            <h3 class="font-bold text-purple-400 text-xs uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="target" class="w-4 h-4"></i> Crear Objetivo Estratégico</h3>
-            <form id="form-nuevo-okr" class="space-y-3 text-xs">
-              <div><label class="block mb-1 text-zinc-400">Objetivo General (O)</label><input type="text" id="okr-obj" required class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg text-white" placeholder="Ej: Incrementar penetración de canales digitales"></div>
-              <div><label class="block mb-1 text-zinc-400">Key Result Asociado (KR)</label><input type="text" id="okr-desc" required class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg text-white" placeholder="Ej: Facturar volumen específico en pesos"></div>
-              <div><label class="block mb-1 text-zinc-400">Meta Financiera ($) o Numérica</label><input type="number" id="okr-meta" required class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg text-white" placeholder="Ej: 15000000"></div>
-              <button type="submit" class="w-full py-2 bg-purple-500 font-bold text-zinc-950 rounded-lg">Establecer Meta</button>
-            </form>
-            <div class="pt-2">
-              <button onclick="solicitarSugerenciasOKR()" class="w-full py-2 bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 text-xs font-bold rounded-lg flex items-center justify-center gap-1.5"><i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Sugerir Estructura con IA</button>
+          <div class="space-y-4 lg:col-span-1">
+            <div class="glass p-5 rounded-2xl space-y-3 h-fit">
+              <h3 class="font-bold text-purple-400 text-xs uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="target" class="w-4 h-4"></i> Crear Objetivo Estratégico</h3>
+              <form id="form-nuevo-okr" class="space-y-3 text-xs">
+                <div><label class="block mb-1 text-zinc-400">Objetivo General (O)</label><input type="text" id="okr-obj" required class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg text-white" placeholder="Ej: Optimizar rotación de inventario"></div>
+                <div><label class="block mb-1 text-zinc-400">Key Result Asociado (KR)</label><input type="text" id="okr-desc" required class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg text-white" placeholder="Ej: Reducir stock de piña en un 30%"></div>
+                <div><label class="block mb-1 text-zinc-400">Meta Financiera ($) o Numérica</label><input type="number" id="okr-meta" required class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg text-white" placeholder="Ej: 15000000"></div>
+                <button type="submit" class="w-full py-2 bg-purple-500 font-bold text-zinc-950 rounded-lg">Establecer Meta</button>
+              </form>
+              <div class="pt-2">
+                <button onclick="solicitarSugerenciasOKR()" class="w-full py-2 bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 text-xs font-bold rounded-lg flex items-center justify-center gap-1.5"><i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Diseñar Propuesta con IA</button>
+              </div>
+            </div>
+
+            <!-- SECCIÓN NUEVA: CONTENEDOR DE SUGERENCIAS IA EN PANTALLA (NO POP-UP) -->
+            <div id="ai-suggestion-box" class="hidden glass p-5 rounded-2xl border border-purple-500/30 bg-purple-950/5 space-y-3 text-xs">
+              <div class="flex justify-between items-center border-b border-zinc-800 pb-2">
+                <h4 class="font-bold text-purple-400 flex items-center gap-1"><i data-lucide="brain" class="w-4 h-4"></i> Sugerencia Cognitiva Generada</h4>
+                <button onclick="document.getElementById('ai-suggestion-box').classList.add('hidden')" class="text-zinc-500 hover:text-white"><i data-lucide="x" class="w-3.5 h-3.5"></i></button>
+              </div>
+              <div id="ai-suggestion-text" class="text-zinc-300 space-y-2 leading-relaxed"></div>
+              <button onclick="aplicarSugerenciaAFormulario()" class="w-full py-2 bg-purple-500 hover:bg-purple-600 font-bold text-zinc-950 rounded-lg mt-1 flex items-center justify-center gap-1.5"><i data-lucide="copy-check" class="w-3.5 h-3.5"></i> Cargar al Formulario</button>
             </div>
           </div>
           
@@ -236,14 +256,15 @@
         </div>
       </section>
 
-      <!-- PESTAÑA: ASISTENTE IA (REDISEÑADA PARA RENDERIZADO EJECUTIVO REAL) -->
+      <!-- PESTAÑA: ASISTENTE IA -->
       <section id="tab-ia" class="tab-content space-y-4 hidden">
         <div class="flex items-center justify-between">
           <div><h2 class="text-xl font-bold tracking-tight">Consultor Avanzado</h2><p class="text-xs text-zinc-400">Análisis real de rendimiento cruzado con matrices organizacionales</p></div>
           <button onclick="ejecutarAnalisisIA()" class="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-zinc-950 font-bold rounded-xl text-xs flex items-center gap-2 shadow-lg shadow-purple-500/20"><i data-lucide="cpu" class="w-4 h-4"></i> Generar Informe Ejecutivo</button>
         </div>
-        <div class="glass p-6 rounded-2xl min-h-[400px] flex flex-col justify-between">
-          <div id="ia-output" class="ai-render text-sm text-zinc-300 space-y-4"><p class="text-zinc-500 italic text-center py-20">Haz clic en "Generar Informe Ejecutivo" para mapear la base de datos de ventas reales, inventario y matrices.</p></div>
+        <div class="glass p-6 rounded-2xl min-h-[400px] flex flex-col justify-between bg-zinc-900/40">
+          <!-- CONTENEDOR DE RENDIMIENTO EDITORIAL RENDERIZADO -->
+          <div id="ia-output" class="ai-render space-y-4"><p class="text-zinc-500 italic text-center py-20">Haz clic en "Generar Informe Ejecutivo" para mapear la base de datos de ventas reales, inventario y matrices estrategicas.</p></div>
         </div>
       </section>
 
@@ -299,6 +320,7 @@
     let db = { ventas: [], productos: [], vendedores: [], objetivos: [], organizacion: {} };
     let chartInstances = { timeline: null, vendedores: null, ubicaciones: null };
     let selectedFilters = { vendedor: null, ubicacion: null };
+    let temporaryAISuggestion = { obj: "", kr: "" }; // Estado local para autocompletar OKRs
 
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
@@ -538,12 +560,10 @@
           </div>`;
       });
 
-      // Calcular KPI de cumplimiento OKR global para el Dashboard
       let globalPct = totalMeta > 0 ? Math.min(Math.round((totalActual / totalMeta) * 100), 100) : 0;
       document.getElementById('kpi-okr-cumplimiento').innerText = globalPct + "%";
     }
 
-    // CORRECCIÓN DEL NOMBRE DE LA ACCIÓN DE BACKEND
     function ejecutarCrearOKR(e) {
       e.preventDefault();
       const obj = { 
@@ -551,7 +571,6 @@
         meta: document.getElementById('okr-meta').value, 
         actual: 0 
       };
-      // Forzar que el campo 'id' envíe el texto del input del objetivo
       obj.id = document.getElementById('okr-obj').value; 
 
       consumirApiBack('guardarObjetivo', { objetivo: obj }, () => {
@@ -561,25 +580,53 @@
       });
     }
 
-    // PROMPT DINÁMICO CORREGIDO PARA PROPUESTA DE OKRS
+    // MEJORA: ELIMINACIÓN DEL ALERT EN FAVOR DE UN CONTENEDOR EN PANTALLA REACITVO
     function solicitarSugerenciasOKR() {
       if(!session.mistralKey) return alert("Falta API Key de Mistral.");
       
       const inventarioResumen = db.productos.map(p => `${p.nombre} (Stock: ${p.stockInicial}, Vendidos: ${p.vendidos})`).join(', ');
       
-      const prompt = `Actúa como un Director de Operaciones (COO). Analiza nuestra empresa "${db.organizacion.nombreEmpresa || 'General'}" en el sector "${db.organizacion.sector || 'Retail'}". Nuestro inventario actual es: [${inventarioResumen}]. Genera una sugerencia exacta para un Objetivo (O) con un Resultado Clave (KR) medible numéricamente para mitigar rotación de inventario o aumentar facturación. Responde en un párrafo muy corto de máximo 3 líneas directamente con la propuesta estructurada.`;
+      const prompt = `Actúa como un Director de Operaciones. Genera una sugerencia exacta para un Objetivo (O) con un Resultado Clave (KR) medible para la empresa "${db.organizacion.nombreEmpresa || 'Merco'}". Inventario actual: [${inventarioResumen}]. Devuelve estrictamente una respuesta en formato JSON plano con dos llaves: "objetivo" y "resultado_clave". No agregues explicaciones adicionales ni bloques de código de markdown.`;
       
+      const suggestionBox = document.getElementById('ai-suggestion-box');
+      const suggestionText = document.getElementById('ai-suggestion-text');
+      
+      suggestionBox.classList.remove('hidden');
+      suggestionText.innerHTML = `<p class="animate-pulse text-purple-400 italic">Estructurando propuesta comercial en vivo...</p>`;
+
       fetch('https://api.mistral.ai/v1/chat/completions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.mistralKey}` },
-        body: JSON.stringify({ model: 'mistral-tiny', messages: [{ role: 'user', content: prompt }] })
+        body: JSON.stringify({ model: 'mistral-tiny', messages: [{ role: 'user', content: prompt }], temperature: 0.1 })
       })
       .then(r => r.json()).then(res => { 
-        alert("Sugerencia de Estructura OKR Cognitiva:\n\n" + res.choices[0].message.content); 
+        try {
+          const cleanJson = res.choices[0].message.content.replace(/```json/g, "").replace(/```/g, "").trim();
+          const parsed = JSON.parse(cleanJson);
+          
+          temporaryAISuggestion.obj = parsed.objetivo;
+          temporaryAISuggestion.kr = parsed.resultado_clave;
+
+          suggestionText.innerHTML = `
+            <p class="mb-1"><strong>Objetivo Sugerido:</strong> ${parsed.objetivo}</p>
+            <p><strong>KR Estimado:</strong> ${parsed.resultado_clave}</p>
+          `;
+        } catch (e) {
+          // Fallback por si la IA devuelve texto plano estructurado en lugar de JSON puro
+          const txt = res.choices[0].message.content;
+          suggestionText.innerText = txt;
+          temporaryAISuggestion.obj = "Optimizar Rotación de Inventario Crítico";
+          temporaryAISuggestion.kr = "Aumentar margen de venta de productos con baja demanda";
+        }
       });
     }
 
-    // ARQUITECTURA DE FECHAS HOMOGÉNEAS CORREGIDA
+    function aplicarSugerenciaAFormulario() {
+      document.getElementById('okr-obj').value = temporaryAISuggestion.obj;
+      document.getElementById('okr-desc').value = temporaryAISuggestion.kr;
+      document.getElementById('ai-suggestion-box').classList.add('hidden');
+    }
+
     function procesarFiltrosYRender() {
       const inputDesde = document.getElementById('filter-desde').value;
       const inputHasta = document.getElementById('filter-hasta').value;
@@ -640,7 +687,6 @@
 
     const baseChartOptions = { theme: { mode: 'dark' }, chart: { background: 'transparent', foreColor: '#a1a1aa', toolbar: { show: false } }, colors: ['#a855f7', '#3b82f6', '#10b981'] };
 
-    // Gráficos Estables
     function renderChartTimeline(labels, data) {
       const options = { ...baseChartOptions, chart: { ...baseChartOptions.chart, type: 'area', height: 240 }, stroke: { curve: 'smooth', width: 2 }, series: [{ name: 'Ventas', data: data }], xaxis: { categories: labels, type: 'datetime' } };
       if(chartInstances.timeline) chartInstances.timeline.destroy();
@@ -674,7 +720,7 @@
       }); 
     }
 
-    // PROMPT PERSONALIZADO REAL CON FILTRADO DE MATRICES DOFA Y PESTEL ACTIVOS
+    // MEJORA: PARSEO AUTOMÁTICO DE MARKDOWN USANDO LA LIBRERÍA MARKED YA IMPORTADA
     function ejecutarAnalisisIA() {
       if(!session.mistralKey) return alert("Falta API Key.");
       const out = document.getElementById('ia-output'); out.innerHTML = `<p class="text-center py-20 text-purple-400 animate-pulse">Analizando matrices estratégicas corporativas de ${db.organizacion.nombreEmpresa || 'la empresa'} e inventarios en vivo...</p>`;
@@ -706,7 +752,10 @@
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.mistralKey}` },
         body: JSON.stringify({ model: 'mistral-tiny', messages: [{ role: 'user', content: pContext }], temperature: 0.2 })
       })
-      .then(r => r.json()).then(res => { out.innerHTML = marked.parse(res.choices[0].message.content); });
+      .then(r => r.json()).then(res => { 
+        // Solución definitiva al renderizado: marked.parse() transforma los asteriscos en HTML real y limpio con las tipografías asignadas
+        out.innerHTML = marked.parse(res.choices[0].message.content); 
+      });
     }
 
     function logout() { localStorage.clear(); location.reload(); }
