@@ -824,7 +824,8 @@
             </div>
           </div>
 
-          <div class="charts-grid">
+          <p style="font-size:.72rem;color:var(--mute);margin-bottom:6px;">💡 Clic en cualquier gráfica para filtrar las demás. Clic de nuevo para quitar el filtro.</p>
+        <div class="charts-grid">
             <div class="chart-card" id="chart_ventas_card" onclick="highlightChart('ventas')">
               <div class="chart-head">
                 <div><div class="chart-title">Tendencia de ventas</div><div class="chart-sub" id="chart_ventas_sub">Últimos 6 meses · COP</div></div>
@@ -1450,7 +1451,7 @@
       if (su) document.getElementById('inScriptUrl').value = su;
     };
 
-    function loginUser() {
+    async function loginUser() {
       const user = document.getElementById('inUser').value.trim();
       const pass = document.getElementById('inPass').value.trim();
       if (!user) { toast('Ingresa un usuario'); return; }
@@ -1462,32 +1463,48 @@
         STATE.scriptUrl = scriptUrl;
       }
 
-      const u = { name: user, email: user + '@empresa.com', initials: user.slice(0, 2).toUpperCase() };
+      const email = user.includes('@') ? user : user + '@empresa.com';
+      const u = { name: user, email, initials: user.slice(0, 2).toUpperCase() };
       STATE.user = u;
       localStorage.setItem('dq_session', JSON.stringify(u));
 
-      if (STATE.firstLogin) {
-        localStorage.setItem('dq_first_login', 'false');
-        STATE.okrs = [];
-        STATE.ventas = [];
-        STATE.config = { ...DEMO_CONFIG };
-        STATE.dofa = { ...DEMO_DOFA };
-        STATE.filteredVentas = [];
-        saveLocal();
-      }
-
+      // Si hay URL de Sheets, verificar si el usuario existe y cargar sus datos
       if (scriptUrl) {
-        fetch(scriptUrl + '?action=getUsuario&email=' + encodeURIComponent(user))
-          .then(res => res.json())
-          .then(data => {
-            if (data && data.email) {
-              u.name = data.nombre || user;
-              u.email = data.email;
-            }
-            checkFirstTime(u);
-          })
-          .catch(() => checkFirstTime(u));
+        const btn = document.querySelector('[onclick="loginUser()"]');
+        if (btn) { btn.textContent = '⏳ Verificando...'; btn.disabled = true; }
+        try {
+          const resp = await fetch(scriptUrl + '?action=getUserData&email=' + encodeURIComponent(email));
+          const data = await resp.json();
+          if (btn) { btn.textContent = '🔑 Iniciar sesión'; btn.disabled = false; }
+
+          if (data && data.ok && data.exists) {
+            // Usuario existe — cargar todos sus datos desde Sheets
+            if (data.config) STATE.config = { ...STATE.config, ...data.config };
+            if (data.dofa) STATE.dofa = { ...STATE.dofa, ...data.dofa };
+            if (data.ventas && data.ventas.length > 0) STATE.ventas = data.ventas;
+            if (data.okrs && data.okrs.length > 0) STATE.okrs = data.okrs;
+            STATE.filteredVentas = [...STATE.ventas];
+            saveLocal();
+            toast('✅ Bienvenido/a de vuelta, ' + (data.user?.nombre || user));
+            setTimeout(() => initApp(u), 300);
+          } else {
+            // Usuario nuevo → onboarding
+            STATE.firstLogin = true;
+            STATE.okrs = [];
+            STATE.ventas = [];
+            STATE.filteredVentas = [];
+            saveLocal();
+            toast('👋 Primera vez — configura tu empresa');
+            setTimeout(() => checkFirstTime(u), 300);
+          }
+        } catch(e) {
+          if (btn) { btn.textContent = '🔑 Iniciar sesión'; btn.disabled = false; }
+          // Sin conexión — usar datos locales
+          toast('⚠️ Sin conexión a Sheets — usando datos locales');
+          checkFirstTime(u);
+        }
       } else {
+        // Sin URL — flujo normal
         checkFirstTime(u);
       }
     }
@@ -1667,13 +1684,27 @@
       STATE.config = config;
       STATE.dofa = dofa;
       STATE.okrs = [okr];
-      if (!STATE.ventas || STATE.ventas.length === 0) {
-        STATE.ventas = [];
-      }
+      if (!STATE.ventas || STATE.ventas.length === 0) { STATE.ventas = []; }
       STATE.filteredVentas = [...STATE.ventas];
       saveLocal();
-      toast('✅ Configuración guardada');
-      setTimeout(() => initApp(STATE.user), 300);
+      // Enviar datos del nuevo usuario a Sheets
+      const url = localStorage.getItem('dq_script_url');
+      if (url) {
+        const email = STATE.user?.email || '';
+        const nombre = STATE.user?.name || '';
+        fetch(url, {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({action:'saveUsuario',email,nombre,rol:'admin'})});
+        fetch(url, {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({action:'saveConfig',...config,email})});
+        fetch(url, {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({action:'saveContexto',dofa,email})});
+        fetch(url, {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
+          body:JSON.stringify({action:'postOKRs',okrs:[okr],email})});
+        toast('✅ Configuración guardada y enviada a Sheets');
+      } else {
+        toast('✅ Configuración guardada');
+      }
+      setTimeout(() => initApp(STATE.user), 500);
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -1983,154 +2014,232 @@
     };
 
     function initCharts() {
-      Object.values(charts).forEach(c => { if (c) { try { c.destroy(); } catch (e) {} } });
-      charts = {};
-
       const em = getComputedStyle(document.documentElement).getPropertyValue('--em').trim() || '#2563EB';
-      const gridColor = '#30363D';
-      const textColor = '#94A3B8';
+      const ventas = STATE.isDemo ? DEMO_VENTAS : STATE.ventas;
 
-      // Obtener datos de ventas para gráficos
-      const ventas = STATE.dateDesde ? STATE.filteredVentas : STATE.ventas;
+      // Cross-filter state
+      let CF = { vendedor: null, producto: null, zona: null };
 
-      // Ventas por mes
+      function getCF() {
+        let v = ventas;
+        if (CF.vendedor) v = v.filter(x => x.vendedor === CF.vendedor);
+        if (CF.producto) v = v.filter(x => x.producto === CF.producto);
+        if (CF.zona) v = v.filter(x => x.zona === CF.zona);
+        return v;
+      }
+
+      function applyCF() {
+        const filtered = getCF();
+        // Update recent table
+        const tbody = document.getElementById('tb_recent');
+        if (tbody) {
+          const recent = filtered.slice(0,8);
+          if (!recent.length) {
+            tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:var(--mute);padding:16px;">Sin datos para el filtro</td></tr>';
+          } else {
+            tbody.innerHTML = recent.map(v => '<tr><td>'+esc(v.fecha)+'</td><td>'+esc(v.vendedor)+'</td><td>'+esc(v.producto)+'</td><td>'+esc(v.zona)+'</td><td class="num">'+(v.unidades||1)+'</td><td class="num">$'+fmt(v.monto)+'</td><td>'+estadoBadge(v.estado)+'</td></tr>').join('');
+          }
+        }
+        // Update KPIs
+        const total = filtered.reduce((s,v) => s + (v.monto||0), 0);
+        const meta = STATE.config.meta || 90000000;
+        const kv = document.getElementById('kpi_ventas');
+        const kp = document.getElementById('kpi_pedidos');
+        const km = document.getElementById('kpi_meta');
+        if (kv) kv.textContent = '$' + fmt(total);
+        if (kp) kp.textContent = filtered.length;
+        if (km) km.textContent = Math.round((total/meta)*100) + '%';
+        // Update bar charts with filtered data
+        updateChartsByFilter(filtered);
+        // Show active filter badge
+        const active = [CF.vendedor, CF.producto, CF.zona].filter(Boolean);
+        const badge = document.getElementById('cf_badge');
+        if (badge) {
+          badge.textContent = active.length ? '🔍 ' + active.join(' · ') + '  ✕' : '';
+          badge.style.display = active.length ? 'inline-flex' : 'none';
+          badge.onclick = () => { CF = {vendedor:null,producto:null,zona:null}; applyCF(); refreshAllCharts(ventas); };
+        }
+      }
+
+      function updateChartsByFilter(filtered) {
+        // Update donut (productos)
+        const byP = {};
+        filtered.forEach(v => { byP[v.producto] = (byP[v.producto]||0) + v.monto; });
+        if (charts.prod && Object.keys(byP).length) {
+          charts.prod.data.labels = Object.keys(byP);
+          charts.prod.data.datasets[0].data = Object.values(byP);
+          charts.prod.update('active');
+        }
+        // Update vendedores
+        const byV = {};
+        filtered.forEach(v => { byV[v.vendedor] = (byV[v.vendedor]||0) + v.monto; });
+        const vEntries = Object.entries(byV).sort((a,b)=>b[1]-a[1]);
+        if (charts.vend && vEntries.length) {
+          charts.vend.data.labels = vEntries.map(e=>e[0]);
+          charts.vend.data.datasets[0].data = vEntries.map(e=>e[1]);
+          charts.vend.data.datasets[0].backgroundColor = vEntries.map(e => CF.vendedor===e[0] ? em : em+'55');
+          charts.vend.update('active');
+        }
+        // Update zonas
+        const byZ = {};
+        filtered.forEach(v => { byZ[v.zona] = (byZ[v.zona]||0) + v.monto; });
+        const zEntries = Object.entries(byZ);
+        if (charts.zona && zEntries.length) {
+          charts.zona.data.labels = zEntries.map(e=>e[0]);
+          charts.zona.data.datasets[0].data = zEntries.map(e=>e[1]);
+          charts.zona.data.datasets[0].backgroundColor = zEntries.map(e => CF.zona===e[0] ? em : em+'55');
+          charts.zona.update('active');
+        }
+      }
+
+      function refreshAllCharts(v) {
+        updateChartsByFilter(v);
+        // Reset opacity
+        if (charts.vend) { charts.vend.data.datasets[0].backgroundColor = Array(charts.vend.data.labels.length).fill(em+'88'); charts.vend.update('none'); }
+        if (charts.zona) { charts.zona.data.datasets[0].backgroundColor = Array(charts.zona.data.labels.length).fill(em+'88'); charts.zona.update('none'); }
+        // Restore KPIs
+        const total = v.reduce((s,x) => s+(x.monto||0), 0);
+        const meta = STATE.config.meta || 90000000;
+        const kv = document.getElementById('kpi_ventas'); if(kv) kv.textContent = '$'+fmt(total);
+        const kp = document.getElementById('kpi_pedidos'); if(kp) kp.textContent = v.length;
+        const km = document.getElementById('kpi_meta'); if(km) km.textContent = Math.round((total/meta)*100)+'%';
+        // Restore recent table
+        renderRecentVentas();
+      }
+
+      // Group data
       const meses = {};
       ventas.forEach(v => {
-        const mes = v.fecha.substring(0, 7);
-        meses[mes] = (meses[mes] || 0) + v.monto;
+        const m = (v.fecha||'').substring(0,7);
+        if (m) meses[m] = (meses[m]||0) + (v.monto||0);
       });
       const mesLabels = Object.keys(meses).sort();
       const mesData = mesLabels.map(l => meses[l]);
 
-      const ctx1 = document.getElementById('ch_ventas').getContext('2d');
-      charts.ventas = new Chart(ctx1, {
-        type: 'line',
-        data: {
-          labels: mesLabels.length > 0 ? mesLabels : DEMO_MESES.labels,
-          datasets: [{
-            label: 'Ventas mensuales',
-            data: mesData.length > 0 ? mesData : [0, 0, 0, 0, 0, 0],
-            borderColor: em,
-            backgroundColor: em + '33',
-            fill: true,
-            tension: 0.4,
-            pointBackgroundColor: em,
-            pointRadius: 3,
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            y: { grid: { color: gridColor }, ticks: { color: textColor, callback: v => '$' + fmt(v) } },
-            x: { grid: { display: false }, ticks: { color: textColor } }
-          }
-        }
-      });
-      if (mesLabels.length > 0) {
-        document.getElementById('chart_ventas_sub').textContent = mesLabels.join(' · ');
+      const byProd = {};
+      ventas.forEach(v => { byProd[v.producto] = (byProd[v.producto]||0) + (v.monto||0); });
+      const prodEntries = Object.entries(byProd);
+
+      const byVend = {};
+      ventas.forEach(v => { byVend[v.vendedor] = (byVend[v.vendedor]||0) + (v.monto||0); });
+      const vendEntries = Object.entries(byVend).sort((a,b)=>b[1]-a[1]);
+
+      const byZona = {};
+      ventas.forEach(v => { byZona[v.zona] = (byZona[v.zona]||0) + (v.monto||0); });
+      const zonaEntries = Object.entries(byZona);
+
+      const COLORS = ['#2563EB','#7C3AED','#0EA5E9','#D97706','#DC2626','#059669','#F59E0B'];
+      const gc = 'rgba(0,0,0,0.05)';
+      const tt = { backgroundColor:'#fff', borderColor:'#E2E8F0', borderWidth:1,
+        titleColor:'#1E293B', bodyColor:'#475569', padding:10, cornerRadius:8 };
+      const sx = {
+        x:{ grid:{color:gc}, ticks:{color:'#94A3B8',font:{size:11}} },
+        y:{ grid:{color:gc}, ticks:{color:'#94A3B8',font:{size:11},
+          callback: v => v>=1000000?'$'+Math.round(v/1000000)+'M':v>=1000?'$'+Math.round(v/1000)+'K':'$'+v }}
+      };
+
+      // Destroy existing
+      Object.keys(charts).forEach(k => { if(charts[k]) { charts[k].destroy(); delete charts[k]; } });
+
+      // 1. LINE — tendencia ventas
+      const ctx1 = document.getElementById('ch_ventas')?.getContext('2d');
+      if (ctx1) {
+        charts.ventas = new Chart(ctx1, {
+          type:'line',
+          data:{ labels: mesLabels.length ? mesLabels : DEMO_MESES.labels,
+            datasets:[{ label:'Ventas', data: mesData.length ? mesData : DEMO_MESES.data,
+              borderColor:em, backgroundColor:em+'22', fill:true, tension:0.4,
+              pointBackgroundColor:em, pointRadius:5, pointHoverRadius:9 }]},
+          options:{ responsive:true, maintainAspectRatio:false,
+            interaction:{mode:'index',intersect:false},
+            plugins:{ legend:{display:false}, tooltip:{...tt,callbacks:{label:c=>' $'+fmt(c.parsed.y)}} },
+            scales:sx }
+        });
       }
 
-      // Productos
-      const prodMap = {};
-      ventas.forEach(v => {
-        prodMap[v.producto] = (prodMap[v.producto] || 0) + (v.unidades || 1);
-      });
-      const prodLabels = Object.keys(prodMap).sort((a, b) => prodMap[b] - prodMap[a]);
-      const prodData = prodLabels.map(l => prodMap[l]);
-
-      const ctx2 = document.getElementById('ch_productos').getContext('2d');
-      const prodColors = ['#2563EB', '#0EA5E9', '#7C3AED', '#D97706', '#DC2626', '#00E5A0', '#F59E0B'];
-      charts.productos = new Chart(ctx2, {
-        type: 'doughnut',
-        data: {
-          labels: prodLabels.length > 0 ? prodLabels.slice(0, 6) : ['Banano', 'Piña', 'Mango', 'Aguacate', 'Papaya', 'Otros'],
-          datasets: [{
-            data: prodData.length > 0 ? prodData.slice(0, 6) : [30, 25, 20, 12, 8, 5],
-            backgroundColor: prodColors,
-            borderWidth: 0
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          cutout: '65%',
-          plugins: { legend: { position: 'right', labels: { color: textColor, boxWidth: 10, padding: 6 } } }
-        }
-      });
-      if (prodLabels.length > 0) {
-        document.getElementById('chart_productos_sub').textContent = prodLabels.slice(0, 3).join(', ') + (prodLabels.length > 3 ? '...' : '');
+      // 2. DONUT — productos (CLICK = cross-filter)
+      const ctx2 = document.getElementById('ch_productos')?.getContext('2d');
+      if (ctx2 && prodEntries.length) {
+        charts.prod = new Chart(ctx2, {
+          type:'doughnut',
+          data:{ labels:prodEntries.map(e=>e[0]),
+            datasets:[{ data:prodEntries.map(e=>e[1]), backgroundColor:COLORS,
+              hoverOffset:16, borderWidth:3, borderColor:'#F8F9FC' }]},
+          options:{ responsive:true, maintainAspectRatio:false, cutout:'62%',
+            plugins:{ legend:{position:'right',labels:{color:'#475569',font:{size:11},usePointStyle:true}},
+              tooltip:{...tt,callbacks:{label:c=>' '+c.label+': $'+fmt(c.parsed)+' ('+Math.round(c.parsed/c.dataset.data.reduce((a,b)=>a+b,0)*100)+'%)'}}},
+            onClick:(e,els) => {
+              if (!els.length) { CF.producto = null; }
+              else {
+                const p = prodEntries[els[0].index]?.[0];
+                CF.producto = CF.producto === p ? null : p;
+                toast(CF.producto ? '🔍 Producto: ' + CF.producto : '🔄 Filtro limpiado');
+              }
+              applyCF();
+            }
+          }
+        });
       }
 
-      // Vendedores
-      const vendMap = {};
-      ventas.forEach(v => {
-        vendMap[v.vendedor] = (vendMap[v.vendedor] || 0) + v.monto;
-      });
-      const vendLabels = Object.keys(vendMap).sort((a, b) => vendMap[b] - vendMap[a]);
-      const vendData = vendLabels.map(l => vendMap[l] / 1000000);
-
-      const ctx3 = document.getElementById('ch_vendedores').getContext('2d');
-      charts.vendedores = new Chart(ctx3, {
-        type: 'bar',
-        data: {
-          labels: vendLabels.length > 0 ? vendLabels.slice(0, 8) : ['Carlos Mendez', 'Ana Pérez', 'Luis Torres', 'María García', 'Pedro Ruiz'],
-          datasets: [{
-            label: 'Ventas (M)',
-            data: vendData.length > 0 ? vendData.slice(0, 8) : [45, 38, 30, 25, 20],
-            backgroundColor: ['#2563EB', '#0EA5E9', '#7C3AED', '#D97706', '#DC2626', '#00E5A0', '#F59E0B'],
-            borderRadius: 6
-          }]
-        },
-        options: {
-          indexAxis: 'y',
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            x: { grid: { color: gridColor }, ticks: { color: textColor, callback: v => '$' + v + 'M' } },
-            y: { grid: { display: false }, ticks: { color: textColor } }
+      // 3. H-BAR — vendedores (CLICK = cross-filter)
+      const ctx3 = document.getElementById('ch_vendedores')?.getContext('2d');
+      if (ctx3 && vendEntries.length) {
+        charts.vend = new Chart(ctx3, {
+          type:'bar',
+          data:{ labels:vendEntries.map(e=>e[0]),
+            datasets:[{ data:vendEntries.map(e=>e[1]),
+              backgroundColor: vendEntries.map(()=>em+'88'),
+              hoverBackgroundColor:em, borderRadius:6, borderSkipped:false }]},
+          options:{ indexAxis:'y', responsive:true, maintainAspectRatio:false,
+            interaction:{mode:'index',intersect:false},
+            plugins:{ legend:{display:false}, tooltip:{...tt,callbacks:{label:c=>' $'+fmt(c.parsed.x)}} },
+            scales:{ x:{...sx.x}, y:{grid:{display:false},ticks:{color:'#475569',font:{size:11}}} },
+            onClick:(e,els) => {
+              if (!els.length) { CF.vendedor = null; }
+              else {
+                const v = vendEntries[els[0].index]?.[0];
+                CF.vendedor = CF.vendedor === v ? null : v;
+                toast(CF.vendedor ? '🔍 Vendedor: ' + CF.vendedor : '🔄 Filtro limpiado');
+                // Highlight selected bar
+                if(charts.vend) {
+                  charts.vend.data.datasets[0].backgroundColor = vendEntries.map(e => CF.vendedor===e[0] ? em : em+'44');
+                  charts.vend.update('none');
+                }
+              }
+              applyCF();
+            }
           }
-        }
-      });
-      if (vendLabels.length > 0) {
-        document.getElementById('chart_vendedores_sub').textContent = vendLabels.slice(0, 3).join(', ') + (vendLabels.length > 3 ? '...' : '');
+        });
       }
 
-      // Zonas
-      const zonaMap = {};
-      ventas.forEach(v => {
-        zonaMap[v.zona] = (zonaMap[v.zona] || 0) + v.monto;
-      });
-      const zonaLabels = Object.keys(zonaMap).sort((a, b) => zonaMap[b] - zonaMap[a]);
-      const totalVentas = ventas.reduce((s, v) => s + v.monto, 0);
-      const zonaData = zonaLabels.map(l => totalVentas > 0 ? Math.round((zonaMap[l] / totalVentas) * 100) : 0);
-
-      const ctx4 = document.getElementById('ch_zonas').getContext('2d');
-      charts.zonas = new Chart(ctx4, {
-        type: 'bar',
-        data: {
-          labels: zonaLabels.length > 0 ? zonaLabels : ['Norte', 'Sur', 'Centro', 'Oriente', 'Occidente', 'Industrial'],
-          datasets: [{
-            label: 'Ventas %',
-            data: zonaData.length > 0 ? zonaData : [32, 28, 22, 12, 6, 0],
-            backgroundColor: em + '99',
-            borderRadius: 6
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { legend: { display: false } },
-          scales: {
-            y: { grid: { color: gridColor }, ticks: { color: textColor, callback: v => v + '%' } },
-            x: { grid: { display: false }, ticks: { color: textColor } }
+      // 4. V-BAR — zonas (CLICK = cross-filter)
+      const ctx4 = document.getElementById('ch_zonas')?.getContext('2d');
+      if (ctx4 && zonaEntries.length) {
+        charts.zona = new Chart(ctx4, {
+          type:'bar',
+          data:{ labels:zonaEntries.map(e=>e[0]),
+            datasets:[{ data:zonaEntries.map(e=>e[1]),
+              backgroundColor: zonaEntries.map(()=>em+'88'),
+              hoverBackgroundColor:em, borderRadius:6, borderSkipped:false }]},
+          options:{ responsive:true, maintainAspectRatio:false,
+            interaction:{mode:'index',intersect:false},
+            plugins:{ legend:{display:false}, tooltip:{...tt,callbacks:{label:c=>' $'+fmt(c.parsed.y)}} },
+            scales:sx,
+            onClick:(e,els) => {
+              if (!els.length) { CF.zona = null; }
+              else {
+                const z = zonaEntries[els[0].index]?.[0];
+                CF.zona = CF.zona === z ? null : z;
+                toast(CF.zona ? '🔍 Zona: ' + CF.zona : '🔄 Filtro limpiado');
+                if(charts.zona) {
+                  charts.zona.data.datasets[0].backgroundColor = zonaEntries.map(e => CF.zona===e[0] ? em : em+'44');
+                  charts.zona.update('none');
+                }
+              }
+              applyCF();
+            }
           }
-        }
-      });
-      if (zonaLabels.length > 0) {
-        document.getElementById('chart_zonas_sub').textContent = zonaLabels.slice(0, 3).join(', ') + (zonaLabels.length > 3 ? '...' : '');
+        });
       }
     }
 
