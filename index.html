@@ -2011,7 +2011,7 @@
 
     function initCharts() {
       const em = getComputedStyle(document.documentElement).getPropertyValue('--em').trim() || '#2563EB';
-      const ventas = STATE.isDemo ? DEMO_VENTAS : STATE.ventas;
+      const ventas = STATE.ventas; // always use current STATE
 
       // Cross-filter state
       let CF = { vendedor: null, producto: null, zona: null };
@@ -2885,6 +2885,13 @@ Responde solo con JSON en este formato:
         STATE.syncInProgress = false;
         if (btn) { btn.textContent = '⟳ Sincronizar';
           btn.disabled = false; }
+        // Trigger consolidar in Sheets (updates Consolidado tab)
+        const url = localStorage.getItem('dq_script_url');
+        if (url) {
+          try {
+            await fetch(url + '?action=getDashboard');
+          } catch(e) {}
+        }
       }
     }
 
