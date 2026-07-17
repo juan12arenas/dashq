@@ -179,7 +179,7 @@
       <!-- CONSULTOR IA -->
       <section id="tab-ia" class="tab-content space-y-4 hidden">
         <div class="flex items-center justify-between">
-          <div><h2 class="text-xl font-bold tracking-tight">Consultor Avanzado</h2><p class="text-xs text-zinc-400">Análisis operativo de rendimiento y matrices</p></div>
+          <div><h2 class="text-xl font-bold tracking-tight">Consultor Avanzado</h2><p class="text-xs text-zinc-400">Análisis estratégico y correlación de rendimiento</p></div>
           <button onclick="ejecutarAnalisisIA()" class="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-zinc-950 font-bold rounded-xl text-xs flex items-center gap-2"><i data-lucide="cpu" class="w-4 h-4"></i> Generar Informe Ejecutivo</button>
         </div>
         <div class="glass p-6 rounded-2xl min-h-[400px] flex flex-col justify-between bg-zinc-900/30">
@@ -230,9 +230,7 @@
     }
 
     function inicializarFechasSlicer() {
-      const hoy = new Date();
-      document.getElementById('filter-hasta').value = hoy.toISOString().split('T')[0];
-      document.getElementById('filter-desde').value = new Date(hoy.getFullYear(), hoy.getMonth(), 1).toISOString().split('T')[0];
+      console.log("Slicer de fechas inicializado internamente para el procesamiento de datos.");
     }
 
     function cargarSesionExistente() {
@@ -386,12 +384,9 @@
     }
 
     function procesarFiltrosYRender() {
-      const inputDesde = document.getElementById('filter-desde').value;
-      const inputHasta = document.getElementById('filter-hasta').value;
-      if (!inputDesde || !inputHasta) return;
-      const partesDesde = inputDesde.split('-'); const partesHasta = inputHasta.split('-');
-      const fDesde = new Date(partesDesde[0], partesDesde[1] - 1, partesDesde[2]).getTime();
-      const fHasta = new Date(partesHasta[0], partesHasta[1] - 1, partesHasta[2], 23, 59, 59).getTime();
+      const hoy = new Date();
+      const fDesde = new Date(hoy.getFullYear(), hoy.getMonth(), 1).getTime();
+      const fHasta = new Date(hoy.getFullYear(), hoy.getMonth(), hoy.getDate(), 23, 59, 59).getTime();
       
       let filtered = db.ventas.filter(v => {
         if (!v.fecha) return false;
@@ -400,6 +395,9 @@
         let t = new Date(p[0], p[1] - 1, p[2]).getTime();
         return t >= fDesde && t <= fHasta;
       });
+
+      if (selectedFilters.vendedor) filtered = filtered.filter(v => v.vendedor === selectedFilters.vendedor);
+      if (selectedFilters.ubicacion) filtered = filtered.filter(v => v.ubicacion === selectedFilters.ubicacion);
 
       let total = 0, mapT = {}, mapV = {}, mapU = {};
       filtered.forEach(v => {
@@ -472,7 +470,6 @@
         body: JSON.stringify({ model: 'mistral-tiny', messages: [{ role: 'user', content: pContext }], temperature: 0.2 })
       })
       .then(r => r.json()).then(res => { 
-        // Solución definitiva al parseo visual: la librería limpia la notación y dibuja elementos HTML ejecutivos reales
         out.innerHTML = marked.parse(res.choices[0].message.content); 
       });
     }
