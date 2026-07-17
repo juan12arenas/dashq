@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DataPulse Suite</title>
+  <title>DataPulse Suite Pro</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -47,7 +47,7 @@
     </div>
   </div>
 
-  <!-- ONBOARDING MODAL COMPLETO -->
+  <!-- ONBOARDING MODAL -->
   <div id="modal-onboarding" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto">
     <div class="w-full max-w-3xl glass p-8 rounded-2xl space-y-4 my-8 max-h-[90vh] overflow-y-auto">
       <div class="flex justify-between items-center">
@@ -148,7 +148,20 @@
               <form id="form-nueva-venta" class="space-y-3 text-xs">
                 <div><label class="block mb-1 text-zinc-400">Fecha Operación</label><input type="date" id="v-fecha" required class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg text-white"></div>
                 <div><label class="block mb-1 text-zinc-400">Seleccionar Producto</label><select id="v-prod" onchange="autoCompletarPrecioVenta()" class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg text-white"></select></div>
-                <div><label class="block mb-1 text-zinc-400">Monto Calculado ($)</label><input type="number" id="v-monto" required class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg text-white"></div>
+                
+                <!-- Campos de Cantidad y Precio Agregados Dinámicamente con Cálculo en Vivo -->
+                <div class="grid grid-cols-2 gap-2">
+                  <div>
+                    <label class="block mb-1 text-zinc-400">Cantidad</label>
+                    <input type="number" id="v-cantidad" value="1" min="1" oninput="autoCompletarPrecioVenta()" required class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg text-white">
+                  </div>
+                  <div>
+                    <label class="block mb-1 text-zinc-400">Precio Unitario ($)</label>
+                    <input type="number" id="v-precio-unitario" readonly class="w-full bg-zinc-800 border border-zinc-700 p-2 rounded-lg text-zinc-400 select-none">
+                  </div>
+                </div>
+
+                <div><label class="block mb-1 text-zinc-400">Monto Total Calculado ($)</label><input type="number" id="v-monto" readonly required class="w-full bg-zinc-800 border border-zinc-700 p-2 rounded-lg text-emerald-400 font-bold"></div>
                 <div><label class="block mb-1 text-zinc-400">Asignar Vendedor</label><select id="v-vend" class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg text-white"></select></div>
                 <div><label class="block mb-1 text-zinc-400">Ubicación de Despacho</label><select id="v-ubici" class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg text-white"><option>Norte</option><option>Centro</option><option>Sur</option></select></div>
                 <button type="submit" class="w-full py-2 bg-purple-500 font-bold text-zinc-950 rounded-lg">Inyectar Transacción</button>
@@ -189,7 +202,6 @@
                 <input type="password" id="cfg-mistral" class="flex-1 bg-zinc-900 border border-zinc-700 p-2 text-xs rounded-lg text-white">
                 <button onclick="guardarMistralKey()" class="px-4 py-2 bg-purple-500 text-zinc-950 rounded-lg text-xs font-bold">Vincular Token</button>
               </div>
-              <!-- Indicador de conexión de API -->
               <div id="api-status-badge" class="hidden text-[11px] font-semibold inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-400">
                 <i data-lucide="check-circle" class="w-3.5 h-3.5"></i> Conexión de API exitosa y vinculada
               </div>
@@ -198,10 +210,9 @@
         </div>
       </section>
 
-      <!-- PESTAÑA: TRACKING DE OBJETIVOS (FORMULARIO OKRs INCLUIDO) -->
+      <!-- PESTAÑA: TRACKING DE OBJETIVOS -->
       <section id="tab-objetivos" class="tab-content space-y-6 hidden">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <!-- Formulario de creación de objetivos -->
           <div class="glass p-5 rounded-2xl space-y-3 lg:col-span-1 h-fit">
             <h3 class="font-bold text-purple-400 text-xs uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="target" class="w-4 h-4"></i> Crear Objetivo OKR</h3>
             <form id="form-nuevo-okr" class="space-y-3 text-xs">
@@ -214,7 +225,6 @@
             </div>
           </div>
           
-          <!-- Contenedor de visualización de objetivos -->
           <div class="lg:col-span-2 space-y-4">
             <h3 class="font-bold text-sm text-zinc-300 uppercase tracking-wide">Cuadro de Mando de Objetivos</h3>
             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4" id="container-objetivos"></div>
@@ -306,7 +316,7 @@
     }
 
     function cargarSesionExistente() {
-      const cache = localStorage.getItem('datapulse_session_v4');
+      const cache = localStorage.getItem('datapulse_session_v5');
       if (cache) {
         session = JSON.parse(cache);
         document.getElementById('label-user').innerText = session.correo;
@@ -319,13 +329,18 @@
           db.productos = res.productos || [];
           db.vendedores = res.vendedores || [];
           db.objetivos = res.objetivos || [];
+          db.organizacion = res.organizacion || {};
           session.mistralKey = res.mistralKey || "";
+          
+          // Anclaje inmutable del nombre de la empresa a través del estado de la SPA
+          document.getElementById('header-empresa').innerText = db.organizacion.nombreEmpresa || "DataPulse";
           
           document.getElementById('cfg-mistral').value = session.mistralKey;
           if(session.mistralKey) {
             document.getElementById('api-status-badge').classList.remove('hidden');
           }
           
+          mapearDatosOrganizacionAInputs();
           poblarListasDesplegablesFormulario();
           renderizarTablaInventario();
           renderizarObjetivos();
@@ -343,7 +358,7 @@
       })
       .then(r => r.json())
       .then(res => { if(res.success) callback(res.data); else alert("Error operativo: " + res.error); })
-      .catch(() => console.log("Fetch procesado"));
+      .catch(() => console.log("Fetch procesado de forma nativa"));
     }
 
     function ejecutarLogin(e) {
@@ -354,11 +369,10 @@
       
       consumirApiBack('login', {}, (res) => {
         session.idUsuario = res.idUsuario;
-        localStorage.setItem('datapulse_session_v4', JSON.stringify(session));
+        localStorage.setItem('datapulse_session_v5', JSON.stringify(session));
         if(res.organizacion) {
           db.organizacion = res.organizacion;
           document.getElementById('header-empresa').innerText = db.organizacion.nombreEmpresa || "DataPulse";
-          mapearDatosOrganizacionAInputs();
         }
         document.getElementById('view-login').classList.add('hidden');
         document.getElementById('view-app').classList.remove('hidden');
@@ -436,9 +450,14 @@
       autoCompletarPrecioVenta();
     }
 
+    // MULTIPLICACIÓN AUTOMÁTICA EN VIVO DE UNIDADES × VALOR UNITARIO
     function autoCompletarPrecioVenta() {
       const match = db.productos.find(p => p.nombre === document.getElementById('v-prod').value);
-      if(match) document.getElementById('v-monto').value = match.precio;
+      if(match) {
+        const cantidad = Number(document.getElementById('v-cantidad').value) || 1;
+        document.getElementById('v-precio-unitario').value = match.precio;
+        document.getElementById('v-monto').value = Math.round(match.precio * cantidad);
+      }
     }
 
     function renderizarTablaInventario() {
@@ -461,15 +480,28 @@
       const venta = { 
         fecha: document.getElementById('v-fecha').value, 
         producto: document.getElementById('v-prod').value, 
+        cantidad: document.getElementById('v-cantidad').value,
         monto: document.getElementById('v-monto').value, 
         vendedor: document.getElementById('v-vend').value, 
         ubicacion: document.getElementById('v-ubici').value 
       };
+      
+      // Bloque asíncrono ordenado: envía, espera respuesta, limpia formulario y fuerza renderizado total
       consumirApiBack('registrarVenta', { venta: venta }, () => { 
-        alert("Venta Impactada con Éxito."); 
+        alert("Transacción impactada correctamente."); 
         document.getElementById('form-nueva-venta').reset();
-        // Recargar la data forzada del servidor y refrescar visuales
-        cargarSesionExistente();
+        document.getElementById('v-cantidad').value = "1";
+        
+        // El truco de reactividad garantizada para el dashboard: volver a bajar la data fresca antes de procesar
+        consumirApiBack('obtenerDatosDashboard', {}, (res) => {
+          db.ventas = res.ventas || [];
+          db.productos = res.productos || [];
+          db.objetivos = res.objetivos || [];
+          renderizarTablaInventario();
+          renderizarObjetivos();
+          procesarFiltrosYRender(); 
+          cambiarPestaña('dash'); // Forzar retorno de vista al tablero principal actualizado
+        });
       });
     }
 
@@ -489,11 +521,7 @@
 
     function ejecutarCrearOKR(e) {
       e.preventDefault();
-      const obj = {
-        descripcion: document.getElementById('okr-desc').value,
-        meta: document.getElementById('okr-meta').value,
-        actual: 0
-      };
+      const obj = { descripcion: document.getElementById('okr-desc').value, meta: document.getElementById('okr-meta').value, actual: 0 };
       consumirApiBack('guardarObjetivo', { objetivo: obj }, () => {
         document.getElementById('form-nuevo-okr').reset();
         alert("OKR Inyectado con Éxito.");
@@ -503,7 +531,7 @@
 
     function solicitarSugerenciasOKR() {
       if(!session.mistralKey) return alert("Falta API Key de Mistral.");
-      const prompt = `Analiza un volumen comercial general de ventas. Sugiere un objetivo corporativo estructurado. Responde sumamente corto.`;
+      const prompt = `Sugiere un objetivo corporativo estructurado. Responde sumamente corto.`;
       fetch('https://api.mistral.ai/v1/chat/completions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.mistralKey}` },
@@ -516,7 +544,6 @@
       const fDesde = new Date(document.getElementById('filter-desde').value);
       const fHasta = new Date(document.getElementById('filter-hasta').value);
       
-      // Corregida consistencia de propiedad "ubicacion" sin tilde
       let filtered = db.ventas.filter(v => { 
         const f = new Date(v.fecha); 
         return f >= fDesde && f <= fHasta; 
@@ -543,7 +570,7 @@
         tbody.innerHTML += `
           <tr class="hover:bg-zinc-900/30">
             <td class="p-3 text-zinc-400">${new Date(v.fecha).toLocaleDateString('es-CO', {timeZone:'UTC'})}</td>
-            <td class="p-3 text-zinc-200 font-medium">${v.producto}</td>
+            <td class="p-3 text-zinc-200 font-medium">${v.producto} <span class="text-[10px] text-purple-400 font-normal">(${v.cantidad || 1} uds)</span></td>
             <td class="p-3"><span class="px-2 py-0.5 bg-zinc-800 text-zinc-300 rounded text-[11px]">${v.vendedor}</span></td>
             <td class="p-3 text-zinc-400">${v.ubicacion || 'General'}</td>
             <td class="p-3 text-right font-bold text-purple-400">$ ${Number(v.monto).toLocaleString()}</td>
@@ -575,14 +602,20 @@
       chartInstances.ubicaciones = new ApexCharts(document.getElementById("chart-ubicaciones"), options); chartInstances.ubicaciones.render();
     }
 
-    function cambiarPestaña(tabId) { document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden')); document.getElementById('tab-' + tabId).classList.remove('hidden'); }
+    function cambiarPestaña(tabId) { 
+      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden')); 
+      document.getElementById('tab-' + tabId).classList.remove('hidden'); 
+      
+      // Asegurar que el nombre de la organización se mantenga visible e inalterado al cambiar de vista
+      document.getElementById('header-empresa').innerText = db.organizacion.nombreEmpresa || "DataPulse";
+    }
     
     function guardarMistralKey() { 
       const key = document.getElementById('cfg-mistral').value; 
       consumirApiBack('guardarConfig', { mistralKey: key }, () => { 
         session.mistralKey = key; 
         document.getElementById('api-status-badge').classList.remove('hidden');
-        alert("API Key Guardada exitosamente en el servidor."); 
+        alert("API Key Guardada exitosamente."); 
       }); 
     }
 
@@ -591,7 +624,7 @@
       const out = document.getElementById('ia-output'); out.innerHTML = `<p class="text-center py-20 text-purple-400 animate-pulse">Estructurando diagnóstico comercial interactivo...</p>`;
       const hist = db.ventas.map(v => `Monto: ${v.monto}`).join(', ');
       
-      const pContext = `Genera un reporte analítico resumido usando Markdown. Usa títulos h3 y viñetas con insights directos.`;
+      const pContext = `Genera un reporte analítico usando Markdown. Usa títulos h3 y viñetas con insights directos.`;
       fetch('https://api.mistral.ai/v1/chat/completions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.mistralKey}` },
