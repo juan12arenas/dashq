@@ -541,8 +541,7 @@
 
     function renderizarObjetivos() {
       const cont = document.getElementById('container-objetivos'); cont.innerHTML = "";
-      let totalMeta = 0;
-      let totalActual = 0;
+      let totalMeta = 0, totalActual = 0;
 
       if (!db.objetivos || db.objetivos.length === 0) {
         cont.innerHTML = '<p class="col-span-2 text-center text-zinc-500 py-8 text-xs">Sin OKRs registrados. Crea el primero desde el panel lateral.</p>';
@@ -551,86 +550,75 @@
       }
 
       db.objetivos.forEach(o => {
-        totalMeta += Number(o.meta || 0);
+        totalMeta   += Number(o.meta   || 0);
         totalActual += Number(o.actual || 0);
-        const pct = o.meta > 0 ? Math.min(Math.round((Number(o.actual) / Number(o.meta)) * 100), 100) : 0;
+        const meta   = Number(o.meta   || 1);
+        const actual = Number(o.actual || 0);
+        const pct    = meta > 0 ? Math.min(Math.round((actual / meta) * 100), 100) : 0;
+        const falta  = Math.max(0, meta - actual);
 
-        // Semáforo de color según avance
-        const semColor  = pct >= 70 ? 'bg-emerald-500'  : pct >= 40 ? 'bg-amber-400'   : 'bg-rose-500';
-        const semText   = pct >= 70 ? 'text-emerald-400' : pct >= 40 ? 'text-amber-400' : 'text-rose-400';
-        const semBg     = pct >= 70 ? 'bg-emerald-500/10 text-emerald-400' : pct >= 40 ? 'bg-amber-400/10 text-amber-400' : 'bg-rose-500/10 text-rose-400';
-        const semLabel  = pct >= 70 ? '🟢 En camino'    : pct >= 40 ? '🟡 Seguimiento' : '🔴 Crítico';
+        const semColor = pct >= 70 ? 'bg-emerald-500'  : pct >= 40 ? 'bg-amber-400'  : 'bg-rose-500';
+        const semText  = pct >= 70 ? 'text-emerald-400': pct >= 40 ? 'text-amber-400': 'text-rose-400';
+        const semBg    = pct >= 70 ? 'bg-emerald-500/10 text-emerald-400' : pct >= 40 ? 'bg-amber-400/10 text-amber-400' : 'bg-rose-500/10 text-rose-400';
+        const semLabel = pct >= 70 ? '🟢 En camino'    : pct >= 40 ? '🟡 Seguimiento': '🔴 Crítico';
 
-        // Objetivo (O) — viene del campo okr-obj, guardado en o.objetivo o fallback a o.id
         const objetivoTexto = o.objetivo || o.id || 'Objetivo Estratégico';
+        const faltaTexto = falta <= 0 ? '✓ Meta' : '$' + falta.toLocaleString('es-CO');
+        const faltaColor = falta <= 0 ? 'text-emerald-400' : 'text-zinc-300';
 
-        cont.innerHTML += \`
-          <div class="glass p-5 rounded-2xl space-y-3 text-xs border border-zinc-800 hover:border-zinc-600 transition-colors">
-            <!-- Header: etiqueta KR + semáforo + % -->
+        const card = `<div class="glass p-5 rounded-2xl space-y-3 text-xs border border-zinc-800 hover:border-zinc-600 transition-colors">
             <div class="flex justify-between items-center">
               <span class="px-2 py-0.5 bg-purple-500/10 text-purple-400 text-[10px] uppercase font-bold rounded-md">OKR</span>
-              <span class="px-2 py-0.5 rounded-md text-[10px] font-bold \${semBg}">\${semLabel}</span>
+              <span class="px-2 py-0.5 rounded-md text-[10px] font-bold ${semBg}">${semLabel}</span>
             </div>
-
-            <!-- Objetivo (O) -->
             <div class="space-y-0.5">
               <p class="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Objetivo (O)</p>
-              <p class="text-zinc-200 font-semibold leading-snug">\${objetivoTexto}</p>
+              <p class="text-zinc-200 font-semibold leading-snug">${objetivoTexto}</p>
             </div>
-
-            <!-- Key Result (KR) -->
             <div class="space-y-0.5">
               <p class="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Key Result (KR)</p>
-              <p class="text-zinc-300 leading-snug">\${o.descripcion}</p>
+              <p class="text-zinc-300 leading-snug">${o.descripcion}</p>
             </div>
-
-            <!-- Barra de progreso -->
             <div class="space-y-1.5">
               <div class="flex justify-between items-center">
                 <span class="text-zinc-400">Avance</span>
-                <span class="font-bold text-sm \${semText}">\${pct}%</span>
+                <span class="font-bold text-sm ${semText}">${pct}%</span>
               </div>
               <div class="w-full bg-zinc-800 h-2.5 rounded-full overflow-hidden">
-                <div class="\${semColor} h-full rounded-full transition-all duration-700" style="width: \${pct}%"></div>
+                <div class="${semColor} h-full rounded-full transition-all duration-700" style="width:${pct}%"></div>
               </div>
             </div>
-
-            <!-- Cifras actual vs meta -->
             <div class="flex justify-between items-center pt-1 border-t border-zinc-800">
               <div class="text-center">
                 <p class="text-zinc-500 text-[10px] mb-0.5">Actual</p>
-                <p class="text-zinc-200 font-bold">$\${Number(o.actual).toLocaleString('es-CO')}</p>
+                <p class="text-zinc-200 font-bold">$${actual.toLocaleString('es-CO')}</p>
               </div>
               <div class="text-center">
                 <p class="text-zinc-500 text-[10px] mb-0.5">Meta</p>
-                <p class="text-zinc-200 font-bold">$\${Number(o.meta).toLocaleString('es-CO')}</p>
+                <p class="text-zinc-200 font-bold">$${meta.toLocaleString('es-CO')}</p>
               </div>
               <div class="text-center">
                 <p class="text-zinc-500 text-[10px] mb-0.5">Falta</p>
-                <p class="font-bold \${Number(o.meta) - Number(o.actual) <= 0 ? 'text-emerald-400' : 'text-zinc-300'}">
-                  \${Number(o.meta) - Number(o.actual) <= 0 ? '✓ Meta' : '$' + Math.max(0, Number(o.meta) - Number(o.actual)).toLocaleString('es-CO')}
-                </p>
+                <p class="font-bold ${faltaColor}">${faltaTexto}</p>
               </div>
             </div>
-          </div>\`;
+          </div>`;
+        cont.innerHTML += card;
       });
 
       const globalPct = totalMeta > 0 ? Math.min(Math.round((totalActual / totalMeta) * 100), 100) : 0;
       document.getElementById('kpi-okr-cumplimiento').innerText = globalPct + "%";
     }
-
     function ejecutarCrearOKR(e) {
       e.preventDefault();
       const obj = { 
-        objetivo: document.getElementById('okr-obj').value,
+        objetivo:    document.getElementById('okr-obj').value,
         descripcion: document.getElementById('okr-desc').value, 
-        meta: document.getElementById('okr-meta').value, 
-        actual: 0 
+        meta:        document.getElementById('okr-meta').value, 
+        actual:      0 
       };
-
       consumirApiBack('guardarObjetivo', { objetivo: obj }, () => {
         document.getElementById('form-nuevo-okr').reset();
-        // Toast en pantalla en lugar de alert
         const toast = document.getElementById('okr-toast');
         if (toast) { toast.classList.remove('hidden'); setTimeout(() => toast.classList.add('hidden'), 3000); }
         cargarSesionExistente();
