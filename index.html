@@ -824,7 +824,7 @@
             </div>
           </div>
 
-          <p style="font-size:.72rem;color:var(--mute);margin-bottom:6px;">💡 Clic en cualquier gráfica para filtrar las demás. Clic de nuevo para quitar el filtro.</p>
+          <p style="font-size:.72rem;color:var(--mute);margin-bottom:6px;">💡 Clic en cualquier gráfica para filtrar las demás. Clic de nuevo para quitar el filtro. <span id="cf_badge" onclick="clearChartFilter()" style="display:none;cursor:pointer;font-weight:700;color:var(--blue);margin-left:8px;"></span></p>
         <div class="charts-grid">
             <div class="chart-card" id="chart_ventas_card" onclick="highlightChart('ventas')">
               <div class="chart-head">
@@ -1248,7 +1248,16 @@
     }
 
     function cleanJSON(s) {
-      return s.replace(/```json/g, '').replace(/```/g, '').trim();
+      s = s.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+      const match = s.match(/\{[\s\S]*\}/);
+      return match ? match[0] : s;
+    }
+    function clearChartFilter() {
+      const badge = document.getElementById('cf_badge');
+      if (badge) badge.style.display = 'none';
+      initCharts(); // reset all charts
+      actualizarMiniKPIs();
+      toast('🔄 Filtros limpiados');
     }
 
     // ═══════════════════════════════════════════════════════════════
@@ -1473,28 +1482,41 @@
         const btn = document.querySelector('[onclick="loginUser()"]');
         if (btn) { btn.textContent = '⏳ Verificando...'; btn.disabled = true; }
         try {
-          const resp = await fetch(scriptUrl + '?action=getUserData&email=' + encodeURIComponent(email));
-          const data = await resp.json();
+          // 1. Verificar si usuario existe
+          const resp = await fetch(scriptUrl + '?action=getUsuario&email=' + encodeURIComponent(email));
+          const userInfo = await resp.json();
           if (btn) { btn.textContent = '🔑 Iniciar sesión'; btn.disabled = false; }
 
-          if (data && data.ok && data.exists) {
-            // Usuario existe — cargar todos sus datos desde Sheets
-            if (data.config) STATE.config = { ...STATE.config, ...data.config };
-            if (data.dofa) STATE.dofa = { ...STATE.dofa, ...data.dofa };
-            if (data.ventas && data.ventas.length > 0) STATE.ventas = data.ventas;
-            if (data.okrs && data.okrs.length > 0) STATE.okrs = data.okrs;
+          if (userInfo && userInfo.email) {
+            // Usuario EXISTE — cargar sus datos desde Sheets
+            toast('⏳ Cargando datos...');
+            try {
+              const [cfgResp, ventasResp, okrsResp, ctxResp] = await Promise.all([
+                fetch(scriptUrl + '?action=getConfig'),
+                fetch(scriptUrl + '?action=getVentas'),
+                fetch(scriptUrl + '?action=getOKRs'),
+                fetch(scriptUrl + '?action=getContexto')
+              ]);
+              const cfg  = await cfgResp.json();
+              const vRaw = await ventasResp.json();
+              const oRaw = await okrsResp.json();
+              const ctx  = await ctxResp.json();
+              if (cfg  && Object.keys(cfg).length)  STATE.config = { ...STATE.config, ...cfg };
+              if (vRaw.ventas?.length) STATE.ventas = vRaw.ventas;
+              if (oRaw.okrs?.length)  STATE.okrs   = oRaw.okrs;
+              if (ctx  && Object.keys(ctx).length)  STATE.dofa   = { ...STATE.dofa, ...ctx };
+            } catch(e2) {}
             STATE.filteredVentas = [...STATE.ventas];
             saveLocal();
-            toast('✅ Bienvenido/a de vuelta, ' + (data.user?.nombre || user));
+            toast('✅ Bienvenido/a de vuelta, ' + (userInfo.nombre || user));
             setTimeout(() => initApp(u), 300);
           } else {
-            // Usuario nuevo — limpiar todo y forzar onboarding
+            // Usuario NUEVO — limpiar todo y forzar onboarding
             STATE.config = { empresa:'', sector:'', ciudad:'', meta:0, nit:'', color:'#00E5A0', mision:'', vision:'', valores:'' };
-            STATE.okrs = [];
-            STATE.ventas = [];
+            STATE.okrs = []; STATE.ventas = [];
             STATE.dofa = { fortalezas:'', oportunidades:'', debilidades:'', amenazas:'' };
             STATE.filteredVentas = [];
-            localStorage.removeItem('dq_state'); // borrar datos locales viejos
+            localStorage.removeItem('dq_state');
             toast('👋 Primera vez — cuéntanos sobre tu empresa');
             setTimeout(() => startOnboarding(u), 400);
           }
@@ -1672,14 +1694,13 @@
           krs.push({ id: Date.now() + i, texto: t, meta: krMetas[i] || 0, avance: 0, unidad: unidades[i] || '' });
         }
       });
-      if (krs.length === 0) {
-        krs.push({ id: Date.now() + 0, texto: 'KR por definir', meta: 0, avance: 0, unidad: '' });
-      }
-      const okr = { id: Date.now(), objective: obj, krs: krs };
+      const okr = krs.length > 0
+        ? { id: Date.now(), objective: obj, krs: krs }
+        : null; // No OKR si no se llenaron los KRs
 
       STATE.config = config;
       STATE.dofa = dofa;
-      STATE.okrs = [okr];
+      STATE.okrs = okr ? [okr] : [];
       if (!STATE.ventas || STATE.ventas.length === 0) { STATE.ventas = []; }
       STATE.filteredVentas = [...STATE.ventas];
       saveLocal();
@@ -1690,11 +1711,12 @@
         const nombre = STATE.user?.name || '';
         fetch(url, {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
           body:JSON.stringify({action:'saveUsuario',email,nombre,rol:'admin'})});
+        // Send config fields flat — Apps Script saveMap iterates Object.entries(body)
         fetch(url, {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
-          body:JSON.stringify({action:'saveConfig',...config,email})});
+          body:JSON.stringify({action:'saveConfig',...config})});
         fetch(url, {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
           body:JSON.stringify({action:'saveContexto',dofa,email})});
-        fetch(url, {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
+        if (okr) fetch(url, {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
           body:JSON.stringify({action:'postOKRs',okrs:[okr],email})});
         toast('✅ Configuración guardada y enviada a Sheets');
       } else {
@@ -2285,8 +2307,12 @@
         populateProductos();
         actualizarMiniKPIs();
       }
+          // Fecha default al abrir Ventas
+      if (name === 'ventas') {
+        const fd = document.getElementById('v_fecha');
+        if (fd && !fd.value) fd.value = new Date().toISOString().split('T')[0];
+      }
     }
-
     function togglePeriod() {
       const el = document.getElementById('hdr_period');
       const periods = ['Julio 2025', 'Agosto 2025', 'Septiembre 2025', 'Octubre 2025'];
@@ -2411,8 +2437,8 @@
       const avg = calcularPromedioOKRs();
       document.getElementById('kf_okrs').style.width = avg + '%';
       sendToSheets('updateKR', { okrId: oId, krId: kId, avance: kr.avance });
+          actualizarMiniKPIs();
     }
-
     function openEditOKR(okrId) {
       const okr = STATE.okrs.find(o => o.id === okrId);
       if (!okr) { toast('OKR no encontrado'); return; }
@@ -2703,6 +2729,7 @@ Responde solo con JSON en este formato:
       populateProductos();
       toast('✅ Venta registrada — $' + fmt(venta.monto));
       sendToSheets('postVenta', venta);
+      initCharts();
       document.getElementById('slicer_count').textContent = STATE.ventas.length + ' registros';
     }
 
@@ -2769,8 +2796,8 @@ Responde solo con JSON en este formato:
       toast('🗑 Venta eliminada');
       sendToSheets('deleteVenta', { id });
       document.getElementById('slicer_count').textContent = STATE.ventas.length + ' registros';
+          initCharts();
     }
-
     function estadoBadge(e) {
       const map = {
         'Entregado': 'b-green',
@@ -3253,6 +3280,14 @@ Proporciona análisis estratégico en formato JSON con las siguientes claves:
         link.href = url;
         document.head.appendChild(link);
       } catch (e) {}
+      // Service Worker para PWA
+      if ('serviceWorker' in navigator) {
+        try {
+          const swCode = "self.addEventListener('install',e=>e.waitUntil(caches.open('dq-v1').then(c=>c.add('/'))));self.addEventListener('fetch',e=>e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request))));";
+          const swBlob = new Blob([swCode], {type:'application/javascript'});
+          navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(()=>{});
+        } catch(e2) {}
+      }
     }
 
     // Restaurar estado
@@ -3270,7 +3305,6 @@ Proporciona análisis estratégico en formato JSON con las siguientes claves:
       } catch (e) {}
     }
 
-    registerPWA();
-  </script>
+    registerPWA(); </script>
 </body>
 </html>
