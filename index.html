@@ -822,7 +822,7 @@ DATOS:
 - Debilidades: ${d.d || 'No provisto'}
 - Amenazas: ${d.a || 'No provisto'}
 
-Responde con este JSON exacto:
+Responde ÚNICAMENTE con el objeto JSON empezando con { y terminando con }. Cero texto adicional:
 {
   "estado": "resumen ejecutivo en 2 oraciones",
   "hallazgos_clave": ["hallazgo 1", "hallazgo 2", "hallazgo 3"],
@@ -835,14 +835,19 @@ Responde con este JSON exacto:
       fetch('https://api.mistral.ai/v1/chat/completions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.mistralKey}` },
-        body: JSON.stringify({ model: 'mistral-tiny', messages: [{ role: 'user', content: pContext }], temperature: 0.2 })
+        body: JSON.stringify({ model: 'mistral-small-latest', messages: [{ role: 'user', content: pContext }], temperature: 0.2 })
       })
       .then(r => r.json()).then(res => {
         const raw = res.choices[0].message.content;
-        // Extraer JSON aunque la IA lo envuelva en ```json
-        const match = raw.replace(/```json\n?|```\n?/g, '').trim().match(/\{[\s\S]*\}/);
+        // Extraer JSON: quitar ```json, bloques de código, y la palabra "json" suelta al inicio
+        const cleaned = raw
+          .replace(/^\s*json\s*/i, '')
+          .replace(/```json\n?/gi, '')
+          .replace(/```\n?/g, '')
+          .trim();
+        const match = cleaned.match(/\{[\s\S]*\}/);
         try {
-          const p = JSON.parse(match ? match[0] : raw);
+          const p = JSON.parse(match ? match[0] : cleaned);
           const seccion = (titulo, items, color) => {
             if (!items || !items.length) return '';
             const dots = { 'emerald': 'bg-emerald-500', 'amber': 'bg-amber-400', 'rose': 'bg-rose-500', 'blue': 'bg-blue-500' };
