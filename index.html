@@ -253,7 +253,7 @@
     .sync-btn:hover{background:rgba(0,229,160,.2);}
     .sync-btn:disabled{opacity:0.5;cursor:not-allowed;}
 
-    /* SLICER DE TIEMPO - NUEVO */
+    /* SLICER DE TIEMPO */
     .time-slicer{
       background:var(--ink2);border:1px solid var(--rim);border-radius:var(--r);
       padding:12px 16px;margin-bottom:16px;
@@ -625,20 +625,20 @@
         <h2>Accede a tu workspace</h2>
         <p>Ingresa tus credenciales para continuar</p>
         <div class="input-field">
-          <label>Usuario</label>
-          <input id="inUser" type="text" placeholder="Tu nombre de usuario"/>
+          <label>Email</label>
+          <input id="inEmail" type="email" placeholder="tu@email.com"/>
         </div>
         <div class="input-field">
-          <label>Contraseña</label>
-          <input id="inPass" type="password" placeholder="••••••••"/>
+          <label>Nombre de usuario</label>
+          <input id="inUser" type="text" placeholder="Tu nombre"/>
         </div>
         <div class="input-field">
           <label>URL del Apps Script</label>
-          <input id="inScriptUrl" type="url" placeholder="https://script.google.com/macros/s/..."/>
+          <input id="inScriptUrl" type="url" placeholder="https://script.google.com/macros/s/.../exec"/>
         </div>
         <button class="btn-login" onclick="loginUser()">🔑 Iniciar sesión</button>
         <div class="login-sep">o</div>
-        <button class="btn-demo" onclick="loginDemo()">🚀 Demo — Caribe</button>
+        <button class="btn-demo" onclick="loginDemo()">🚀 Demo — Sin datos</button>
       </div>
     </div>
   </div>
@@ -730,7 +730,7 @@
         <div class="sb-logomark">📊</div>
         <div>
           <div class="sb-brand">Dash<span>Q</span></div>
-          <div class="sb-empresa" id="sb_empresa">Caribe</div>
+          <div class="sb-empresa" id="sb_empresa">Mi Empresa</div>
         </div>
       </div>
       <div class="sb-nav">
@@ -746,10 +746,10 @@
       </div>
       <div class="sb-footer">
         <div class="sb-user">
-          <div class="sb-avatar" id="sb_avatar">JA</div>
+          <div class="sb-avatar" id="sb_avatar">U</div>
           <div class="sb-user-info">
             <div class="sb-user-name" id="sb_name">Usuario</div>
-            <div class="sb-user-role">Admin</div>
+            <div class="sb-user-role" id="sb_email">usuario@email.com</div>
           </div>
           <span class="sb-logout" onclick="logout()" title="Cerrar sesión">↩</span>
         </div>
@@ -827,14 +827,14 @@
           <div class="charts-grid">
             <div class="chart-card" id="chart_ventas_card" onclick="highlightChart('ventas')">
               <div class="chart-head">
-                <div><div class="chart-title">Tendencia de ventas</div><div class="chart-sub" id="chart_ventas_sub">Últimos 6 meses · COP</div></div>
+                <div><div class="chart-title">Tendencia de ventas</div><div class="chart-sub" id="chart_ventas_sub">Sin datos</div></div>
                 <span class="chart-tag" onclick="event.stopPropagation();toggleChartView('ventas')">+0% YoY</span>
               </div>
               <div class="chart-wrap"><canvas id="ch_ventas"></canvas></div>
             </div>
             <div class="chart-card" id="chart_productos_card" onclick="highlightChart('productos')">
               <div class="chart-head">
-                <div><div class="chart-title">Mix de productos</div><div class="chart-sub" id="chart_productos_sub">Por volumen de ventas</div></div>
+                <div><div class="chart-title">Mix de productos</div><div class="chart-sub" id="chart_productos_sub">Sin datos</div></div>
                 <span class="chart-tag" onclick="event.stopPropagation();toggleChartView('productos')">Detalle</span>
               </div>
               <div class="chart-wrap"><canvas id="ch_productos"></canvas></div>
@@ -843,13 +843,13 @@
 
           <div class="charts-grid-2">
             <div class="chart-card" id="chart_vendedores_card" onclick="highlightChart('vendedores')">
-              <div class="chart-head"><div><div class="chart-title">Ranking de vendedores</div><div class="chart-sub" id="chart_vendedores_sub">Ventas acumuladas del período</div></div>
+              <div class="chart-head"><div><div class="chart-title">Ranking de vendedores</div><div class="chart-sub" id="chart_vendedores_sub">Sin datos</div></div>
                 <span class="chart-tag" onclick="event.stopPropagation();toggleChartView('vendedores')">Top</span>
               </div>
               <div class="chart-wrap"><canvas id="ch_vendedores"></canvas></div>
             </div>
             <div class="chart-card" id="chart_zonas_card" onclick="highlightChart('zonas')">
-              <div class="chart-head"><div><div class="chart-title">Ventas por zona</div><div class="chart-sub" id="chart_zonas_sub">Distribución geográfica</div></div>
+              <div class="chart-head"><div><div class="chart-title">Ventas por zona</div><div class="chart-sub" id="chart_zonas_sub">Sin datos</div></div>
                 <span class="chart-tag" onclick="event.stopPropagation();toggleChartView('zonas')">Mapa</span>
               </div>
               <div class="chart-wrap"><canvas id="ch_zonas"></canvas></div>
@@ -951,6 +951,7 @@
         <!-- ANÁLISIS IA -->
         <div class="panel" id="panel_analisis">
           <div class="ia-context">
+            <div class="ia-ctx-item"><div class="ia-ctx-label">Usuario</div><div class="ia-ctx-val" id="ia_user">Sin sesión</div></div>
             <div class="ia-ctx-item"><div class="ia-ctx-label">Empresa</div><div class="ia-ctx-val" id="ia_emp">Sin configurar</div></div>
             <div class="ia-ctx-item"><div class="ia-ctx-label">Ventas período</div><div class="ia-ctx-val warn" id="ia_ven">$0</div></div>
             <div class="ia-ctx-item"><div class="ia-ctx-label">OKRs</div><div class="ia-ctx-val warn" id="ia_okr">0% promedio</div></div>
@@ -1076,7 +1077,7 @@
             <div class="cfg-title">Google Sheets</div>
             <div class="cfg-card">
               <div class="field" style="margin-bottom:12px;"><label>URL del Apps Script publicado</label>
-                <input id="cfg_script" placeholder="https://script.google.com/macros/s/..."/></div>
+                <input id="cfg_script" placeholder="https://script.google.com/macros/s/.../exec"/></div>
               <div style="display:flex;gap:10px;flex-wrap:wrap;">
                 <button class="btn btn-em btn-sm" onclick="saveScriptUrl()">💾 Guardar URL</button>
                 <button class="btn btn-ghost btn-sm" onclick="testConnection()">🔌 Probar conexión</button>
@@ -1174,14 +1175,14 @@
   <div id="toast"></div>
 
   <script>
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     // DATOS Y ESTADO
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     const DEMO_CONFIG = {
-      empresa: 'Caribe',
-      sector: 'Alimentos',
-      ciudad: 'Barranquilla',
-      meta: 90000000,
+      empresa: '',
+      sector: '',
+      ciudad: '',
+      meta: 0,
       color: '#00E5A0',
       mision: '',
       vision: '',
@@ -1189,10 +1190,10 @@
       nit: ''
     };
     const DEMO_DOFA = {
-      fortalezas: 'Red de distribución consolidada\nProductos frescos de alta calidad',
-      oportunidades: 'Crecimiento e-commerce\nExpansión a nuevos municipios',
-      debilidades: 'Alta dependencia de temporadas\nSistema de trazabilidad manual',
-      amenazas: 'Competidores con mayor capital\nVolatilidad de precios agrícolas'
+      fortalezas: '',
+      oportunidades: '',
+      debilidades: '',
+      amenazas: ''
     };
 
     let STATE = {
@@ -1203,16 +1204,16 @@
       ventas: [],
       isDemo: false,
       scriptUrl: '',
-      productos: ['Banano', 'Piña', 'Mango', 'Aguacate', 'Papaya', 'Maracuyá', 'Otro'],
-      vendedores: ['Carlos Mendez', 'Ana Pérez', 'Luis Torres', 'María García', 'Pedro Ruiz'],
+      productos: ['Producto 1', 'Producto 2', 'Producto 3'],
+      vendedores: ['Vendedor 1', 'Vendedor 2', 'Vendedor 3'],
       lastSynced: null,
       syncInProgress: false,
       chartView: 'normal',
       firstLogin: localStorage.getItem('dq_first_login') === null,
-      // Filtro de fechas
       dateDesde: null,
       dateHasta: null,
-      filteredVentas: []
+      filteredVentas: [],
+      userEmail: ''
     };
 
     // Cargar listas desde localStorage
@@ -1221,9 +1222,9 @@
     const savedVendedores = localStorage.getItem('dq_vendedores');
     if (savedVendedores) try { STATE.vendedores = JSON.parse(savedVendedores); } catch (e) {}
 
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     // UTILS
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     function fmt(n) { return Intl.NumberFormat('es-CO').format(Math.round(n || 0)); }
     function esc(s) { return String(s).replace(/[&<>"']/g, function(m) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m]; }); }
     function toast(msg) { const t = document.getElementById('toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 3000); }
@@ -1236,7 +1237,8 @@
         config: STATE.config,
         dofa: STATE.dofa,
         productos: STATE.productos,
-        vendedores: STATE.vendedores
+        vendedores: STATE.vendedores,
+        userEmail: STATE.userEmail
       }));
     }
 
@@ -1250,21 +1252,17 @@
       return s.replace(/```json/g, '').replace(/```/g, '').trim();
     }
 
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     // SLICER DE TIEMPO
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     function aplicarSlicer() {
       const desde = document.getElementById('slicer_desde').value;
       const hasta = document.getElementById('slicer_hasta').value;
-      if (!desde || !hasta) {
-        toast('Selecciona ambas fechas');
-        return;
-      }
+      if (!desde || !hasta) { toast('Selecciona ambas fechas'); return; }
       STATE.dateDesde = new Date(desde);
       STATE.dateHasta = new Date(hasta);
       STATE.dateHasta.setHours(23, 59, 59, 999);
 
-      // Filtrar ventas
       STATE.filteredVentas = STATE.ventas.filter(v => {
         const fecha = new Date(v.fecha);
         return fecha >= STATE.dateDesde && fecha <= STATE.dateHasta;
@@ -1273,8 +1271,6 @@
       const count = STATE.filteredVentas.length;
       document.getElementById('slicer_count').textContent = count + ' registros';
       toast('🔍 Filtro aplicado: ' + count + ' ventas');
-
-      // Actualizar dashboard con filtro
       actualizarDashboardConFiltro();
     }
 
@@ -1293,14 +1289,13 @@
       const ventas = STATE.dateDesde ? STATE.filteredVentas : STATE.ventas;
       const total = ventas.reduce((s, v) => s + (v.monto || 0), 0);
       const count = ventas.length;
-      const meta = STATE.config.meta || 90000000;
+      const meta = STATE.config.meta || 0;
       const pctMeta = meta > 0 ? Math.min(100, (total / meta) * 100) : 0;
       const avgOKR = calcularPromedioOKRs();
 
-      // Actualizar KPIs
       document.getElementById('kpi_ventas').textContent = '$' + fmt(total);
       document.getElementById('kpi_pedidos').textContent = count;
-      document.getElementById('kpi_meta').textContent = Math.round(pctMeta) + '%';
+      document.getElementById('kpi_meta').textContent = meta > 0 ? Math.round(pctMeta) + '%' : '0%';
       document.getElementById('kpi_okrs').innerHTML = getSemaforo(avgOKR).ico + ' ' + avgOKR + '%';
 
       setTimeout(() => {
@@ -1310,17 +1305,13 @@
         document.getElementById('kf_okrs').style.width = avgOKR + '%';
       }, 400);
 
-      // Actualizar mini KPIs en ventas
       document.getElementById('mini_total').textContent = '$' + fmt(total);
       document.getElementById('mini_pedidos').textContent = count;
-      document.getElementById('mini_meta').textContent = pctMeta.toFixed(1) + '%';
+      document.getElementById('mini_meta').textContent = meta > 0 ? pctMeta.toFixed(1) + '%' : '0%';
       document.getElementById('mini_meta_bar').style.width = Math.min(100, pctMeta) + '%';
 
-      // Actualizar tablas
       renderRecentVentasFiltered(ventas);
       renderVentasTableFiltered(ventas);
-
-      // Actualizar gráficos
       actualizarGraficosConFiltro(ventas);
     }
 
@@ -1372,17 +1363,13 @@
     }
 
     function actualizarGraficosConFiltro(ventas) {
-      // Reconstruir datos para gráficos con filtro
       if (ventas.length === 0) {
-        // Si no hay datos, mostrar vacío
         if (charts.ventas) {
           charts.ventas.data.datasets[0].data = [0, 0, 0, 0, 0, 0];
           charts.ventas.update();
         }
         return;
       }
-
-      // Agrupar por mes para ventas
       const meses = {};
       ventas.forEach(v => {
         const mes = v.fecha.substring(0, 7);
@@ -1392,21 +1379,59 @@
       const data = labels.map(l => meses[l]);
 
       if (charts.ventas) {
-        charts.ventas.data.labels = labels.length > 0 ? labels : DEMO_MESES.labels;
-        charts.ventas.data.datasets[0].data = data.length > 0 ? data : [0, 0, 0, 0, 0, 0];
+        charts.ventas.data.labels = labels.length > 0 ? labels : ['Sin datos'];
+        charts.ventas.data.datasets[0].data = data.length > 0 ? data : [0];
         charts.ventas.update();
         document.getElementById('chart_ventas_sub').textContent = labels.length > 0 ? labels.join(' · ') : 'Sin datos';
       }
 
-      // Actualizar otros gráficos según selección
-      if (chartHighlight) {
-        highlightChart(chartHighlight);
+      // Actualizar productos
+      const prodMap = {};
+      ventas.forEach(v => {
+        prodMap[v.producto] = (prodMap[v.producto] || 0) + (v.unidades || 1);
+      });
+      const prodLabels = Object.keys(prodMap).sort((a, b) => prodMap[b] - prodMap[a]);
+      const prodData = prodLabels.map(l => prodMap[l]);
+      if (charts.productos && prodData.length > 0) {
+        charts.productos.data.labels = prodLabels.slice(0, 6);
+        charts.productos.data.datasets[0].data = prodData.slice(0, 6);
+        charts.productos.update();
+        document.getElementById('chart_productos_sub').textContent = prodLabels.slice(0, 3).join(', ') + (prodLabels.length > 3 ? '...' : '');
+      }
+
+      // Actualizar vendedores
+      const vendMap = {};
+      ventas.forEach(v => {
+        vendMap[v.vendedor] = (vendMap[v.vendedor] || 0) + v.monto;
+      });
+      const vendLabels = Object.keys(vendMap).sort((a, b) => vendMap[b] - vendMap[a]);
+      const vendData = vendLabels.map(l => vendMap[l] / 1000000);
+      if (charts.vendedores && vendData.length > 0) {
+        charts.vendedores.data.labels = vendLabels.slice(0, 8);
+        charts.vendedores.data.datasets[0].data = vendData.slice(0, 8);
+        charts.vendedores.update();
+        document.getElementById('chart_vendedores_sub').textContent = vendLabels.slice(0, 3).join(', ') + (vendLabels.length > 3 ? '...' : '');
+      }
+
+      // Actualizar zonas
+      const zonaMap = {};
+      ventas.forEach(v => {
+        zonaMap[v.zona] = (zonaMap[v.zona] || 0) + v.monto;
+      });
+      const zonaLabels = Object.keys(zonaMap).sort((a, b) => zonaMap[b] - zonaMap[a]);
+      const total = ventas.reduce((s, v) => s + v.monto, 0);
+      const zonaData = zonaLabels.map(l => total > 0 ? Math.round((zonaMap[l] / total) * 100) : 0);
+      if (charts.zonas && zonaData.length > 0) {
+        charts.zonas.data.labels = zonaLabels;
+        charts.zonas.data.datasets[0].data = zonaData;
+        charts.zonas.update();
+        document.getElementById('chart_zonas_sub').textContent = zonaLabels.slice(0, 3).join(', ') + (zonaLabels.length > 3 ? '...' : '');
       }
     }
 
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     // TAMAÑO DE LETRA
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     let currentFontSize = 0;
 
     function changeFontSize(dir) {
@@ -1418,16 +1443,16 @@
       toast('Tamaño: ' + size + 'px');
     }
 
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     // AUTENTICACIÓN
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     window.onload = function() {
       const saved = localStorage.getItem('dq_session');
       if (saved) {
         try {
           const u = JSON.parse(saved);
           STATE.user = u;
-          if (u.email || u.name) {
+          if (u.email) {
             const st = localStorage.getItem('dq_state');
             if (st) {
               try {
@@ -1436,9 +1461,11 @@
                 STATE.ventas = d.ventas || [];
                 STATE.config = d.config || DEMO_CONFIG;
                 STATE.dofa = d.dofa || DEMO_DOFA;
+                STATE.userEmail = d.userEmail || u.email;
                 if (d.productos) STATE.productos = d.productos;
                 if (d.vendedores) STATE.vendedores = d.vendedores;
                 STATE.filteredVentas = [...STATE.ventas];
+                document.getElementById('slicer_count').textContent = STATE.ventas.length + ' registros';
               } catch (e) {}
             }
             initApp(u);
@@ -1451,10 +1478,10 @@
     };
 
     function loginUser() {
+      const email = document.getElementById('inEmail').value.trim();
       const user = document.getElementById('inUser').value.trim();
-      const pass = document.getElementById('inPass').value.trim();
-      if (!user) { toast('Ingresa un usuario'); return; }
-      if (!pass) { toast('Ingresa una contraseña'); return; }
+      if (!email) { toast('Ingresa tu email'); return; }
+      if (!user) { toast('Ingresa tu nombre de usuario'); return; }
 
       const scriptUrl = document.getElementById('inScriptUrl').value.trim();
       if (scriptUrl) {
@@ -1462,8 +1489,24 @@
         STATE.scriptUrl = scriptUrl;
       }
 
-      const u = { name: user, email: user + '@empresa.com', initials: user.slice(0, 2).toUpperCase() };
+      // Guardar usuario en Sheets
+      if (scriptUrl) {
+        fetch(scriptUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            action: 'saveUser', 
+            email: email, 
+            nombre: user,
+            timestamp: new Date().toISOString()
+          })
+        }).catch(() => {});
+      }
+
+      const u = { name: user, email: email, initials: user.slice(0, 2).toUpperCase() };
       STATE.user = u;
+      STATE.userEmail = email;
       localStorage.setItem('dq_session', JSON.stringify(u));
 
       if (STATE.firstLogin) {
@@ -1476,20 +1519,30 @@
         saveLocal();
       }
 
+      // Cargar datos del usuario desde Sheets
       if (scriptUrl) {
-        fetch(scriptUrl + '?action=getUsuario&email=' + encodeURIComponent(user))
-          .then(res => res.json())
-          .then(data => {
-            if (data && data.email) {
-              u.name = data.nombre || user;
-              u.email = data.email;
-            }
-            checkFirstTime(u);
-          })
-          .catch(() => checkFirstTime(u));
+        cargarDatosUsuario(email, scriptUrl, u);
       } else {
         checkFirstTime(u);
       }
+    }
+
+    function cargarDatosUsuario(email, scriptUrl, user) {
+      fetch(scriptUrl + '?action=getUserData&email=' + encodeURIComponent(email))
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.ventas) {
+            STATE.ventas = data.ventas || [];
+            STATE.okrs = data.okrs || [];
+            STATE.config = data.config || DEMO_CONFIG;
+            STATE.dofa = data.dofa || DEMO_DOFA;
+            STATE.filteredVentas = [...STATE.ventas];
+            document.getElementById('slicer_count').textContent = STATE.ventas.length + ' registros';
+            saveLocal();
+          }
+          checkFirstTime(user);
+        })
+        .catch(() => checkFirstTime(user));
     }
 
     function checkFirstTime(user) {
@@ -1505,6 +1558,7 @@
             if (d.productos) STATE.productos = d.productos;
             if (d.vendedores) STATE.vendedores = d.vendedores;
             STATE.filteredVentas = [...STATE.ventas];
+            document.getElementById('slicer_count').textContent = STATE.ventas.length + ' registros';
             initApp(user);
             return;
           }
@@ -1514,19 +1568,31 @@
     }
 
     function loginDemo() {
-      const user = { name: 'Demo User', email: 'demo@dashq.app', initials: 'DU', isDemo: true };
+      const user = { name: 'Usuario Demo', email: 'demo@dashq.app', initials: 'UD', isDemo: true };
       STATE.user = user;
       STATE.isDemo = true;
+      STATE.userEmail = 'demo@dashq.app';
       localStorage.setItem('dq_session', JSON.stringify(user));
       STATE.okrs = [];
       STATE.ventas = [];
-      STATE.config = { ...DEMO_CONFIG };
-      STATE.dofa = { ...DEMO_DOFA };
-      STATE.productos = ['Banano', 'Piña', 'Mango', 'Aguacate', 'Papaya', 'Maracuyá', 'Otro'];
-      STATE.vendedores = ['Carlos Mendez', 'Ana Pérez', 'Luis Torres', 'María García', 'Pedro Ruiz'];
+      STATE.config = { 
+        empresa: 'Empresa Demo',
+        sector: 'Tecnología',
+        ciudad: 'Ciudad',
+        meta: 10000000,
+        color: '#00E5A0',
+        mision: '',
+        vision: '',
+        valores: '',
+        nit: ''
+      };
+      STATE.dofa = { fortalezas: '', oportunidades: '', debilidades: '', amenazas: '' };
+      STATE.productos = ['Producto A', 'Producto B', 'Producto C'];
+      STATE.vendedores = ['Vendedor 1', 'Vendedor 2'];
       STATE.filteredVentas = [];
+      document.getElementById('slicer_count').textContent = '0 registros';
       saveLocal();
-      toast('🚀 Demo iniciada');
+      toast('🚀 Demo iniciada — sin datos');
       setTimeout(() => initApp(user), 300);
     }
 
@@ -1538,9 +1604,9 @@
       toast('Sesión cerrada');
     }
 
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     // ONBOARDING
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     function startOnboarding(user) {
       STATE.user = user;
       showScreen('scOnboarding');
@@ -1667,41 +1733,61 @@
       STATE.config = config;
       STATE.dofa = dofa;
       STATE.okrs = [okr];
-      if (!STATE.ventas || STATE.ventas.length === 0) {
-        STATE.ventas = [];
-      }
-      STATE.filteredVentas = [...STATE.ventas];
+      STATE.ventas = [];
+      STATE.filteredVentas = [];
+      document.getElementById('slicer_count').textContent = '0 registros';
       saveLocal();
+      
+      // Guardar en Sheets
+      const scriptUrl = localStorage.getItem('dq_script_url');
+      if (scriptUrl && STATE.user) {
+        fetch(scriptUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            action: 'saveAllData',
+            email: STATE.user.email,
+            config: config,
+            dofa: dofa,
+            okrs: [okr],
+            ventas: []
+          })
+        }).catch(() => {});
+      }
+
       toast('✅ Configuración guardada');
       setTimeout(() => initApp(STATE.user), 300);
     }
 
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     // INIT APP
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     function initApp(user) {
       showScreen('scApp');
-      document.getElementById('sb_empresa').textContent = STATE.config.empresa || 'Empresa';
+      document.getElementById('sb_empresa').textContent = STATE.config.empresa || 'Mi Empresa';
       document.getElementById('sb_name').textContent = user?.name || 'Usuario';
+      document.getElementById('sb_email').textContent = user?.email || 'usuario@email.com';
+      
       const avatar = document.getElementById('sb_avatar');
-      if (user?.picture) {
-        avatar.innerHTML = `<img src="${user.picture}" alt=""/>`;
-      } else {
-        const initials = (user?.name || 'U').split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-        avatar.textContent = initials || 'U';
-      }
+      const initials = (user?.name || 'U').split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
+      avatar.textContent = initials || 'U';
+      
       document.getElementById('cfg_name').textContent = user?.name || 'Usuario';
       document.getElementById('cfg_email').textContent = user?.email || 'usuario@dashq.app';
       const cfgAvatar = document.getElementById('cfg_avatar');
-      if (user?.picture) {
-        cfgAvatar.innerHTML = `<img src="${user.picture}" alt=""/>`;
-      } else {
-        const initials = (user?.name || 'U').split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2);
-        cfgAvatar.textContent = initials || 'U';
-      }
+      cfgAvatar.textContent = initials || 'U';
 
       STATE.filteredVentas = [...STATE.ventas];
       document.getElementById('slicer_count').textContent = STATE.ventas.length + ' registros';
+
+      // IA context
+      document.getElementById('ia_user').textContent = user?.email || 'Sin sesión';
+      document.getElementById('ia_emp').textContent = STATE.config.empresa || 'Sin configurar';
+      const totalVentas = STATE.ventas.reduce((s, v) => s + (v.monto || 0), 0);
+      document.getElementById('ia_ven').textContent = '$' + fmt(totalVentas);
+      const avg = calcularPromedioOKRs();
+      document.getElementById('ia_okr').textContent = avg + '% promedio';
 
       loadContextoFields();
       loadCfgFields();
@@ -1728,31 +1814,27 @@
         animarKPI();
         loadFromSheets();
       }, 400);
-
-      const totalVentas = STATE.ventas.reduce((s, v) => s + (v.monto || 0), 0);
-      document.getElementById('ia_emp').textContent = STATE.config.empresa || 'Sin configurar';
-      document.getElementById('ia_ven').textContent = '$' + fmt(totalVentas);
-      const avg = calcularPromedioOKRs();
-      document.getElementById('ia_okr').textContent = avg + '% promedio';
     }
 
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     // CARGA DE DATOS DESDE SHEETS
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     let sheetsLoaded = false;
 
     async function loadFromSheets() {
       if (STATE.isDemo) return;
       const scriptUrl = localStorage.getItem('dq_script_url');
-      if (!scriptUrl) return;
+      if (!scriptUrl || !STATE.user) return;
       if (sheetsLoaded) return;
 
       try {
-        const vResp = await fetch(scriptUrl + '?action=getVentas');
-        const vData = await vResp.json();
-        if (vData && vData.ventas && vData.ventas.length > 0) {
+        const email = STATE.user.email;
+        const resp = await fetch(scriptUrl + '?action=getUserData&email=' + encodeURIComponent(email));
+        const data = await resp.json();
+        
+        if (data && data.ventas) {
           const existingIds = new Set(STATE.ventas.map(v => v.id));
-          const newVentas = vData.ventas.filter(v => !existingIds.has(v.id));
+          const newVentas = data.ventas.filter(v => !existingIds.has(v.id));
           if (newVentas.length > 0) {
             STATE.ventas = [...STATE.ventas, ...newVentas];
             STATE.filteredVentas = [...STATE.ventas];
@@ -1762,13 +1844,12 @@
           renderRecentVentas();
           actualizarMiniKPIs();
           populateVendedores();
+          document.getElementById('slicer_count').textContent = STATE.ventas.length + ' registros';
         }
 
-        const oResp = await fetch(scriptUrl + '?action=getOKRs');
-        const oData = await oResp.json();
-        if (oData && oData.okrs && oData.okrs.length > 0) {
+        if (data && data.okrs) {
           const existingIds = new Set(STATE.okrs.map(o => o.id));
-          const newOKRs = oData.okrs.filter(o => !existingIds.has(o.id));
+          const newOKRs = data.okrs.filter(o => !existingIds.has(o.id));
           if (newOKRs.length > 0) {
             STATE.okrs = [...STATE.okrs, ...newOKRs];
             toast('📥 ' + newOKRs.length + ' OKRs cargados desde Sheets');
@@ -1777,10 +1858,8 @@
           updateOKRKPI();
         }
 
-        const cResp = await fetch(scriptUrl + '?action=getConfig');
-        const cData = await cResp.json();
-        if (cData && cData.empresa) {
-          STATE.config = { ...STATE.config, ...cData };
+        if (data && data.config) {
+          STATE.config = { ...STATE.config, ...data.config };
           document.getElementById('sb_empresa').textContent = STATE.config.empresa || 'Empresa';
           loadCfgFields();
           saveLocal();
@@ -1791,25 +1870,22 @@
         if (status) {
           status.textContent = '✅ Última sincronización: ' + new Date().toLocaleTimeString();
         }
-        document.getElementById('slicer_count').textContent = STATE.ventas.length + ' registros';
       } catch (e) {
         console.log('Error cargando desde Sheets:', e);
       }
     }
 
-    // ═══════════════════════════════════════════════════════════════
-    // CHARTS - CON INTERACTIVIDAD Y HIGHLIGHT
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
+    // CHARTS
+    // ============================================================
     let charts = {};
     let chartViewMode = 'normal';
     let chartHighlight = null;
 
     function highlightChart(type) {
       chartHighlight = type;
-      // Limpiar highlights anteriores
       document.querySelectorAll('.chart-card').forEach(el => el.classList.remove('highlighted'));
 
-      // Marcar el chart seleccionado
       const cardMap = {
         'ventas': 'chart_ventas_card',
         'productos': 'chart_productos_card',
@@ -1819,14 +1895,10 @@
       const card = document.getElementById(cardMap[type]);
       if (card) card.classList.add('highlighted');
 
-      // Obtener datos de ventas filtrados
       const ventas = STATE.dateDesde ? STATE.filteredVentas : STATE.ventas;
-
-      // Actualizar todos los gráficos según el tipo seleccionado
       const em = getComputedStyle(document.documentElement).getPropertyValue('--em').trim() || '#2563EB';
 
       if (type === 'ventas') {
-        // Destacar tendencia de ventas
         const meses = {};
         ventas.forEach(v => {
           const mes = v.fecha.substring(0, 7);
@@ -1840,12 +1912,10 @@
           charts.ventas.update();
           document.getElementById('chart_ventas_sub').textContent = labels.join(' · ');
         }
-        // Actualizar otros gráficos con datos de ventas
         actualizarGraficosSecundarios(ventas, 'ventas');
         toast('📊 Tendencia de ventas destacada');
 
       } else if (type === 'productos') {
-        // Destacar mix de productos
         const prodMap = {};
         ventas.forEach(v => {
           prodMap[v.producto] = (prodMap[v.producto] || 0) + (v.unidades || 1);
@@ -1853,17 +1923,15 @@
         const labels = Object.keys(prodMap).sort((a, b) => prodMap[b] - prodMap[a]);
         const data = labels.map(l => prodMap[l]);
         if (charts.productos && data.length > 0) {
-          charts.productos.data.labels = labels;
-          charts.productos.data.datasets[0].data = data;
+          charts.productos.data.labels = labels.slice(0, 6);
+          charts.productos.data.datasets[0].data = data.slice(0, 6);
           charts.productos.update();
           document.getElementById('chart_productos_sub').textContent = labels.slice(0, 3).join(', ') + (labels.length > 3 ? '...' : '');
         }
-        // Actualizar ventas con el mismo filtro
         actualizarGraficosSecundarios(ventas, 'productos');
         toast('📊 Mix de productos actualizado');
 
       } else if (type === 'vendedores') {
-        // Destacar ranking de vendedores
         const vendMap = {};
         ventas.forEach(v => {
           vendMap[v.vendedor] = (vendMap[v.vendedor] || 0) + v.monto;
@@ -1880,7 +1948,6 @@
         toast('📊 Ranking de vendedores actualizado');
 
       } else if (type === 'zonas') {
-        // Destacar ventas por zona
         const zonaMap = {};
         ventas.forEach(v => {
           zonaMap[v.zona] = (zonaMap[v.zona] || 0) + v.monto;
@@ -1900,7 +1967,6 @@
     }
 
     function actualizarGraficosSecundarios(ventas, tipoPrincipal) {
-      // Actualizar ventas si no es el principal
       if (tipoPrincipal !== 'ventas') {
         const meses = {};
         ventas.forEach(v => {
@@ -1917,7 +1983,6 @@
         }
       }
 
-      // Actualizar productos si no es el principal
       if (tipoPrincipal !== 'productos') {
         const prodMap = {};
         ventas.forEach(v => {
@@ -1933,7 +1998,6 @@
         }
       }
 
-      // Actualizar vendedores si no es el principal
       if (tipoPrincipal !== 'vendedores') {
         const vendMap = {};
         ventas.forEach(v => {
@@ -1949,7 +2013,6 @@
         }
       }
 
-      // Actualizar zonas si no es el principal
       if (tipoPrincipal !== 'zonas') {
         const zonaMap = {};
         ventas.forEach(v => {
@@ -1970,17 +2033,11 @@
     function toggleChartView(type) {
       chartViewMode = chartViewMode === 'normal' ? 'detalle' : 'normal';
       initCharts();
-      // Re-aplicar highlight si existe
       if (chartHighlight) {
         setTimeout(() => highlightChart(chartHighlight), 300);
       }
       toast('Vista: ' + chartViewMode);
     }
-
-    const DEMO_MESES = {
-      labels: ['Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul'],
-      ventas: [55800000, 62100000, 57600000, 65700000, 71100000, 64800000]
-    };
 
     function initCharts() {
       Object.values(charts).forEach(c => { if (c) { try { c.destroy(); } catch (e) {} } });
@@ -1990,7 +2047,6 @@
       const gridColor = '#30363D';
       const textColor = '#94A3B8';
 
-      // Obtener datos de ventas para gráficos
       const ventas = STATE.dateDesde ? STATE.filteredVentas : STATE.ventas;
 
       // Ventas por mes
@@ -2006,10 +2062,10 @@
       charts.ventas = new Chart(ctx1, {
         type: 'line',
         data: {
-          labels: mesLabels.length > 0 ? mesLabels : DEMO_MESES.labels,
+          labels: mesLabels.length > 0 ? mesLabels : ['Sin datos'],
           datasets: [{
             label: 'Ventas mensuales',
-            data: mesData.length > 0 ? mesData : [0, 0, 0, 0, 0, 0],
+            data: mesData.length > 0 ? mesData : [0],
             borderColor: em,
             backgroundColor: em + '33',
             fill: true,
@@ -2045,9 +2101,9 @@
       charts.productos = new Chart(ctx2, {
         type: 'doughnut',
         data: {
-          labels: prodLabels.length > 0 ? prodLabels.slice(0, 6) : ['Banano', 'Piña', 'Mango', 'Aguacate', 'Papaya', 'Otros'],
+          labels: prodLabels.length > 0 ? prodLabels.slice(0, 6) : ['Sin datos'],
           datasets: [{
-            data: prodData.length > 0 ? prodData.slice(0, 6) : [30, 25, 20, 12, 8, 5],
+            data: prodData.length > 0 ? prodData.slice(0, 6) : [1],
             backgroundColor: prodColors,
             borderWidth: 0
           }]
@@ -2075,10 +2131,10 @@
       charts.vendedores = new Chart(ctx3, {
         type: 'bar',
         data: {
-          labels: vendLabels.length > 0 ? vendLabels.slice(0, 8) : ['Carlos Mendez', 'Ana Pérez', 'Luis Torres', 'María García', 'Pedro Ruiz'],
+          labels: vendLabels.length > 0 ? vendLabels.slice(0, 8) : ['Sin datos'],
           datasets: [{
             label: 'Ventas (M)',
-            data: vendData.length > 0 ? vendData.slice(0, 8) : [45, 38, 30, 25, 20],
+            data: vendData.length > 0 ? vendData.slice(0, 8) : [0],
             backgroundColor: ['#2563EB', '#0EA5E9', '#7C3AED', '#D97706', '#DC2626', '#00E5A0', '#F59E0B'],
             borderRadius: 6
           }]
@@ -2111,10 +2167,10 @@
       charts.zonas = new Chart(ctx4, {
         type: 'bar',
         data: {
-          labels: zonaLabels.length > 0 ? zonaLabels : ['Norte', 'Sur', 'Centro', 'Oriente', 'Occidente', 'Industrial'],
+          labels: zonaLabels.length > 0 ? zonaLabels : ['Sin datos'],
           datasets: [{
             label: 'Ventas %',
-            data: zonaData.length > 0 ? zonaData : [32, 28, 22, 12, 6, 0],
+            data: zonaData.length > 0 ? zonaData : [0],
             backgroundColor: em + '99',
             borderRadius: 6
           }]
@@ -2134,9 +2190,9 @@
       }
     }
 
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     // NAVEGACIÓN
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     function goTab(name) {
       document.querySelectorAll('.sb-item').forEach(el => el.classList.remove('active'));
       document.querySelectorAll('.bn-item').forEach(el => el.classList.remove('active'));
@@ -2189,11 +2245,6 @@
       idx = (idx + 1) % periods.length;
       el.textContent = periods[idx];
       toast('Período: ' + periods[idx]);
-      if (charts.ventas) {
-        const data = DEMO_MESES.ventas.map(v => v * (0.9 + Math.random() * 0.2));
-        charts.ventas.data.datasets[0].data = data;
-        charts.ventas.update();
-      }
     }
 
     async function syncAll() {
@@ -2204,19 +2255,19 @@
       await forceSyncToSheets();
     }
 
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     // KPI
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     function animarKPI() {
       const ventasTotal = STATE.ventas.reduce((s, v) => s + (v.monto || 0), 0);
-      const meta = STATE.config.meta || 90000000;
+      const meta = STATE.config.meta || 0;
       const pctMeta = meta > 0 ? Math.min(100, (ventasTotal / meta) * 100) : 0;
       const pctPedidos = Math.min(100, (STATE.ventas.length / 1000) * 100);
       const avgOKR = calcularPromedioOKRs();
 
       document.getElementById('kpi_ventas').textContent = '$' + fmt(ventasTotal);
       document.getElementById('kpi_pedidos').textContent = STATE.ventas.length || 0;
-      document.getElementById('kpi_meta').textContent = Math.round(pctMeta) + '%';
+      document.getElementById('kpi_meta').textContent = meta > 0 ? Math.round(pctMeta) + '%' : '0%';
       document.getElementById('kpi_okrs').innerHTML = getSemaforo(avgOKR).ico + ' ' + avgOKR + '%';
 
       setTimeout(() => {
@@ -2227,15 +2278,13 @@
       }, 400);
     }
 
-    // ═══════════════════════════════════════════════════════════════
-    // OKRs - CON EDICIÓN Y ELIMINACIÓN
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
+    // OKRs
+    // ============================================================
     function calcularPromedioOKRs() {
-      let total = 0,
-        count = 0;
+      let total = 0, count = 0;
       STATE.okrs.forEach(o => {
-        o.krs.forEach(k => { total += k.avance || 0;
-          count++; });
+        o.krs.forEach(k => { total += k.avance || 0; count++; });
       });
       return count > 0 ? Math.round(total / count) : 0;
     }
@@ -2305,7 +2354,7 @@
       updateOKRKPI();
       const avg = calcularPromedioOKRs();
       document.getElementById('kf_okrs').style.width = avg + '%';
-      sendToSheets('updateKR', { okrId: oId, krId: kId, avance: kr.avance });
+      sendToSheets('updateKR', { okrId: oId, krId: kId, avance: kr.avance, email: STATE.userEmail });
     }
 
     function openEditOKR(okrId) {
@@ -2365,7 +2414,7 @@
       renderOKRs();
       updateOKRKPI();
       toast('✅ OKR actualizado');
-      sendToSheets('postOKRs', { okrs: STATE.okrs });
+      sendToSheets('postOKRs', { okrs: STATE.okrs, email: STATE.userEmail });
     }
 
     function deleteOKR(okrId) {
@@ -2375,7 +2424,7 @@
       renderOKRs();
       updateOKRKPI();
       toast('🗑 OKR eliminado');
-      sendToSheets('postOKRs', { okrs: STATE.okrs });
+      sendToSheets('postOKRs', { okrs: STATE.okrs, email: STATE.userEmail });
     }
 
     function openAddOKR() {
@@ -2409,12 +2458,12 @@
       renderOKRs();
       updateOKRKPI();
       toast('✅ OKR creado');
-      sendToSheets('postOKRs', { okrs: STATE.okrs });
+      sendToSheets('postOKRs', { okrs: STATE.okrs, email: STATE.userEmail });
     }
 
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     // GENERAR OKRS CON IA
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     function generarOKRs() {
       const obj = document.getElementById('inp_obj').value.trim();
       if (!obj) { toast('Escribe un Objective primero'); return; }
@@ -2426,7 +2475,7 @@
         `Fortalezas: ${STATE.dofa.fortalezas || '—'}\nOportunidades: ${STATE.dofa.oportunidades || '—'}\nDebilidades: ${STATE.dofa.debilidades || '—'}\nAmenazas: ${STATE.dofa.amenazas || '—'}` :
         '—';
 
-      const userPrompt = `Empresa: ${STATE.config.empresa} | Sector: ${STATE.config.sector} | Meta mensual: $${fmt(STATE.config.meta || 90000000)}
+      const userPrompt = `Empresa: ${STATE.config.empresa} | Sector: ${STATE.config.sector} | Meta mensual: $${fmt(STATE.config.meta || 0)}
 Objective: ${obj}
 DOFA:
 ${dofaStr}
@@ -2491,7 +2540,7 @@ Responde solo con JSON en este formato:
           updateOKRKPI();
           document.getElementById('inp_obj').value = '';
           toast('✅ OKR creado con IA');
-          sendToSheets('postOKRs', { okrs: STATE.okrs });
+          sendToSheets('postOKRs', { okrs: STATE.okrs, email: STATE.userEmail });
         })
         .catch(err => {
           toast('❌ Error: ' + err.message);
@@ -2499,9 +2548,9 @@ Responde solo con JSON en este formato:
         });
     }
 
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     // VENTAS
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     function populateVendedores() {
       const select = document.getElementById('v_vendedor');
       const current = select.value;
@@ -2534,12 +2583,12 @@ Responde solo con JSON en este formato:
       const ventas = STATE.dateDesde ? STATE.filteredVentas : STATE.ventas;
       const total = ventas.reduce((s, v) => s + (v.monto || 0), 0);
       const count = ventas.length;
-      const meta = STATE.config.meta || 90000000;
+      const meta = STATE.config.meta || 0;
       const pct = meta > 0 ? (total / meta) * 100 : 0;
 
       document.getElementById('mini_total').textContent = '$' + fmt(total);
       document.getElementById('mini_pedidos').textContent = count;
-      document.getElementById('mini_meta').textContent = pct.toFixed(1) + '%';
+      document.getElementById('mini_meta').textContent = meta > 0 ? pct.toFixed(1) + '%' : '0%';
       document.getElementById('mini_meta_bar').style.width = Math.min(100, pct) + '%';
     }
 
@@ -2597,7 +2646,7 @@ Responde solo con JSON en este formato:
       populateVendedores();
       populateProductos();
       toast('✅ Venta registrada — $' + fmt(venta.monto));
-      sendToSheets('postVenta', venta);
+      sendToSheets('postVenta', { ...venta, email: STATE.userEmail });
       document.getElementById('slicer_count').textContent = STATE.ventas.length + ' registros';
     }
 
@@ -2662,7 +2711,7 @@ Responde solo con JSON en este formato:
       actualizarMiniKPIs();
       populateVendedores();
       toast('🗑 Venta eliminada');
-      sendToSheets('deleteVenta', { id });
+      sendToSheets('deleteVenta', { id, email: STATE.userEmail });
       document.getElementById('slicer_count').textContent = STATE.ventas.length + ' registros';
     }
 
@@ -2675,9 +2724,9 @@ Responde solo con JSON en este formato:
       return `<span class="badge ${map[e] || 'b-blue'}">${e}</span>`;
     }
 
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     // GOOGLE SHEETS
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     let syncQueue = [];
 
     async function sendToSheets(action, data) {
@@ -2689,13 +2738,6 @@ Responde solo con JSON en este formato:
       syncQueue.push(key);
 
       try {
-        if (action === 'postVenta') {
-          const exists = await checkVentaExists(data.id, url);
-          if (exists) {
-            syncQueue = syncQueue.filter(k => k !== key);
-            return;
-          }
-        }
         await fetch(url, {
           method: 'POST',
           mode: 'no-cors',
@@ -2709,16 +2751,6 @@ Responde solo con JSON en este formato:
       }
     }
 
-    async function checkVentaExists(id, url) {
-      try {
-        const resp = await fetch(url + '?action=getVentas');
-        const data = await resp.json();
-        return data && data.ventas ? data.ventas.some(v => v.id === id) : false;
-      } catch (e) {
-        return false;
-      }
-    }
-
     async function forceSyncToSheets() {
       if (STATE.isDemo) { toast('ℹ️ Modo demo'); return; }
       const url = localStorage.getItem('dq_script_url');
@@ -2727,59 +2759,39 @@ Responde solo con JSON en este formato:
 
       STATE.syncInProgress = true;
       const btn = document.querySelector('.sync-btn');
-      if (btn) { btn.textContent = '⟳ Sincronizando...';
-        btn.disabled = true; }
+      if (btn) { btn.textContent = '⟳ Sincronizando...'; btn.disabled = true; }
       const status = document.getElementById('sync_status');
       if (status) status.textContent = '⏳ Sincronizando...';
 
       try {
-        const ventasToSend = STATE.ventas.slice(0, 100);
-        let sent = 0;
-        for (const v of ventasToSend) {
-          const exists = await checkVentaExists(v.id, url);
-          if (!exists) {
-            await fetch(url, {
-              method: 'POST',
-              mode: 'no-cors',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ action: 'postVenta', ...v })
-            });
-            sent++;
-            await new Promise(r => setTimeout(r, 100));
-          }
-        }
-
+        const email = STATE.userEmail;
+        
+        // Sincronizar todo
         await fetch(url, {
           method: 'POST',
           mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'postOKRs', okrs: STATE.okrs })
-        });
-
-        await fetch(url, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'saveConfig', ...STATE.config })
-        });
-
-        await fetch(url, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ action: 'saveContexto', dofa: STATE.dofa })
+          body: JSON.stringify({ 
+            action: 'saveAllData',
+            email: email,
+            config: STATE.config,
+            dofa: STATE.dofa,
+            okrs: STATE.okrs,
+            ventas: STATE.ventas,
+            productos: STATE.productos,
+            vendedores: STATE.vendedores
+          })
         });
 
         const hora = new Date().toLocaleTimeString('es-CO', { hour: '2-digit', minute: '2-digit' });
-        toast('✅ Sincronizado con Sheets · ' + hora + ' (' + sent + ' ventas)');
-        if (status) status.textContent = '✅ Última sincronización: ' + hora + ' (' + sent + ' ventas)';
+        toast('✅ Sincronizado con Sheets · ' + hora);
+        if (status) status.textContent = '✅ Última sincronización: ' + hora;
       } catch (e) {
         toast('❌ Error: ' + e.message);
         if (status) status.textContent = '❌ Error: ' + e.message;
       } finally {
         STATE.syncInProgress = false;
-        if (btn) { btn.textContent = '⟳ Sincronizar';
-          btn.disabled = false; }
+        if (btn) { btn.textContent = '⟳ Sincronizar'; btn.disabled = false; }
       }
     }
 
@@ -2794,9 +2806,9 @@ Responde solo con JSON en este formato:
         const resp = await fetch(url + '?action=ping');
         const data = await resp.json();
         if (data && data.ok) {
-          toast('✅ Conectado · ' + data.empresa + ' · ' + new Date(data.ts).toLocaleTimeString());
+          toast('✅ Conectado · ' + (data.empresa || 'DashQ'));
           const status = document.getElementById('sync_status');
-          if (status) status.textContent = '✅ Conectado a: ' + data.empresa;
+          if (status) status.textContent = '✅ Conectado a: ' + (data.empresa || 'DashQ');
         } else {
           toast('⚠️ Script respondió pero no ok');
         }
@@ -2805,9 +2817,9 @@ Responde solo con JSON en este formato:
       }
     }
 
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     // CONFIG - PRODUCTOS Y VENDEDORES
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     function renderProductosList() {
       const container = document.getElementById('productos_list');
       if (!container) return;
@@ -2854,7 +2866,7 @@ Responde solo con JSON en este formato:
       renderProductosList();
       populateProductos();
       toast('✅ Producto agregado');
-      sendToSheets('saveConfig', { productos: STATE.productos });
+      sendToSheets('saveConfig', { productos: STATE.productos, email: STATE.userEmail });
     }
 
     function deleteProducto(index) {
@@ -2864,7 +2876,7 @@ Responde solo con JSON en este formato:
       renderProductosList();
       populateProductos();
       toast('🗑 Producto eliminado');
-      sendToSheets('saveConfig', { productos: STATE.productos });
+      sendToSheets('saveConfig', { productos: STATE.productos, email: STATE.userEmail });
     }
 
     function editProducto(index) {
@@ -2886,7 +2898,7 @@ Responde solo con JSON en este formato:
       renderVendedoresList();
       populateVendedores();
       toast('✅ Vendedor agregado');
-      sendToSheets('saveConfig', { vendedores: STATE.vendedores });
+      sendToSheets('saveConfig', { vendedores: STATE.vendedores, email: STATE.userEmail });
     }
 
     function deleteVendedor(index) {
@@ -2896,7 +2908,7 @@ Responde solo con JSON en este formato:
       renderVendedoresList();
       populateVendedores();
       toast('🗑 Vendedor eliminado');
-      sendToSheets('saveConfig', { vendedores: STATE.vendedores });
+      sendToSheets('saveConfig', { vendedores: STATE.vendedores, email: STATE.userEmail });
     }
 
     function editVendedor(index) {
@@ -2933,12 +2945,12 @@ Responde solo con JSON en este formato:
       }
       document.getElementById('modalEditItem').classList.remove('open');
       toast('✅ Actualizado');
-      sendToSheets('saveConfig', { productos: STATE.productos, vendedores: STATE.vendedores });
+      sendToSheets('saveConfig', { productos: STATE.productos, vendedores: STATE.vendedores, email: STATE.userEmail });
     }
 
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     // CONTEXTO
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     function loadContextoFields() {
       document.getElementById('ctx_mis').value = STATE.config.mision || '';
       document.getElementById('ctx_vis').value = STATE.config.vision || '';
@@ -2959,12 +2971,12 @@ Responde solo con JSON en este formato:
       STATE.dofa.amenazas = document.getElementById('ctx_ame').value.trim();
       saveLocal();
       toast('✅ Contexto guardado');
-      sendToSheets('saveContexto', STATE.dofa);
+      sendToSheets('saveContexto', { dofa: STATE.dofa, email: STATE.userEmail });
     }
 
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     // CONFIG
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     function loadCfgFields() {
       document.getElementById('cfg_emp').value = STATE.config.empresa || '';
       document.getElementById('cfg_sec').value = STATE.config.sector || '';
@@ -2987,7 +2999,7 @@ Responde solo con JSON en este formato:
       document.getElementById('sb_empresa').textContent = STATE.config.empresa;
       saveLocal();
       toast('✅ Configuración guardada');
-      sendToSheets('saveConfig', STATE.config);
+      sendToSheets('saveConfig', { config: STATE.config, email: STATE.userEmail });
     }
 
     function saveScriptUrl() {
@@ -3002,9 +3014,9 @@ Responde solo con JSON en este formato:
       }
     }
 
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     // MISTRAL API KEY
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     function saveMistralKey() {
       const key = document.getElementById('cfg_mistral_key').value.trim();
       if (!key) { toast('Ingresa una API Key'); return; }
@@ -3014,9 +3026,9 @@ Responde solo con JSON en este formato:
       toast('✅ API Key de Mistral guardada');
     }
 
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     // IA ANÁLISIS
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     function generarAnalisis() {
       const key = localStorage.getItem('dq_mistral_key') || document.getElementById('ia_key').value.trim();
       if (!key) { toast('⚠️ Configura la API Key de Mistral en ⚙️ Configuración'); return; }
@@ -3025,7 +3037,7 @@ Responde solo con JSON en este formato:
       document.getElementById('ia_result').style.display = 'none';
 
       const totalVentas = STATE.ventas.reduce((s, v) => s + (v.monto || 0), 0);
-      const meta = STATE.config.meta || 90000000;
+      const meta = STATE.config.meta || 0;
       const pctMeta = meta > 0 ? Math.round((totalVentas / meta) * 100) : 0;
       const avgOKR = calcularPromedioOKRs();
 
@@ -3118,9 +3130,9 @@ Proporciona análisis estratégico en formato JSON con las siguientes claves:
       setTimeout(() => toast('✅ PDF exportado (simulado)'), 1200);
     }
 
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     // PWA
-    // ═══════════════════════════════════════════════════════════════
+    // ============================================================
     function registerPWA() {
       try {
         const color = STATE.config.color || '#00E5A0';
@@ -3140,21 +3152,6 @@ Proporciona análisis estratégico en formato JSON con las siguientes claves:
         link.rel = 'manifest';
         link.href = url;
         document.head.appendChild(link);
-      } catch (e) {}
-    }
-
-    // Restaurar estado
-    const savedState = localStorage.getItem('dq_state');
-    if (savedState) {
-      try {
-        const d = JSON.parse(savedState);
-        if (d.okrs) STATE.okrs = d.okrs;
-        if (d.ventas) STATE.ventas = d.ventas;
-        if (d.config) STATE.config = { ...STATE.config, ...d.config };
-        if (d.dofa) STATE.dofa = { ...STATE.dofa, ...d.dofa };
-        if (d.productos) STATE.productos = d.productos;
-        if (d.vendedores) STATE.vendedores = d.vendedores;
-        STATE.filteredVentas = [...STATE.ventas];
       } catch (e) {}
     }
 
