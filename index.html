@@ -34,7 +34,11 @@
   <div id="view-login" class="flex items-center justify-center min-h-screen px-4">
     <div class="w-full max-w-md p-8 glass rounded-2xl shadow-2xl space-y-5">
       <div class="text-center">
-        <div class="inline-flex p-3 bg-purple-500/10 text-purple-400 rounded-xl mb-2"><i data-lucide="shield-check" class="w-7 h-7"></i></div>
+        <div class="inline-flex p-3 bg-purple-500/10 text-purple-400 rounded-xl mb-2">
+        <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/>
+        </svg>
+      </div>
         <h1 class="text-2xl font-bold tracking-tight">DataPulse Engine</h1>
         <p class="text-xs text-zinc-400 mt-1">Conexión cifrada a tu ecosistema de control</p>
       </div>
@@ -94,7 +98,11 @@
     <!-- Sidebar -->
     <aside class="hidden md:flex flex-col w-64 glass p-6 space-y-7 shrink-0">
       <div class="flex items-center gap-3">
-        <div class="p-2 bg-purple-500/10 text-purple-400 rounded-xl"><i data-lucide="layers"></i></div>
+        <div class="p-2 bg-purple-500/10 text-purple-400 rounded-xl">
+          <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2 2 7l10 5 10-5-10-5Z"/><path d="m2 17 10 5 10-5"/><path d="m2 12 10 5 10-5"/>
+          </svg>
+        </div>
         <span class="font-bold text-lg tracking-wide bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent truncate max-w-[150px]" id="header-empresa">DataPulse</span>
       </div>
       <nav class="space-y-1 flex-1">
@@ -649,12 +657,21 @@
           const cleanJson = res.choices[0].message.content.replace(/```json/g, "").replace(/```/g, "").trim();
           const parsed = JSON.parse(cleanJson);
           
-          temporaryAISuggestion.obj = parsed.objetivo;
-          temporaryAISuggestion.kr = parsed.resultado_clave;
+          const krTexto = typeof parsed.resultado_clave === 'object'
+            ? (parsed.resultado_clave.texto || parsed.resultado_clave.descripcion || Object.values(parsed.resultado_clave).join(' '))
+            : String(parsed.resultado_clave || '');
+          const krMeta = typeof parsed.resultado_clave === 'object'
+            ? (parsed.resultado_clave.meta || parsed.meta || '')
+            : (parsed.meta || '');
+
+          temporaryAISuggestion.obj  = parsed.objetivo;
+          temporaryAISuggestion.kr   = krTexto;
+          temporaryAISuggestion.meta = krMeta;
 
           suggestionText.innerHTML = `
-            <p class="mb-1"><strong>Objetivo Sugerido:</strong> ${parsed.objetivo}</p>
-            <p><strong>KR Estimado:</strong> ${parsed.resultado_clave}</p>
+            <p class="mb-2"><strong class="text-purple-400">Objetivo (O):</strong><br/><span class="text-zinc-200">${parsed.objetivo}</span></p>
+            <p class="mb-2"><strong class="text-purple-400">Key Result (KR):</strong><br/><span class="text-zinc-200">${krTexto}</span></p>
+            ${krMeta ? `<p><strong class="text-purple-400">Meta sugerida:</strong> <span class="text-emerald-400">$${Number(krMeta).toLocaleString('es-CO')}</span></p>` : ''}
           `;
         } catch (e) {
           // Fallback por si la IA devuelve texto plano estructurado en lugar de JSON puro
@@ -667,8 +684,9 @@
     }
 
     function aplicarSugerenciaAFormulario() {
-      document.getElementById('okr-obj').value = temporaryAISuggestion.obj;
-      document.getElementById('okr-desc').value = temporaryAISuggestion.kr;
+      document.getElementById('okr-obj').value  = temporaryAISuggestion.obj  || '';
+      document.getElementById('okr-desc').value = temporaryAISuggestion.kr   || '';
+      if (temporaryAISuggestion.meta) document.getElementById('okr-meta').value = temporaryAISuggestion.meta;
       document.getElementById('ai-suggestion-box').classList.add('hidden');
     }
 
@@ -776,30 +794,71 @@
       const d = db.organizacion.dofa || {};
       const p = db.organizacion.pestel || {};
 
-      const pContext = `Actúa como el Chief Data Officer de la empresa "${db.organizacion.nombreEmpresa || 'Merco'}". Analiza nuestro rendimiento y genera un informe de diagnóstico de rendimiento de ventas conciso en Markdown usando tarjetas visuales (títulos h3 claros y listas).
+      const pContext = `Eres el Chief Data Officer de "${db.organizacion.nombreEmpresa || 'la empresa'}". Analiza estos datos y responde ÚNICAMENTE con JSON válido, sin texto adicional ni bloques markdown.
 
-      DATOS DE ENTORNO COMERCIAL ACTUAL:
-      - Facturación Bruta Acumulada: $${facturacionTotal.toLocaleString('es-CO')} COP
-      - Comportamiento de Inventario por Ítems: ${resumenProductos}
-      - Sector Industrial: ${db.organizacion.sector || 'No provisto'}
+DATOS:
+- Facturación acumulada: $${facturacionTotal.toLocaleString('es-CO')} COP
+- Inventario: ${resumenProductos}
+- Sector: ${db.organizacion.sector || 'No especificado'}
+- Fortalezas: ${d.f || 'No provisto'}
+- Oportunidades: ${d.o || 'No provisto'}
+- Debilidades: ${d.d || 'No provisto'}
+- Amenazas: ${d.a || 'No provisto'}
 
-      MATRICES ESTRATÉGICAS DE LA ORGANIZACIÓN:
-      - Fortalezas DOFA: ${d.f || 'No provisto'}
-      - Oportunidades DOFA: ${d.o || 'No provisto'}
-      - Debilidades DOFA: ${d.d || 'No provisto'}
-      - Amenazas DOFA: ${d.a || 'No provisto'}
-      - Macroentorno PESTEL (Político/Económico/Social): ${p.pe || ''}, ${p.ec || ''}, ${p.so || ''}
-
-      Por favor, genera un análisis ejecutivo directo, muy accionable y visual enfocado en optimizar el ROI de inmediato basándote únicamente en estos datos reales provistos. Evita texto de relleno genérico.`;
+Responde con este JSON exacto:
+{
+  "estado": "resumen ejecutivo en 2 oraciones",
+  "hallazgos_clave": ["hallazgo 1", "hallazgo 2", "hallazgo 3"],
+  "oportunidades": ["oportunidad 1", "oportunidad 2", "oportunidad 3"],
+  "alertas": ["alerta 1", "alerta 2"],
+  "recomendaciones": ["acción concreta 1", "acción concreta 2", "acción concreta 3"],
+  "roi_inmediato": "estimado de impacto financiero en 30 días"
+}`;
 
       fetch('https://api.mistral.ai/v1/chat/completions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.mistralKey}` },
         body: JSON.stringify({ model: 'mistral-tiny', messages: [{ role: 'user', content: pContext }], temperature: 0.2 })
       })
-      .then(r => r.json()).then(res => { 
-        // Solución definitiva al renderizado: marked.parse() transforma los asteriscos en HTML real y limpio con las tipografías asignadas
-        out.innerHTML = marked.parse(res.choices[0].message.content); 
+      .then(r => r.json()).then(res => {
+        const raw = res.choices[0].message.content;
+        // Extraer JSON aunque la IA lo envuelva en ```json
+        const match = raw.replace(/```json\n?|```\n?/g, '').trim().match(/\{[\s\S]*\}/);
+        try {
+          const p = JSON.parse(match ? match[0] : raw);
+          const seccion = (titulo, items, color) => {
+            if (!items || !items.length) return '';
+            const dots = { 'emerald': 'bg-emerald-500', 'amber': 'bg-amber-400', 'rose': 'bg-rose-500', 'blue': 'bg-blue-500' };
+            const texts = { 'emerald': 'text-emerald-400', 'amber': 'text-amber-400', 'rose': 'text-rose-400', 'blue': 'text-blue-400' };
+            return `<div class="glass p-4 rounded-xl space-y-2">
+              <p class="text-xs font-bold uppercase tracking-wider ${texts[color] || 'text-purple-400'} mb-2">${titulo}</p>
+              ${items.map((item, i) => `<div class="flex gap-2.5 items-start">
+                <span class="mt-1.5 w-1.5 h-1.5 rounded-full ${dots[color] || 'bg-purple-500'} flex-shrink-0"></span>
+                <span class="text-zinc-300 text-xs leading-relaxed">${item}</span>
+              </div>`).join('')}
+            </div>`;
+          };
+          out.innerHTML = `
+            <div class="space-y-4">
+              <div class="glass p-4 rounded-xl border-l-4 border-purple-500">
+                <p class="text-xs font-bold text-purple-400 uppercase tracking-wider mb-1">Estado General</p>
+                <p class="text-zinc-200 text-sm leading-relaxed">${p.estado || p.resumen || p.diagnostico || ''}</p>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                ${seccion('🚀 Hallazgos Clave', p.hallazgos || p.hallazgos_clave, 'blue')}
+                ${seccion('📈 Oportunidades', p.oportunidades, 'emerald')}
+                ${seccion('⚠️ Alertas', p.alertas || p.riesgos, 'rose')}
+                ${seccion('💡 Recomendaciones', p.recomendaciones || p.acciones, 'amber')}
+              </div>
+              ${p.roi_inmediato || p.roi ? `<div class="glass p-4 rounded-xl">
+                <p class="text-xs font-bold text-amber-400 uppercase tracking-wider mb-2">💰 ROI Inmediato</p>
+                <p class="text-zinc-300 text-xs leading-relaxed">${typeof p.roi_inmediato === 'object' ? JSON.stringify(p.roi_inmediato) : (p.roi_inmediato || p.roi)}</p>
+              </div>` : ''}
+            </div>`;
+        } catch(e) {
+          // Fallback: render como texto limpio sin markdown crudo
+          out.innerHTML = `<div class="glass p-5 rounded-xl text-zinc-300 text-sm leading-relaxed whitespace-pre-line">${raw.replace(/[#*`]/g, '').replace(/---/g, '').trim()}</div>`;
+        }
       });
     }
 
