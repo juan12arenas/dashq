@@ -590,16 +590,33 @@
             <div class="space-y-1.5">
               <div class="flex justify-between items-center">
                 <span class="text-zinc-400">Avance</span>
-                <span class="font-bold text-sm ${semText}">${pct}%</span>
+                <span class="font-bold text-sm ${semText}" id="pct-label-${o.id}">${pct}%</span>
               </div>
               <div class="w-full bg-zinc-800 h-2.5 rounded-full overflow-hidden">
-                <div class="${semColor} h-full rounded-full transition-all duration-700" style="width:${pct}%"></div>
+                <div class="${semColor} h-full rounded-full transition-all duration-700" id="pct-bar-${o.id}" style="width:${pct}%"></div>
               </div>
+            </div>
+            <!-- INPUT DE AVANCE MANUAL -->
+            <div class="flex items-center gap-2 pt-1">
+              <label class="text-zinc-500 text-[10px] whitespace-nowrap">Actualizar avance ($)</label>
+              <input
+                type="number"
+                id="input-actual-${o.id}"
+                value="${actual}"
+                min="0"
+                max="${meta}"
+                class="flex-1 bg-zinc-900 border border-zinc-700 text-white text-xs px-2 py-1.5 rounded-lg focus:border-purple-500 focus:outline-none"
+                placeholder="Monto actual"
+              />
+              <button
+                onclick="actualizarAvanceOKR('${o.id}', ${meta})"
+                class="px-3 py-1.5 bg-purple-500 hover:bg-purple-600 text-zinc-950 font-bold text-[10px] rounded-lg transition-colors whitespace-nowrap"
+              >Guardar</button>
             </div>
             <div class="flex justify-between items-center pt-1 border-t border-zinc-800">
               <div class="text-center">
                 <p class="text-zinc-500 text-[10px] mb-0.5">Actual</p>
-                <p class="text-zinc-200 font-bold">$${actual.toLocaleString('es-CO')}</p>
+                <p class="text-zinc-200 font-bold" id="actual-label-${o.id}">$${actual.toLocaleString('es-CO')}</p>
               </div>
               <div class="text-center">
                 <p class="text-zinc-500 text-[10px] mb-0.5">Meta</p>
@@ -607,7 +624,7 @@
               </div>
               <div class="text-center">
                 <p class="text-zinc-500 text-[10px] mb-0.5">Falta</p>
-                <p class="font-bold ${faltaColor}">${faltaTexto}</p>
+                <p class="font-bold ${faltaColor}" id="falta-label-${o.id}">${faltaTexto}</p>
               </div>
             </div>
           </div>`;
@@ -859,6 +876,49 @@ Responde con este JSON exacto:
           // Fallback: render como texto limpio sin markdown crudo
           out.innerHTML = `<div class="glass p-5 rounded-xl text-zinc-300 text-sm leading-relaxed whitespace-pre-line">${raw.replace(/[#*`]/g, '').replace(/---/g, '').trim()}</div>`;
         }
+      });
+    }
+
+    function actualizarAvanceOKR(idObjetivo, meta) {
+      const input = document.getElementById('input-actual-' + idObjetivo);
+      const nuevoActual = Number(input.value);
+      if (isNaN(nuevoActual) || nuevoActual < 0) {
+        alert('Ingresa un valor válido'); return;
+      }
+
+      // Actualizar UI inmediatamente sin esperar al servidor
+      const pct = meta > 0 ? Math.min(Math.round((nuevoActual / meta) * 100), 100) : 0;
+      const falta = Math.max(0, meta - nuevoActual);
+      const semColor = pct >= 70 ? 'bg-emerald-500' : pct >= 40 ? 'bg-amber-400' : 'bg-rose-500';
+      const semText  = pct >= 70 ? 'text-emerald-400': pct >= 40 ? 'text-amber-400': 'text-rose-400';
+
+      const bar   = document.getElementById('pct-bar-'    + idObjetivo);
+      const label = document.getElementById('pct-label-'  + idObjetivo);
+      const actEl = document.getElementById('actual-label-'+ idObjetivo);
+      const faltEl= document.getElementById('falta-label-'+ idObjetivo);
+
+      if (bar)   { bar.style.width = pct + '%'; bar.className = bar.className.replace(/bg-\w+-\d+/, semColor); }
+      if (label) { label.textContent = pct + '%'; label.className = label.className.replace(/text-\w+-\d+/, semText); }
+      if (actEl) { actEl.textContent = '$' + nuevoActual.toLocaleString('es-CO'); }
+      if (faltEl){ faltEl.textContent = falta <= 0 ? '✓ Meta' : '$' + falta.toLocaleString('es-CO'); }
+
+      // Actualizar db local para que el KPI del dashboard se recalcule
+      const okr = db.objetivos.find(o => o.id === idObjetivo);
+      if (okr) okr.actual = nuevoActual;
+
+      // Recalcular KPI global del dashboard
+      let totalMeta = 0, totalActual = 0;
+      db.objetivos.forEach(o => {
+        totalMeta   += Number(o.meta   || 0);
+        totalActual += Number(o.actual || 0);
+      });
+      const globalPct = totalMeta > 0 ? Math.min(Math.round((totalActual / totalMeta) * 100), 100) : 0;
+      const kpiEl = document.getElementById('kpi-okr-cumplimiento');
+      if (kpiEl) kpiEl.innerText = globalPct + '%';
+
+      // Enviar al Apps Script
+      consumirApiBack('actualizarAvanceOKR', { idObjetivo, nuevoActual }, (res) => {
+        console.log('Avance sincronizado:', res);
       });
     }
 
