@@ -233,6 +233,7 @@
                 <div><label class="block mb-1 text-zinc-400">Meta Financiera ($) o Numérica</label><input type="number" id="okr-meta" required class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg text-white" placeholder="Ej: 15000000"></div>
                 <button type="submit" class="w-full py-2 bg-purple-500 font-bold text-zinc-950 rounded-lg">Establecer Meta</button>
               </form>
+              <div id="okr-toast" class="hidden mt-2 text-center text-xs font-bold text-emerald-400 py-2 bg-emerald-500/10 rounded-lg">✅ OKR creado y sincronizado</div>
               <div class="pt-2">
                 <button onclick="solicitarSugerenciasOKR()" class="w-full py-2 bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 text-xs font-bold rounded-lg flex items-center justify-center gap-1.5"><i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Diseñar Propuesta con IA</button>
               </div>
@@ -543,39 +544,95 @@
       let totalMeta = 0;
       let totalActual = 0;
 
+      if (!db.objetivos || db.objetivos.length === 0) {
+        cont.innerHTML = '<p class="col-span-2 text-center text-zinc-500 py-8 text-xs">Sin OKRs registrados. Crea el primero desde el panel lateral.</p>';
+        document.getElementById('kpi-okr-cumplimiento').innerText = '0%';
+        return;
+      }
+
       db.objetivos.forEach(o => {
         totalMeta += Number(o.meta || 0);
         totalActual += Number(o.actual || 0);
-        let pct = Math.min(Math.round((o.actual / o.meta) * 100), 100);
-        cont.innerHTML += `
-          <div class="glass p-5 rounded-2xl space-y-3 text-xs">
-            <div class="flex justify-between items-start">
-               <span class="px-2 py-0.5 bg-purple-500/10 text-purple-400 text-[10px] uppercase font-bold rounded-md">KR</span>
-               <span class="text-xs font-bold text-zinc-400">${pct}%</span>
+        const pct = o.meta > 0 ? Math.min(Math.round((Number(o.actual) / Number(o.meta)) * 100), 100) : 0;
+
+        // Semáforo de color según avance
+        const semColor  = pct >= 70 ? 'bg-emerald-500'  : pct >= 40 ? 'bg-amber-400'   : 'bg-rose-500';
+        const semText   = pct >= 70 ? 'text-emerald-400' : pct >= 40 ? 'text-amber-400' : 'text-rose-400';
+        const semBg     = pct >= 70 ? 'bg-emerald-500/10 text-emerald-400' : pct >= 40 ? 'bg-amber-400/10 text-amber-400' : 'bg-rose-500/10 text-rose-400';
+        const semLabel  = pct >= 70 ? '🟢 En camino'    : pct >= 40 ? '🟡 Seguimiento' : '🔴 Crítico';
+
+        // Objetivo (O) — viene del campo okr-obj, guardado en o.objetivo o fallback a o.id
+        const objetivoTexto = o.objetivo || o.id || 'Objetivo Estratégico';
+
+        cont.innerHTML += \`
+          <div class="glass p-5 rounded-2xl space-y-3 text-xs border border-zinc-800 hover:border-zinc-600 transition-colors">
+            <!-- Header: etiqueta KR + semáforo + % -->
+            <div class="flex justify-between items-center">
+              <span class="px-2 py-0.5 bg-purple-500/10 text-purple-400 text-[10px] uppercase font-bold rounded-md">OKR</span>
+              <span class="px-2 py-0.5 rounded-md text-[10px] font-bold \${semBg}">\${semLabel}</span>
             </div>
-            <p class="text-zinc-400 font-medium">Objetivo: <span class="text-zinc-200 font-semibold">${o.id || 'Estratégico'}</span></p>
-            <p class="text-zinc-300 leading-snug font-medium">Resultado Clave: ${o.descripcion}</p>
-            <div class="w-full bg-zinc-800 h-2 rounded-full overflow-hidden"><div class="bg-purple-500 h-full" style="width: ${pct}%"></div></div>
-            <div class="flex justify-between text-[11px] text-zinc-400"><span>Actual: $${Number(o.actual).toLocaleString()}</span><span>Meta: $${Number(o.meta).toLocaleString()}</span></div>
-          </div>`;
+
+            <!-- Objetivo (O) -->
+            <div class="space-y-0.5">
+              <p class="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Objetivo (O)</p>
+              <p class="text-zinc-200 font-semibold leading-snug">\${objetivoTexto}</p>
+            </div>
+
+            <!-- Key Result (KR) -->
+            <div class="space-y-0.5">
+              <p class="text-[10px] text-zinc-500 uppercase font-bold tracking-wider">Key Result (KR)</p>
+              <p class="text-zinc-300 leading-snug">\${o.descripcion}</p>
+            </div>
+
+            <!-- Barra de progreso -->
+            <div class="space-y-1.5">
+              <div class="flex justify-between items-center">
+                <span class="text-zinc-400">Avance</span>
+                <span class="font-bold text-sm \${semText}">\${pct}%</span>
+              </div>
+              <div class="w-full bg-zinc-800 h-2.5 rounded-full overflow-hidden">
+                <div class="\${semColor} h-full rounded-full transition-all duration-700" style="width: \${pct}%"></div>
+              </div>
+            </div>
+
+            <!-- Cifras actual vs meta -->
+            <div class="flex justify-between items-center pt-1 border-t border-zinc-800">
+              <div class="text-center">
+                <p class="text-zinc-500 text-[10px] mb-0.5">Actual</p>
+                <p class="text-zinc-200 font-bold">$\${Number(o.actual).toLocaleString('es-CO')}</p>
+              </div>
+              <div class="text-center">
+                <p class="text-zinc-500 text-[10px] mb-0.5">Meta</p>
+                <p class="text-zinc-200 font-bold">$\${Number(o.meta).toLocaleString('es-CO')}</p>
+              </div>
+              <div class="text-center">
+                <p class="text-zinc-500 text-[10px] mb-0.5">Falta</p>
+                <p class="font-bold \${Number(o.meta) - Number(o.actual) <= 0 ? 'text-emerald-400' : 'text-zinc-300'}">
+                  \${Number(o.meta) - Number(o.actual) <= 0 ? '✓ Meta' : '$' + Math.max(0, Number(o.meta) - Number(o.actual)).toLocaleString('es-CO')}
+                </p>
+              </div>
+            </div>
+          </div>\`;
       });
 
-      let globalPct = totalMeta > 0 ? Math.min(Math.round((totalActual / totalMeta) * 100), 100) : 0;
+      const globalPct = totalMeta > 0 ? Math.min(Math.round((totalActual / totalMeta) * 100), 100) : 0;
       document.getElementById('kpi-okr-cumplimiento').innerText = globalPct + "%";
     }
 
     function ejecutarCrearOKR(e) {
       e.preventDefault();
       const obj = { 
+        objetivo: document.getElementById('okr-obj').value,
         descripcion: document.getElementById('okr-desc').value, 
         meta: document.getElementById('okr-meta').value, 
         actual: 0 
       };
-      obj.id = document.getElementById('okr-obj').value; 
 
       consumirApiBack('guardarObjetivo', { objetivo: obj }, () => {
         document.getElementById('form-nuevo-okr').reset();
-        alert("OKR Sincronizado e Inyectado con Éxito.");
+        // Toast en pantalla en lugar de alert
+        const toast = document.getElementById('okr-toast');
+        if (toast) { toast.classList.remove('hidden'); setTimeout(() => toast.classList.add('hidden'), 3000); }
         cargarSesionExistente();
       });
     }
