@@ -1488,14 +1488,15 @@
             toast('✅ Bienvenido/a de vuelta, ' + (data.user?.nombre || user));
             setTimeout(() => initApp(u), 300);
           } else {
-            // Usuario nuevo → onboarding
-            STATE.firstLogin = true;
+            // Usuario nuevo — limpiar todo y forzar onboarding
+            STATE.config = { empresa:'', sector:'', ciudad:'', meta:0, nit:'', color:'#00E5A0', mision:'', vision:'', valores:'' };
             STATE.okrs = [];
             STATE.ventas = [];
+            STATE.dofa = { fortalezas:'', oportunidades:'', debilidades:'', amenazas:'' };
             STATE.filteredVentas = [];
-            saveLocal();
-            toast('👋 Primera vez — configura tu empresa');
-            setTimeout(() => checkFirstTime(u), 300);
+            localStorage.removeItem('dq_state'); // borrar datos locales viejos
+            toast('👋 Primera vez — cuéntanos sobre tu empresa');
+            setTimeout(() => startOnboarding(u), 400);
           }
         } catch(e) {
           if (btn) { btn.textContent = '🔑 Iniciar sesión'; btn.disabled = false; }
@@ -1510,6 +1511,11 @@
     }
 
     function checkFirstTime(user) {
+      // Only use localStorage if empresa is already configured
+      if (STATE.config && STATE.config.empresa) {
+        initApp(user);
+        return;
+      }
       const st = localStorage.getItem('dq_state');
       if (st) {
         try {
@@ -1518,7 +1524,7 @@
             STATE.config = d.config;
             STATE.okrs = d.okrs || [];
             STATE.ventas = d.ventas || [];
-            STATE.dofa = d.dofa || DEMO_DOFA;
+            STATE.dofa = d.dofa || { fortalezas:'', oportunidades:'', debilidades:'', amenazas:'' };
             if (d.productos) STATE.productos = d.productos;
             if (d.vendedores) STATE.vendedores = d.vendedores;
             STATE.filteredVentas = [...STATE.ventas];
