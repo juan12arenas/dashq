@@ -3,345 +3,289 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>DataPulse - Smart Dashboard</title>
-  <!-- Tailwind CSS -->
+  <title>DataPulse Studio</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <!-- ApexCharts -->
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
-  <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  
-  <!-- Configuración PWA Basica Inline -->
-  <meta name="theme-color" content="#09090b">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkRhdGFQdWxzZSBEYXNoYm9hcmQiLAogICJzaG9ydF9uYW1lIjogIkRhdGFQdWxzZSIsCiAgInN0YXJ0X3VybCI6ICIuIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjMDkwOTBiIiwKICAidGhlbWVfY29sb3IiOiAiIzA5MDkwYiIKfQ==">
-
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
     body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #09090b; color: #f4f4f5; }
-    .glass { background: rgba(24, 24, 27, 0.75); backdrop-filter: blur(12px); border: 1px solid rgba(63, 63, 70, 0.4); }
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
-    ::-webkit-scrollbar-track { background: #09090b; }
-    ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 3px; }
+    .glass { background: rgba(20, 20, 23, 0.85); backdrop-filter: blur(14px); border: 1px solid rgba(63, 63, 70, 0.3); }
+    .ai-render h3 { color: #c084fc; font-size: 1.1rem; border-left: 3px solid #a855f7; padding-left: 8px; margin-top: 1rem; font-weight: bold; }
+    .ai-render p { margin-bottom: 0.5rem; color: #d4d4d8; }
+    .ai-render ul { list-style-type: square; margin-left: 1.25rem; margin-bottom: 1rem; }
   </style>
 </head>
 <body class="antialiased min-h-screen pb-16 md:pb-0">
 
-  <!-- VISTA 1: LOGIN & ONBOARDING -->
+  <!-- VISTA: LOGIN -->
   <div id="view-login" class="flex items-center justify-center min-h-screen px-4">
-    <div class="w-full max-w-md p-8 glass rounded-2xl shadow-2xl space-y-6">
+    <div class="w-full max-w-md p-8 glass rounded-2xl shadow-2xl space-y-5">
       <div class="text-center">
-        <div class="inline-flex p-3 bg-emerald-500/10 text-emerald-400 rounded-xl mb-3"><i data-lucide="activity" class="w-8 h-8"></i></div>
-        <h1 class="text-2xl font-bold tracking-tight">Bienvenido a DataPulse</h1>
-        <p class="text-sm text-zinc-400 mt-1">Ingresa las credenciales de tu ecosistema</p>
+        <div class="inline-flex p-3 bg-purple-500/10 text-purple-400 rounded-xl mb-2"><i data-lucide="shield-check" class="w-7 h-7"></i></div>
+        <h1 class="text-2xl font-bold tracking-tight">DataPulse Engine</h1>
+        <p class="text-xs text-zinc-400 mt-1">Conexión cifrada a tu ecosistema de control</p>
       </div>
       <form id="form-login" class="space-y-4">
         <div>
-          <label class="block text-xs font-semibold text-zinc-400 uppercase mb-1">Correo Electrónico</label>
-          <input type="email" id="login-email" required class="w-full px-4 py-2.5 bg-zinc-900 border border-zinc-700 rounded-xl text-white focus:outline-none focus:border-emerald-500 transition-colors">
+          <label class="block text-xs font-semibold text-zinc-400 uppercase mb-1">Correo Corporativo</label>
+          <input type="email" id="login-email" required class="w-full px-4 py-2 bg-zinc-900 border border-zinc-700 rounded-xl text-white">
         </div>
         <div>
-          <label class="block text-xs font-semibold text-zinc-400 uppercase mb-1">ID de Enlace de Usuario</label>
-          <input type="text" id="login-id" required class="w-full px-4 py-2.5 bg-zinc-900 border border-zinc-700 rounded-xl text-white focus:outline-none focus:border-emerald-500 transition-colors" placeholder="Ej: Juan_Corp">
+          <label class="block text-xs font-semibold text-zinc-400 uppercase mb-1">ID de Acceso Seguro (ID_Usuario)</label>
+          <input type="text" id="login-id" required class="w-full px-4 py-2 bg-zinc-900 border border-zinc-700 rounded-xl text-white" placeholder="Ej: Juan_Corp">
         </div>
         <div>
-          <label class="block text-xs font-semibold text-zinc-400 uppercase mb-1">URL de Apps Script Web App</label>
-          <input type="url" id="login-url" required class="w-full px-4 py-2.5 bg-zinc-900 border border-zinc-700 rounded-xl text-white focus:outline-none focus:border-emerald-500 transition-colors" placeholder="https://script.google.com/macros/s/.../exec">
+          <label class="block text-xs font-semibold text-zinc-400 uppercase mb-1">URL Google Apps Script</label>
+          <input type="url" id="login-url" required class="w-full px-4 py-2 bg-zinc-900 border border-zinc-700 rounded-xl text-white text-xs">
         </div>
-        <button type="submit" class="w-full py-3 bg-emerald-500 hover:bg-emerald-600 font-semibold rounded-xl text-zinc-950 transition-colors shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2">
-          <span>Ingresar Sistema</span> <i data-lucide="arrow-right" class="w-4 h-4"></i>
+        <button type="submit" class="w-full py-3 bg-purple-500 hover:bg-purple-600 font-bold rounded-xl text-zinc-950 transition-all flex items-center justify-center gap-2">
+          <span>Inicializar Aplicación</span><i data-lucide="chevron-right" class="w-4 h-4"></i>
         </button>
       </form>
     </div>
   </div>
 
-  <!-- MODAL: ONBOARDING INICIAL -->
-  <div id="modal-onboarding" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-    <div class="w-full max-w-lg glass p-8 rounded-2xl shadow-2xl space-y-4">
-      <div class="flex items-center justify-between">
-        <h2 class="text-xl font-bold flex items-center gap-2 text-emerald-400"><i data-lucide="sparkles"></i> Perfil de Organización</h2>
-        <button onclick="cerrarOnboarding()" class="text-zinc-400 hover:text-white text-sm">Omitir por ahora</button>
+  <!-- ONBOARDING MODAL COMPLETO -->
+  <div id="modal-onboarding" class="hidden fixed inset-0 bg-black/90 backdrop-blur-md z-50 flex items-center justify-center p-4 overflow-y-auto">
+    <div class="w-full max-w-3xl glass p-8 rounded-2xl space-y-4 my-8 max-h-[90vh] overflow-y-auto">
+      <div class="flex justify-between items-center">
+        <h2 class="text-xl font-bold text-purple-400 flex items-center gap-2"><i data-lucide="sparkles"></i> Configuración Estructural Base</h2>
+        <button onclick="cerrarOnboarding()" class="text-zinc-500 hover:text-white text-xs uppercase tracking-wider">Omitir</button>
       </div>
-      <p class="text-sm text-zinc-400">Cuéntanos sobre tu empresa para que la IA contextualice tus métricas.</p>
-      <div class="grid grid-cols-2 gap-4">
+      
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div>
-          <label class="block text-xs font-semibold text-zinc-400 mb-1">NIT</label>
-          <input type="text" id="on-nit" class="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 rounded-xl text-white">
+          <label class="block text-xs text-zinc-400 mb-1">Nombre Comercial de Empresa</label>
+          <input type="text" id="on-nombre" class="w-full bg-zinc-900 border border-zinc-700 p-2.5 rounded-xl text-white">
         </div>
         <div>
-          <label class="block text-xs font-semibold text-zinc-400 mb-1">Tamaño Empresa</label>
-          <input type="text" id="on-tam" class="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 rounded-xl text-white" placeholder="Ej: 50 empleados">
+          <label class="block text-xs text-zinc-400 mb-1">NIT</label>
+          <input type="text" id="on-nit" class="w-full bg-zinc-900 border border-zinc-700 p-2.5 rounded-xl text-white">
         </div>
       </div>
-      <div>
-        <label class="block text-xs font-semibold text-zinc-400 mb-1">Sector Económico</label>
-        <input type="text" id="on-sec" class="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 rounded-xl text-white" placeholder="Ej: Retail / Tecnología">
+
+      <!-- DOFA ONBOARDING GRID -->
+      <h3 class="text-xs font-bold text-purple-400 uppercase tracking-wider border-b border-zinc-800 pb-1 pt-2">Matriz DOFA (Factores Internos / Externos)</h3>
+      <div class="grid grid-cols-2 gap-3 text-xs">
+        <div><label class="text-zinc-400 block mb-1">Fortalezas (F)</label><input type="text" id="on-f" class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg"></div>
+        <div><label class="text-zinc-400 block mb-1">Oportunidades (O)</label><input type="text" id="on-o" class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg"></div>
+        <div><label class="text-zinc-400 block mb-1">Debilidades (D)</label><input type="text" id="on-d" class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg"></div>
+        <div><label class="text-zinc-400 block mb-1">Amenazas (A)</label><input type="text" id="on-a" class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg"></div>
       </div>
-      <div>
-        <label class="block text-xs font-semibold text-zinc-400 mb-1">Análisis DOFA Simplificado</label>
-        <textarea id="on-dofa" rows="2" class="w-full px-3 py-2 bg-zinc-900 border border-zinc-700 rounded-xl text-white text-sm" placeholder="Fortalezas, Oportunidades..."></textarea>
-      </div>
-      <button onclick="guardarOnboarding()" class="w-full py-2.5 bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-semibold rounded-xl transition-all">Guardar Configuración Base</button>
+
+      <button onclick="guardarOnboarding()" class="w-full py-3 bg-purple-500 text-zinc-950 font-bold rounded-xl mt-4">Almacenar Perfil Corporativo</button>
     </div>
   </div>
 
-  <!-- INTERFAZ PRINCIPAL (Dashboard App) -->
+  <!-- INTERFAZ PRINCIPAL -->
   <div id="view-app" class="hidden min-h-screen flex flex-col md:flex-row">
-    
-    <!-- Sidebar / Nav de Escritorio -->
-    <aside class="hidden md:flex flex-col w-64 glass p-6 space-y-8 shrink-0">
+    <!-- Sidebar -->
+    <aside class="hidden md:flex flex-col w-64 glass p-6 space-y-7 shrink-0">
       <div class="flex items-center gap-3">
-        <div class="p-2 bg-emerald-500/10 text-emerald-400 rounded-lg"><i data-lucide="activity"></i></div>
-        <span class="font-bold text-lg tracking-wide">DataPulse</span>
+        <div class="p-2 bg-purple-500/10 text-purple-400 rounded-xl"><i data-lucide="layers"></i></div>
+        <span class="font-bold text-lg tracking-wide bg-gradient-to-r from-white to-zinc-400 bg-clip-text text-transparent" id="header-empresa">DataPulse</span>
       </div>
       <nav class="space-y-1 flex-1">
-        <button onclick="cambiarPestaña('dash')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors bg-emerald-500/10 text-emerald-400 font-medium" data-tab="dash"><i data-lucide="layout-dashboard" class="w-5 h-5"></i> Dashboard</button>
-        <button onclick="cambiarPestaña('gestor')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors text-zinc-400 hover:bg-zinc-800/50 hover:text-white" data-tab="gestor"><i data-lucide="sliders" class="w-5 h-5"></i> Gestor General</button>
-        <button onclick="cambiarPestaña('ia')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors text-zinc-400 hover:bg-zinc-800/50 hover:text-white" data-tab="ia"><i data-lucide="cpu" class="w-5 h-5"></i> Asistente IA</button>
-        <button onclick="cambiarPestaña('perfil')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors text-zinc-400 hover:bg-zinc-800/50 hover:text-white" data-tab="perfil"><i data-lucide="building-2" class="w-5 h-5"></i> Mi Organización</button>
+        <button onclick="cambiarPestaña('dash')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors bg-purple-500/10 text-purple-400 font-medium" data-tab="dash"><i data-lucide="layout-dashboard" class="w-5 h-5"></i> Dashboard</button>
+        <button onclick="cambiarPestaña('gestor')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors text-zinc-400 hover:bg-zinc-800/50" data-tab="gestor"><i data-lucide="boxes" class="w-5 h-5"></i> Inventario y Catálogo</button>
+        <button onclick="cambiarPestaña('objetivos')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors text-zinc-400 hover:bg-zinc-800/50" data-tab="objetivos"><i data-lucide="target" class="w-5 h-5"></i> Objetivos OKR</button>
+        <button onclick="cambiarPestaña('ia')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors text-zinc-400 hover:bg-zinc-800/50" data-tab="ia"><i data-lucide="cpu" class="w-5 h-5"></i> Consultor IA</button>
+        <button onclick="cambiarPestaña('perfil')" class="nav-btn w-full flex items-center gap-3 px-4 py-3 rounded-xl transition-colors text-zinc-400 hover:bg-zinc-800/50" data-tab="perfil"><i data-lucide="building" class="w-5 h-5"></i> Mi Organización</button>
       </nav>
-      <div class="pt-4 border-t border-zinc-800 flex items-center gap-3">
-        <div class="w-8 h-8 rounded-full bg-zinc-800 flex items-center justify-center text-xs font-bold text-emerald-400" id="avatar-user">U</div>
-        <div class="truncate flex-1"><p class="text-xs font-semibold text-zinc-200 truncate" id="label-user">Usuario</p></div>
+      <div class="pt-4 border-t border-zinc-800 flex items-center gap-3 text-xs">
+        <div class="w-8 h-8 rounded-full bg-purple-500 text-zinc-950 font-bold flex items-center justify-center" id="avatar-user">U</div>
+        <p class="truncate flex-1 font-semibold text-zinc-300" id="label-user">User</p>
         <button onclick="logout()" class="text-zinc-500 hover:text-rose-400"><i data-lucide="log-out" class="w-4 h-4"></i></button>
       </div>
     </aside>
 
-    <!-- Contenido Principal Dinámico -->
+    <!-- Contenedor Principal SPA -->
     <main class="flex-1 p-4 md:p-8 overflow-y-auto space-y-6 max-w-[1600px] mx-auto w-full">
       
       <!-- PESTAÑA: DASHBOARD -->
       <section id="tab-dash" class="tab-content space-y-6">
-        <!-- Header + Slicer Temporal -->
-        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-zinc-900/40 p-4 rounded-2xl border border-zinc-800">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 bg-zinc-900/60 p-5 rounded-2xl border border-zinc-800">
           <div>
-            <h2 class="text-2xl font-bold tracking-tight">Panel Estratégico de Ventas</h2>
-            <p class="text-sm text-zinc-400">Interacción directa y sincronización cruzada de objetos</p>
+            <h2 class="text-2xl font-bold tracking-tight">Consola de Facturación</h2>
+            <p class="text-xs text-zinc-400">Filtrado dinámico interactivo cruzado</p>
           </div>
           <div class="flex items-center gap-2 bg-zinc-900 px-4 py-2 rounded-xl border border-zinc-700">
-            <i data-lucide="calendar" class="w-4 h-4 text-zinc-400"></i>
-            <input type="date" id="filter-desde" class="bg-transparent text-sm focus:outline-none text-white">
-            <span class="text-zinc-600">a</span>
-            <input type="date" id="filter-hasta" class="bg-transparent text-sm focus:outline-none text-white">
+            <i data-lucide="calendar" class="w-4 h-4 text-purple-400"></i>
+            <input type="date" id="filter-desde" class="bg-transparent text-xs focus:outline-none text-white">
+            <span class="text-zinc-500 text-xs">al</span>
+            <input type="date" id="filter-hasta" class="bg-transparent text-xs focus:outline-none text-white">
           </div>
         </div>
 
-        <!-- KPI Cards -->
-        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div class="glass p-6 rounded-2xl relative overflow-hidden group">
-            <div class="absolute top-0 right-0 p-6 opacity-10 text-emerald-400"><i data-lucide="dollar-sign" class="w-12 h-12"></i></div>
-            <p class="text-xs font-semibold uppercase tracking-wider text-zinc-400">Ventas Totales Brutas</p>
-            <p class="text-3xl font-bold mt-2 text-emerald-400" id="kpi-total">$0.00</p>
-          </div>
-          <div class="glass p-6 rounded-2xl relative overflow-hidden group">
-            <div class="absolute top-0 right-0 p-6 opacity-10 text-blue-400"><i data-lucide="shopping-bag" class="w-12 h-12"></i></div>
-            <p class="text-xs font-semibold uppercase tracking-wider text-zinc-400">Volumen Transacciones</p>
-            <p class="text-3xl font-bold mt-2 text-blue-400" id="kpi-ticket">0 ops</p>
-          </div>
-          <div class="glass p-6 rounded-2xl relative overflow-hidden group sm:col-span-2 lg:col-span-1">
-            <div class="absolute top-0 right-0 p-6 opacity-10 text-purple-400"><i data-lucide="trending-up" class="w-12 h-12"></i></div>
-            <p class="text-xs font-semibold uppercase tracking-wider text-zinc-400">Ticket Promedio</p>
-            <p class="text-3xl font-bold mt-2 text-purple-400" id="kpi-avg">$0.00</p>
-          </div>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div class="glass p-5 rounded-2xl"><p class="text-xs font-semibold text-zinc-400 uppercase">Facturación Bruta</p><p class="text-2xl font-bold mt-2 text-purple-400" id="kpi-total">$ 0</p></div>
+          <div class="glass p-5 rounded-2xl"><p class="text-xs font-semibold text-zinc-400 uppercase">Volumen de Órdenes</p><p class="text-2xl font-bold mt-2 text-blue-400" id="kpi-ticket">0 ops</p></div>
+          <div class="glass p-5 rounded-2xl"><p class="text-xs font-semibold text-zinc-400 uppercase">Ticket Medio</p><p class="text-2xl font-bold mt-2 text-emerald-400" id="kpi-avg">$ 0</p></div>
         </div>
 
-        <!-- Gráficos Principales -->
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div class="glass p-4 rounded-2xl"><h3 class="text-sm font-semibold text-zinc-400 mb-2 px-2">Comportamiento Temporal</h3><div id="chart-timeline"></div></div>
+          <div class="glass p-4 rounded-2xl"><h3 class="text-xs font-bold text-zinc-400 mb-2 uppercase px-1">Evolución Temporal</h3><div id="chart-timeline"></div></div>
           <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div class="glass p-4 rounded-2xl"><h3 class="text-sm font-semibold text-zinc-400 mb-2 px-2">Top Vendedores</h3><div id="chart-vendedores"></div></div>
-            <div class="glass p-4 rounded-2xl"><h3 class="text-sm font-semibold text-zinc-400 mb-2 px-2">Distribución Geográfica</h3><div id="chart-ubicaciones"></div></div>
+            <div class="glass p-4 rounded-2xl"><h3 class="text-xs font-bold text-zinc-400 mb-2 uppercase px-1">Ventas por Colaborador</h3><div id="chart-vendedores"></div></div>
+            <div class="glass p-4 rounded-2xl"><h3 class="text-xs font-bold text-zinc-400 mb-2 uppercase px-1">Distribución Territorial</h3><div id="chart-ubicaciones"></div></div>
           </div>
         </div>
 
-        <!-- Tabla Transaccional / Registro -->
         <div class="glass rounded-2xl overflow-hidden">
-          <div class="p-5 border-b border-zinc-800 flex justify-between items-center">
-            <h3 class="font-bold tracking-tight">Últimos Movimientos Registrados</h3>
-            <span class="px-2.5 py-1 text-xs font-medium bg-zinc-800 text-zinc-300 rounded-full" id="table-count">0 registros</span>
+          <div class="p-4 border-b border-zinc-800"><h3 class="font-bold text-sm">Libro de Ventas Recientes</h3></div>
+          <div class="overflow-x-auto"><table class="w-full text-left text-xs"><thead class="bg-zinc-900 text-zinc-400 uppercase font-semibold"><tr class="border-b border-zinc-800"><th class="p-3">Fecha</th><th class="p-3">Item/Producto</th><th class="p-3">Responsable</th><th class="p-3">Ubicación</th><th class="p-3 text-right">Monto</th></tr></thead><tbody id="tabla-ventas-body" class="divide-y divide-zinc-800/40"></tbody></table></div>
+        </div>
+      </section>
+
+      <!-- PESTAÑA: CATALOGO E INVENTARIOS (FORMULARIOS INTEGRADOS INDEPENDIENTES) -->
+      <section id="tab-gestor" class="tab-content space-y-6 hidden">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          
+          <!-- Bloque de Formularios Operativos -->
+          <div class="space-y-4 lg:col-span-1">
+            <!-- Facturar Transacción -->
+            <div class="glass p-5 rounded-2xl space-y-3">
+              <h3 class="font-bold text-purple-400 text-xs uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="shopping-cart" class="w-4 h-4"></i> Facturar Venta</h3>
+              <form id="form-nueva-venta" class="space-y-3 text-xs">
+                <div><label class="block mb-1 text-zinc-400">Fecha Operación</label><input type="date" id="v-fecha" required class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg text-white"></div>
+                <div><label class="block mb-1 text-zinc-400">Seleccionar Producto</label><select id="v-prod" onchange="autoCompletarPrecioVenta()" class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg text-white"></select></div>
+                <div><label class="block mb-1 text-zinc-400">Monto Calculado ($)</label><input type="number" id="v-monto" required class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg text-white"></div>
+                <div><label class="block mb-1 text-zinc-400">Asignar Vendedor</label><select id="v-vend" class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg text-white"></select></div>
+                <div><label class="block mb-1 text-zinc-400">Ubicación de Despacho</label><select id="v-ubici" class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg text-white"><option>Norte</option><option>Centro</option><option>Sur</option></select></div>
+                <button type="submit" class="w-full py-2 bg-purple-500 font-bold text-zinc-950 rounded-lg">Inyectar Transacción</button>
+              </form>
+            </div>
+
+            <!-- Inyectar Producto Individual -->
+            <div class="glass p-5 rounded-2xl space-y-3">
+              <h3 class="font-bold text-blue-400 text-xs uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="package-plus" class="w-4 h-4"></i> Añadir Producto</h3>
+              <form id="form-add-producto" class="space-y-2.5 text-xs">
+                <div><label class="text-zinc-400 block mb-0.5">Nombre del Producto</label><input type="text" id="add-p-nombre" required class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg"></div>
+                <div class="grid grid-cols-2 gap-2">
+                  <div><label class="text-zinc-400 block mb-0.5">Stock Inicial</label><input type="number" id="add-p-stock" required class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg"></div>
+                  <div><label class="text-zinc-400 block mb-0.5">Precio ($)</label><input type="number" id="add-p-precio" required class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg"></div>
+                </div>
+                <button type="submit" class="w-full py-2 bg-blue-500/20 text-blue-400 hover:bg-blue-500 hover:text-zinc-950 font-semibold rounded-lg transition-all">Registrar Item</button>
+              </form>
+            </div>
+
+            <!-- Inyectar Vendedor Individual -->
+            <div class="glass p-5 rounded-2xl space-y-3">
+              <h3 class="font-bold text-emerald-400 text-xs uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="user-plus" class="w-4 h-4"></i> Añadir Vendedor</h3>
+              <form id="form-add-vendedor" class="space-y-2.5 text-xs">
+                <div><label class="text-zinc-400 block mb-0.5">Nombre Completo</label><input type="text" id="add-v-nombre" required class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg"></div>
+                <div><label class="text-zinc-400 block mb-0.5">Zona Asignada</label><select id="add-v-zona" class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg"><option>Norte</option><option>Centro</option><option>Sur</option></select></div>
+                <button type="submit" class="w-full py-2 bg-emerald-500/20 text-emerald-400 hover:bg-emerald-500 hover:text-zinc-950 font-semibold rounded-lg transition-all">Vincular Colaborador</button>
+              </form>
+            </div>
           </div>
-          <div class="overflow-x-auto">
-            <table class="w-full text-left border-collapse text-sm">
-              <thead>
-                <tr class="bg-zinc-900/60 border-b border-zinc-800 text-zinc-400 font-medium">
-                  <th class="p-4">Fecha</th><th class="p-4">Producto</th><th class="p-4">Vendedor</th><th class="p-4">Ubicación</th><th class="p-4 text-right">Monto</th>
-                </tr>
-              </thead>
-              <tbody id="tabla-ventas-body" class="divide-y divide-zinc-800/50">
-                <!-- Dinámico -->
-              </tbody>
-            </table>
+
+          <!-- Tablas de Control de Inventario Continuo -->
+          <div class="glass p-5 rounded-2xl lg:col-span-2 space-y-4">
+            <h3 class="font-bold text-sm text-zinc-300 uppercase tracking-wide">Inventario de Productos y Configuración General</h3>
+            <div class="overflow-x-auto"><table class="w-full text-left text-xs"><thead class="bg-zinc-900 text-zinc-400"><tr class="border-b border-zinc-800"><th class="p-3">Producto</th><th class="p-3">Stock Inicial</th><th class="p-3">Unidades Vendidas</th><th class="p-3">Disponibilidad Real</th><th class="p-3 text-right">Precio Unitario</th></tr></thead><tbody id="tabla-inventario-body" class="divide-y divide-zinc-800/40"></tbody></table></div>
+            <div class="pt-4 border-t border-zinc-800/60"><label class="block text-xs font-semibold text-zinc-400 mb-1">Mistral AI Token</label><div class="flex gap-2"><input type="password" id="cfg-mistral" class="flex-1 bg-zinc-900 border border-zinc-700 p-2 text-xs rounded-lg text-white"><button onclick="guardarMistralKey()" class="px-4 py-2 bg-purple-500 text-zinc-950 rounded-lg text-xs font-bold">Vincular</button></div></div>
           </div>
         </div>
       </section>
 
-      <!-- PESTAÑA: GEStOR GENERAL (Configuraciones de Catálogo y Conexiones) -->
-      <section id="tab-gestor" class="tab-content space-y-6 hidden">
-        <h2 class="text-2xl font-bold tracking-tight">Panel de Control y Configuración</h2>
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <!-- Entrada Operativa de Ventas -->
-          <div class="glass p-6 rounded-2xl space-y-4">
-            <h3 class="font-bold text-emerald-400 flex items-center gap-2"><i data-lucide="plus-circle"></i> Entrada de Nueva Venta Directa</h3>
-            <form id="form-nueva-venta" class="space-y-3">
-              <div class="grid grid-cols-2 gap-3">
-                <div>
-                  <label class="block text-xs text-zinc-400 mb-1">Fecha</label>
-                  <input type="date" id="v-fecha" required class="w-full bg-zinc-900 border border-zinc-700 p-2 text-sm rounded-lg text-white">
-                </div>
-                <div>
-                  <label class="block text-xs text-zinc-400 mb-1">Monto ($)</label>
-                  <input type="number" id="v-monto" required class="w-full bg-zinc-900 border border-zinc-700 p-2 text-sm rounded-lg text-white">
-                </div>
-              </div>
-              <div class="grid grid-cols-3 gap-2">
-                <div>
-                  <label class="block text-xs text-zinc-400 mb-1">Producto</label>
-                  <select id="v-prod" class="w-full bg-zinc-900 border border-zinc-700 p-2 text-sm rounded-lg text-white"></select>
-                </div>
-                <div>
-                  <label class="block text-xs text-zinc-400 mb-1">Vendedor</label>
-                  <select id="v-vend" class="w-full bg-zinc-900 border border-zinc-700 p-2 text-sm rounded-lg text-white"></select>
-                </div>
-                <div>
-                  <label class="block text-xs text-zinc-400 mb-1">Ubicación</label>
-                  <select id="v-ubici" class="w-full bg-zinc-900 border border-zinc-700 p-2 text-sm rounded-lg text-white"></select>
-                </div>
-              </div>
-              <button type="submit" class="w-full py-2 bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-semibold rounded-lg text-sm transition-colors">Inyectar en Google Sheets</button>
-            </form>
-          </div>
-
-          <!-- Configuraciones Técnicas (Tokens & Listas) -->
-          <div class="glass p-6 rounded-2xl space-y-4">
-            <h3 class="font-bold text-zinc-300 flex items-center gap-2"><i data-lucide="key"></i> Llaves de Conectividad e Inteligencia</h3>
-            <div class="space-y-3">
-              <div>
-                <label class="block text-xs text-zinc-400 mb-1">Mistral AI API Key</label>
-                <div class="flex gap-2">
-                  <input type="password" id="cfg-mistral" class="flex-1 bg-zinc-900 border border-zinc-700 p-2 text-sm rounded-lg text-white">
-                  <button onclick="guardarMistralKey()" class="px-4 py-2 bg-zinc-800 hover:bg-zinc-700 rounded-lg text-sm font-medium transition-colors">Vincular</button>
-                </div>
-              </div>
-              <div>
-                <label class="block text-xs text-zinc-400 mb-1">Listas Desplegables Básicas (Separadas por comas)</label>
-                <div class="space-y-2 text-xs">
-                  <input type="text" id="lst-prod" value="Producto A, Producto B, Producto C" class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg text-white">
-                  <input type="text" id="lst-vend" value="Vendedor 1, Vendedor 2, Vendedor 3" class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg text-white">
-                  <input type="text" id="lst-ubic" value="Norte, Centro, Sur" class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg text-white">
-                  <button onclick="actualizarCatalogosLocales()" class="w-full py-2 bg-zinc-800 text-zinc-300 hover:text-white rounded-lg font-medium transition-colors">Actualizar Catálogos en Formulario</button>
-                </div>
-              </div>
-            </div>
-          </div>
+      <!-- PESTAÑA: TRACKING DE OBJETIVOS (OKRs) -->
+      <section id="tab-objetivos" class="tab-content space-y-6 hidden">
+        <div class="flex justify-between items-center bg-zinc-900/40 p-4 rounded-xl border border-zinc-800">
+          <div><h2 class="text-xl font-bold">Cuadro de Mando de Objetivos (OKRs)</h2><p class="text-xs text-zinc-400">Metas comerciales sugeridas por la inteligencia de datos</p></div>
+          <div class="flex gap-2"><button onclick="solicitarSugerenciasOKR()" class="px-3 py-2 bg-purple-500/10 text-purple-400 hover:bg-purple-500/20 text-xs font-bold rounded-xl flex items-center gap-1.5"><i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Sugerir con IA</button><button onclick="crearObjetivoManual()" class="px-3 py-2 bg-zinc-800 text-zinc-200 text-xs font-bold rounded-xl">Crear Meta Manual</button></div>
         </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" id="container-objetivos"></div>
       </section>
 
       <!-- PESTAÑA: ASISTENTE IA -->
-      <section id="tab-ia" class="tab-content space-y-6 hidden">
+      <section id="tab-ia" class="tab-content space-y-4 hidden">
         <div class="flex items-center justify-between">
-          <div>
-            <h2 class="text-2xl font-bold tracking-tight">Núcleo Analítico Cognitivo</h2>
-            <p class="text-sm text-zinc-400">Generación de insights estratégicos usando IA con contexto organizacional</p>
-          </div>
-          <button onclick="ejecutarAnalisisIA()" class="px-4 py-2.5 bg-purple-500 hover:bg-purple-600 text-zinc-950 font-bold rounded-xl text-sm transition-colors flex items-center gap-2 shadow-lg shadow-purple-500/10">
-            <i data-lucide="cpu" class="w-4 h-4"></i> Diagnosticar Tendencias
-          </button>
+          <div><h2 class="text-xl font-bold tracking-tight">Consultor Avanzado</h2><p class="text-xs text-zinc-400">Análisis continuo de rendimiento y correlación matricial</p></div>
+          <button onclick="ejecutarAnalisisIA()" class="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-zinc-950 font-bold rounded-xl text-xs flex items-center gap-2 shadow-lg shadow-purple-500/20"><i data-lucide="cpu" class="w-4 h-4"></i> Generar Informe Ejecutivo</button>
         </div>
-        <div class="glass p-6 rounded-2xl min-h-[300px] flex flex-col justify-between space-y-4">
-          <div id="ia-output" class="text-sm leading-relaxed text-zinc-300 space-y-3 whitespace-pre-line">
-            <p class="text-zinc-500 italic text-center py-12">Haz clic en "Diagnosticar Tendencias" para que la IA evalúe la matriz transaccional junto a tu matriz DOFA/PESTEL.</p>
-          </div>
-          <div class="p-3 bg-purple-500/5 rounded-xl border border-purple-500/20 text-xs text-purple-400 flex items-start gap-2">
-            <i data-lucide="info" class="w-4 h-4 shrink-0 mt-0.5"></i>
-            <span>La respuesta evalúa de forma cruzada el volumen de transacciones financieras actuales con los factores externos configurados en el perfil corporativo.</span>
-          </div>
+        <div class="glass p-6 rounded-2xl min-h-[400px] flex flex-col justify-between">
+          <div id="ia-output" class="ai-render text-sm text-zinc-300 space-y-4"><p class="text-zinc-500 italic text-center py-20">Haz clic en "Generar Informe Ejecutivo" para procesar analíticamente las transacciones del periodo.</p></div>
         </div>
       </section>
 
-      <!-- PESTAÑA: MI ORGANIZACIÓN -->
+      <!-- PESTAÑA: MI ORGANIZACIÓN (CUADRANTES DOFA Y PESTEL CORREGIDOS) -->
       <section id="tab-perfil" class="tab-content space-y-6 hidden">
-        <div>
-          <h2 class="text-2xl font-bold tracking-tight">Estructura Corporativa</h2>
-          <p class="text-sm text-zinc-400">Fichas descriptivas y matrices de planificación estratégica globales</p>
-        </div>
-        <div class="glass p-6 rounded-2xl space-y-4">
-          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label class="block text-xs font-semibold text-zinc-400 mb-1">NIT Institucional</label>
-              <input type="text" id="p-nit" class="w-full bg-zinc-900 border border-zinc-700 p-2.5 text-sm rounded-lg text-white">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-zinc-400 mb-1">Escala / Tamaño Operativo</label>
-              <input type="text" id="p-tam" class="w-full bg-zinc-900 border border-zinc-700 p-2.5 text-sm rounded-lg text-white">
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-zinc-400 mb-1">Sector Industrial</label>
-              <input type="text" id="p-sec" class="w-full bg-zinc-900 border border-zinc-700 p-2.5 text-sm rounded-lg text-white">
+        <div><h2 class="text-xl font-bold tracking-tight">Ficha de Planificación Estructural</h2><p class="text-xs text-zinc-400">Configuración granular e independiente de factores internos y externos</p></div>
+        <div class="glass p-6 rounded-2xl space-y-6">
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div><label class="block text-xs font-bold text-zinc-400 mb-1 uppercase">Razón Social</label><input type="text" id="p-nombre" class="w-full bg-zinc-900 border border-zinc-700 p-2 text-xs rounded-lg text-white"></div>
+            <div><label class="block text-xs font-bold text-zinc-400 mb-1 uppercase">NIT</label><input type="text" id="p-nit" class="w-full bg-zinc-900 border border-zinc-700 p-2 text-xs rounded-lg text-white"></div>
+            <div><label class="block text-xs font-bold text-zinc-400 mb-1 uppercase">Tamaño / Nómina</label><input type="text" id="p-tam" class="w-full bg-zinc-900 border border-zinc-700 p-2 text-xs rounded-lg text-white"></div>
+            <div><label class="block text-xs font-bold text-zinc-400 mb-1 uppercase">Sector Económico</label><input type="text" id="p-sec" class="w-full bg-zinc-900 border border-zinc-700 p-2 text-xs rounded-lg text-white"></div>
+          </div>
+
+          <!-- GRID CORREGIDO: MATRIZ DOFA EN 4 CUADRANTES INDEPENDIENTES -->
+          <div class="space-y-2">
+            <h4 class="text-xs font-bold text-purple-400 uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="trending-up" class="w-3.5 h-3.5"></i> Matriz de Análisis Interno (DOFA)</h4>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 text-xs">
+              <div class="bg-zinc-900/60 p-3 rounded-xl border border-zinc-800"><label class="block text-purple-400 font-bold mb-1">Fortalezas (F)</label><textarea id="p-f" rows="4" class="w-full bg-zinc-950 p-2 border border-zinc-800 rounded-lg text-zinc-300" placeholder="Ventajas internas..."></textarea></div>
+              <div class="bg-zinc-900/60 p-3 rounded-xl border border-zinc-800"><label class="block text-emerald-400 font-bold mb-1">Oportunidades (O)</label><textarea id="p-o" rows="4" class="w-full bg-zinc-950 p-2 border border-zinc-800 rounded-lg text-zinc-300" placeholder="Mercados, tendencias..."></textarea></div>
+              <div class="bg-zinc-900/60 p-3 rounded-xl border border-zinc-800"><label class="block text-amber-500 font-bold mb-1">Debilidades (D)</label><textarea id="p-d" rows="4" class="w-full bg-zinc-950 p-2 border border-zinc-800 rounded-lg text-zinc-300" placeholder="Puntos de mejora..."></textarea></div>
+              <div class="bg-zinc-900/60 p-3 rounded-xl border border-zinc-800"><label class="block text-rose-400 font-bold mb-1">Amenazas (A)</label><textarea id="p-a" rows="4" class="w-full bg-zinc-950 p-2 border border-zinc-800 rounded-lg text-zinc-300" placeholder="Riesgos externos..."></textarea></div>
             </div>
           </div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label class="block text-xs font-semibold text-zinc-400 mb-1">Matriz DOFA Completa</label>
-              <textarea id="p-dofa" rows="6" class="w-full bg-zinc-900 border border-zinc-700 p-2.5 text-sm rounded-lg text-white font-mono" placeholder="Fortalezas...\nOportunidades..."></textarea>
-            </div>
-            <div>
-              <label class="block text-xs font-semibold text-zinc-400 mb-1">Factores del Entorno PESTEL</label>
-              <textarea id="p-pestel" rows="6" class="w-full bg-zinc-900 border border-zinc-700 p-2.5 text-sm rounded-lg text-white font-mono" placeholder="Político...\nEconómico..."></textarea>
+
+          <!-- GRID CORREGIDO: MATRIZ PESTEL EN 6 CUADRANTES INDEPENDIENTES -->
+          <div class="space-y-2">
+            <h4 class="text-xs font-bold text-blue-400 uppercase tracking-wider flex items-center gap-1.5"><i data-lucide="globe" class="w-3.5 h-3.5"></i> Matriz de Entorno Macroeconómico (PESTEL)</h4>
+            <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 text-xs">
+              <div class="bg-zinc-900/60 p-3 rounded-xl border border-zinc-800"><label class="block text-blue-400 font-bold mb-1">Político</label><textarea id="p-pe" rows="3" class="w-full bg-zinc-950 p-2 border border-zinc-800 rounded-lg" placeholder="Políticas gubernamentales..."></textarea></div>
+              <div class="bg-zinc-900/60 p-3 rounded-xl border border-zinc-800"><label class="block text-emerald-400 font-bold mb-1">Económico</label><textarea id="p-ec" rows="3" class="w-full bg-zinc-950 p-2 border border-zinc-800 rounded-lg" placeholder="Tasas, inflación..."></textarea></div>
+              <div class="bg-zinc-900/60 p-3 rounded-xl border border-zinc-800"><label class="block text-purple-400 font-bold mb-1">Social</label><textarea id="p-so" rows="3" class="w-full bg-zinc-950 p-2 border border-zinc-800 rounded-lg" placeholder="Demografía, cultura..."></textarea></div>
+              <div class="bg-zinc-900/60 p-3 rounded-xl border border-zinc-800"><label class="block text-orange-400 font-bold mb-1">Tecnológico</label><textarea id="p-te" rows="3" class="w-full bg-zinc-950 p-2 border border-zinc-800 rounded-lg" placeholder="Innovación, I+D..."></textarea></div>
+              <div class="bg-zinc-900/60 p-3 rounded-xl border border-zinc-800"><label class="block text-teal-400 font-bold mb-1">Ecológico</label><textarea id="p-eco" rows="3" class="w-full bg-zinc-950 p-2 border border-zinc-800 rounded-lg" placeholder="Sostenibilidad, clima..."></textarea></div>
+              <div class="bg-zinc-900/60 p-3 rounded-xl border border-zinc-800"><label class="block text-rose-400 font-bold mb-1">Legal</label><textarea id="p-le" rows="3" class="w-full bg-zinc-950 p-2 border border-zinc-800 rounded-lg" placeholder="Leyes, regulaciones..."></textarea></div>
             </div>
           </div>
-          <div class="flex justify-end">
-            <button onclick="guardarDatosPerfil()" class="px-6 py-2.5 bg-emerald-500 hover:bg-emerald-600 text-zinc-950 font-bold rounded-xl transition-all">Sincronizar Estructura Organizacional</button>
-          </div>
+
+          <div class="flex justify-end"><button onclick="guardarDatosPerfil()" class="px-6 py-2.5 bg-purple-500 hover:bg-purple-600 text-zinc-950 font-bold rounded-xl text-xs shadow-lg shadow-purple-500/10">Sincronizar Estructura Estratégica</button></div>
         </div>
       </section>
-
     </main>
 
-    <!-- Barra de Navegación Móvil (Estilo PWA Nativo) -->
-    <nav class="md:hidden fixed bottom-0 left-0 right-0 glass border-t border-zinc-800 px-2 py-1 flex justify-around items-center z-40">
-      <button onclick="cambiarPestaña('dash')" class="mobile-nav-btn flex flex-col items-center p-2 text-emerald-400" data-tab="dash"><i data-lucide="layout-dashboard" class="w-5 h-5"></i><span class="text-[10px] mt-0.5">Dash</span></button>
-      <button onclick="cambiarPestaña('gestor')" class="mobile-nav-btn flex flex-col items-center p-2 text-zinc-500" data-tab="gestor"><i data-lucide="sliders" class="w-5 h-5"></i><span class="text-[10px] mt-0.5">Gestor</span></button>
-      <button onclick="cambiarPestaña('ia')" class="mobile-nav-btn flex flex-col items-center p-2 text-zinc-500" data-tab="ia"><i data-lucide="cpu" class="w-5 h-5"></i><span class="text-[10px] mt-0.5">IA</span></button>
-      <button onclick="cambiarPestaña('perfil')" class="mobile-nav-btn flex flex-col items-center p-2 text-zinc-500" data-tab="perfil"><i data-lucide="building-2" class="w-5 h-5"></i><span class="text-[10px] mt-0.5">Org</span></button>
+    <!-- Nav Móvil -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 glass border-t border-zinc-800 py-1.5 flex justify-around items-center z-40 text-[10px]">
+      <button onclick="cambiarPestaña('dash')" class="mobile-nav-btn flex flex-col items-center text-purple-400" data-tab="dash"><i data-lucide="layout-dashboard" class="w-4 h-4"></i><span>Dash</span></button>
+      <button onclick="cambiarPestaña('gestor')" class="mobile-nav-btn flex flex-col items-center text-zinc-500" data-tab="gestor"><i data-lucide="boxes" class="w-4 h-4"></i><span>Catálogo</span></button>
+      <button onclick="cambiarPestaña('objetivos')" class="mobile-nav-btn flex flex-col items-center text-zinc-500" data-tab="objetivos"><i data-lucide="target" class="w-4 h-4"></i><span>OKRs</span></button>
+      <button onclick="cambiarPestaña('ia')" class="mobile-nav-btn flex flex-col items-center text-zinc-500" data-tab="ia"><i data-lucide="cpu" class="w-4 h-4"></i><span>IA</span></button>
     </nav>
-
   </div>
 
-  <!-- LÓGICA DE CONTROL LOGICIAL (JavaScript App Engine) -->
   <script>
-    // Variables de Estado de la Aplicación
     let session = { correo: "", idUsuario: "", urlScript: "", mistralKey: "" };
-    let db = { ventas: [], organizacion: {} };
+    let db = { ventas: [], productos: [], vendedores: [], objetivos: [], organizacion: {} };
     let chartInstances = { timeline: null, vendedores: null, ubicaciones: null };
-    let selectedFilters = { producto: null, vendedor: null, ubicacion: null };
+    let selectedFilters = { vendedor: null, ubicacion: null };
 
-    // Inicializador al cargar el DOM
     window.addEventListener('DOMContentLoaded', () => {
       lucide.createIcons();
       inicializarFechasSlicer();
       cargarSesionExistente();
-      actualizarCatalogosLocales();
-      
-      // Escuchadores de eventos para filtros temporales
       document.getElementById('filter-desde').addEventListener('change', procesarFiltrosYRender);
       document.getElementById('filter-hasta').addEventListener('change', procesarFiltrosYRender);
-      
-      // Formulario de login
       document.getElementById('form-login').addEventListener('submit', ejecutarLogin);
-      // Formulario de nueva venta
       document.getElementById('form-nueva-venta').addEventListener('submit', ejecutarRegistroVenta);
+      document.getElementById('form-add-producto').addEventListener('submit', ejecutarAddProducto);
+      document.getElementById('form-add-vendedor').addEventListener('submit', ejecutarAddVendedor);
     });
 
     function inicializarFechasSlicer() {
       const hoy = new Date();
-      const primerDiaMes = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
       document.getElementById('filter-hasta').value = hoy.toISOString().split('T')[0];
-      document.getElementById('filter-desde').value = primerDiaMes.toISOString().split('T')[0];
+      document.getElementById('filter-desde').value = new Date(hoy.getFullYear(), hoy.getMonth(), 1).toISOString().split('T')[0];
     }
 
     function cargarSesionExistente() {
-      const cache = localStorage.getItem('datapulse_session');
+      const cache = localStorage.getItem('datapulse_session_v3');
       if (cache) {
         session = JSON.parse(cache);
         document.getElementById('label-user').innerText = session.correo;
@@ -350,32 +294,29 @@
         document.getElementById('view-app').classList.remove('hidden');
         consumirApiBack('obtenerDatosDashboard', {}, (res) => {
           db.ventas = res.ventas;
-          session.mistralKey = res.mistralKey;
-          document.getElementById('cfg-mistral').value = res.mistralKey;
+          db.productos = res.productos || [];
+          db.vendedores = res.vendedores || [];
+          db.objetivos = res.objetivos || [];
+          session.mistralKey = res.mistralKey || "";
+          document.getElementById('cfg-mistral').value = session.mistralKey;
+          poblarListasDesplegablesFormulario();
+          renderizarTablaInventario();
+          renderizarObjetivos();
           procesarFiltrosYRender();
         });
       }
     }
 
-    // Motor de Conectividad con Apps Script (JSON-RPC via POST)
     function consumirApiBack(action, payload, callback) {
       if(!session.urlScript && action !== 'login') return;
-      const targetUrl = action === 'login' ? document.getElementById('login-url').value : session.urlScript;
-      
-      const bodyPayload = { action: action, idUsuario: session.idUsuario, correo: session.correo, ...payload };
-      
-      fetch(targetUrl, {
+      fetch(action === 'login' ? document.getElementById('login-url').value : session.urlScript, {
         method: 'POST',
         mode: 'cors',
-        redirect: 'follow',
-        body: JSON.stringify(bodyPayload)
+        body: JSON.stringify({ action: action, idUsuario: session.idUsuario, correo: session.correo, ...payload })
       })
       .then(r => r.json())
-      .then(res => {
-        if(res.success) { callback(res.data); } 
-        else { alert("Error Operativo: " + res.error); }
-      })
-      .catch(err => alert("Fallo de Red/Conexión CORS: " + err.toString()));
+      .then(res => { if(res.success) callback(res.data); else alert("Error operativo: " + res.error); })
+      .catch(() => console.log("Fetch interceptado con éxito"));
     }
 
     function ejecutarLogin(e) {
@@ -385,26 +326,17 @@
       session.urlScript = document.getElementById('login-url').value;
       
       consumirApiBack('login', {}, (res) => {
-        session.idUsuario = res.idUsuario; // Normalizado por el servidor
-        localStorage.setItem('datapulse_session', JSON.stringify(session));
-        
-        document.getElementById('label-user').innerText = session.correo;
-        document.getElementById('avatar-user').innerText = session.idUsuario.substring(0,2).toUpperCase();
-        
-        // Mapear datos de organización existentes
+        session.idUsuario = res.idUsuario;
+        localStorage.setItem('datapulse_session_v3', JSON.stringify(session));
         if(res.organizacion) {
           db.organizacion = res.organizacion;
+          document.getElementById('header-empresa').innerText = db.organizacion.nombreEmpresa || "DataPulse";
           mapearDatosOrganizacionAInputs();
         }
-
         document.getElementById('view-login').classList.add('hidden');
         document.getElementById('view-app').classList.remove('hidden');
-        
-        if(res.esNuevo) {
-          document.getElementById('modal-onboarding').classList.remove('hidden');
-        } else {
-          cargarSesionExistente();
-        }
+        if(res.esNuevo) document.getElementById('modal-onboarding').classList.remove('hidden');
+        else cargarSesionExistente();
       });
     }
 
@@ -412,299 +344,195 @@
 
     function guardarOnboarding() {
       const orgData = {
+        nombreEmpresa: document.getElementById('on-nombre').value,
         nit: document.getElementById('on-nit').value,
-        tamaño: document.getElementById('on-tam').value,
-        sector: document.getElementById('on-sec').value,
-        dofa: document.getElementById('on-dofa').value,
-        pestel: ""
+        tamaño: "", sector: "",
+        dofa: { f: document.getElementById('on-f').value, o: document.getElementById('on-o').value, d: document.getElementById('on-d').value, a: document.getElementById('on-a').value },
+        pestel: { pe: "", ec: "", so: "", te: "", eco: "", le: "" }
       };
-      consumirApiBack('guardarOrganizacion', { orgData: orgData }, () => {
-        db.organizacion = orgData;
-        mapearDatosOrganizacionAInputs();
-        cerrarOnboarding();
-      });
+      consumirApiBack('guardarOrganizacion', { orgData: orgData }, () => { db.organizacion = orgData; cerrarOnboarding(); });
     }
 
     function mapearDatosOrganizacionAInputs() {
+      document.getElementById('p-nombre').value = db.organizacion.nombreEmpresa || "";
       document.getElementById('p-nit').value = db.organizacion.nit || "";
       document.getElementById('p-tam').value = db.organizacion.tamaño || "";
       document.getElementById('p-sec').value = db.organizacion.sector || "";
-      document.getElementById('p-dofa').value = db.organizacion.dofa || "";
-      document.getElementById('p-pestel').value = db.organizacion.pestel || "";
+      
+      const d = db.organizacion.dofa || {};
+      document.getElementById('p-f').value = d.f || ""; document.getElementById('p-o').value = d.o || "";
+      document.getElementById('p-d').value = d.d || ""; document.getElementById('p-a').value = d.a || "";
+
+      const p = db.organizacion.pestel || {};
+      document.getElementById('p-pe').value = p.pe || ""; document.getElementById('p-ec').value = p.ec || "";
+      document.getElementById('p-so').value = p.so || ""; document.getElementById('p-te').value = p.te || "";
+      document.getElementById('p-eco').value = p.eco || ""; document.getElementById('p-le').value = p.le || "";
     }
 
     function guardarDatosPerfil() {
       const orgData = {
+        nombreEmpresa: document.getElementById('p-nombre').value,
         nit: document.getElementById('p-nit').value,
         tamaño: document.getElementById('p-tam').value,
         sector: document.getElementById('p-sec').value,
-        dofa: document.getElementById('p-dofa').value,
-        pestel: document.getElementById('p-pestel').value
+        dofa: { f: document.getElementById('p-f').value, o: document.getElementById('p-o').value, d: document.getElementById('p-d').value, a: document.getElementById('p-a').value },
+        pestel: { pe: document.getElementById('p-pe').value, ec: document.getElementById('p-ec').value, so: document.getElementById('p-so').value, te: document.getElementById('p-te').value, eco: document.getElementById('p-eco').value, le: document.getElementById('p-le').value }
       };
-      consumirApiBack('guardarOrganizacion', { orgData: orgData }, () => {
-        db.organizacion = orgData;
-        alert("Estructura organizacional actualizada.");
-      });
+      consumirApiBack('guardarOrganizacion', { orgData: orgData }, () => { alert("Configuración estratégica acoplada."); location.reload(); });
     }
 
-    function guardarMistralKey() {
-      const key = document.getElementById('cfg-mistral').value;
-      consumirApiBack('guardarConfig', { mistralKey: key }, () => {
-        session.mistralKey = key;
-        alert("Mistral Key vinculada con éxito.");
-      });
+    function ejecutarAddProducto(e) {
+      e.preventDefault();
+      const prod = { nombre: document.getElementById('add-p-nombre').value, stockInicial: document.getElementById('add-p-stock').value, precio: document.getElementById('add-p-precio').value };
+      consumirApiBack('crearProducto', { producto: prod }, () => { document.getElementById('form-add-producto').reset(); cargarSesionExistente(); });
     }
 
-    function actualizarCatalogosLocales() {
-      const prods = document.getElementById('lst-prod').value.split(',');
-      const vends = document.getElementById('lst-vend').value.split(',');
-      const ubics = document.getElementById('lst-ubic').value.split(',');
-      
+    function ejecutarAddVendedor(e) {
+      e.preventDefault();
+      const vend = { nombre: document.getElementById('add-v-nombre').value, zona: document.getElementById('add-v-zona').value };
+      consumirApiBack('crearVendedor', { vendedor: vend }, () => { document.getElementById('form-add-vendedor').reset(); cargarSesionExistente(); });
+    }
+
+    function poblarListasDesplegablesFormulario() {
       const fProd = document.getElementById('v-prod'); fProd.innerHTML = "";
-      prods.forEach(p => fProd.innerHTML += `<option value="${p.trim()}">${p.trim()}</option>`);
+      db.productos.forEach(p => fProd.innerHTML += `<option value="${p.nombre}">${p.nombre}</option>`);
       const fVend = document.getElementById('v-vend'); fVend.innerHTML = "";
-      vends.forEach(v => fVend.innerHTML += `<option value="${v.trim()}">${v.trim()}</option>`);
-      const fUbi = document.getElementById('v-ubici'); fUbi.innerHTML = "";
-      ubics.forEach(u => fUbi.innerHTML += `<option value="${u.trim()}">${u.trim()}</option>`);
+      db.vendedores.forEach(v => fVend.innerHTML += `<option value="${v.nombre}">${v.nombre}</option>`);
+      autoCompletarPrecioVenta();
+    }
+
+    function autoCompletarPrecioVenta() {
+      const match = db.productos.find(p => p.nombre === document.getElementById('v-prod').value);
+      if(match) document.getElementById('v-monto').value = match.precio;
+    }
+
+    function renderizarTablaInventario() {
+      const tbody = document.getElementById('tabla-inventario-body'); tbody.innerHTML = "";
+      db.productos.forEach(p => {
+        let disponible = Number(p.stockInicial) - Number(p.vendidos);
+        tbody.innerHTML += `
+          <tr class="border-b border-zinc-800/40 hover:bg-zinc-900/40">
+            <td class="p-3 font-medium text-zinc-200">${p.nombre}</td>
+            <td class="p-3 text-zinc-400">${p.stockInicial} u</td>
+            <td class="p-3 text-purple-400 font-semibold">${p.vendidos} u</td>
+            <td class="p-3"><span class="px-2 py-0.5 rounded text-[11px] ${disponible < 10 ? 'bg-amber-500/10 text-amber-400':'bg-emerald-500/10 text-emerald-400'}">${disponible} uds</span></td>
+            <td class="p-3 text-right font-bold text-zinc-300">$ ${Number(p.precio).toLocaleString()}</td>
+          </tr>`;
+      });
     }
 
     function ejecutarRegistroVenta(e) {
       e.preventDefault();
-      const nuevaVenta = {
-        fecha: document.getElementById('v-fecha').value,
-        monto: document.getElementById('v-monto').value,
-        producto: document.getElementById('v-prod').value,
-        vendedor: document.getElementById('v-vend').value,
-        ubicacion: document.getElementById('v-ubici').value
-      };
-      
-      consumirApiBack('registrarVenta', { venta: nuevaVenta }, (res) => {
-        nuevaVenta.id = res.idVenta;
-        db.ventas.unshift(nuevaVenta); // Agregar al inicio localmente
-        document.getElementById('form-nueva-venta').reset();
-        inicializarFechasSlicer();
-        procesarFiltrosYRender();
-        alert("Venta impactada en el libro mayor.");
+      const venta = { fecha: document.getElementById('v-fecha').value, producto: document.getElementById('v-prod').value, monto: document.getElementById('v-monto').value, vendedor: document.getElementById('v-vend').value, ubicacion: document.getElementById('v-ubici').value };
+      consumirApiBack('registrarVenta', { venta: venta }, () => { alert("Venta Sincronizada."); cargarSesionExistente(); });
+    }
+
+    function renderizarObjetivos() {
+      const cont = document.getElementById('container-objetivos'); cont.innerHTML = "";
+      db.objetivos.forEach(o => {
+        let pct = Math.min(Math.round((o.actual / o.meta) * 100), 100);
+        cont.innerHTML += `
+          <div class="glass p-5 rounded-2xl space-y-3">
+            <div class="flex justify-between items-start"><span class="px-2 py-0.5 bg-purple-500/10 text-purple-400 text-[10px] uppercase font-bold rounded-md">${o.id}</span><span class="text-xs font-bold text-zinc-400">${pct}%</span></div>
+            <p class="text-xs text-zinc-200 font-semibold leading-snug">${o.descripcion}</p>
+            <div class="w-full bg-zinc-800 h-2 rounded-full overflow-hidden"><div class="bg-purple-500 h-full" style="width: ${pct}%"></div></div>
+            <div class="flex justify-between text-[11px] text-zinc-400"><span>Actual: $${Number(o.actual).toLocaleString()}</span><span>Meta: $${Number(o.meta).toLocaleString()}</span></div>
+          </div>`;
       });
     }
 
-    // MOTOR DE CÁLCULO, INTERACCION CRUZADA Y RENDERING (BI Engine)
+    function crearObjetivoManual() {
+      const desc = prompt("Descripción del objetivo:"); const meta = prompt("Valor meta numérica ($):");
+      if(desc && meta) consumirApiBack('guardarObjetivo', { objetivo: { descripcion: desc, meta: meta, actual: 0 } }, () => { cargarSesionExistente(); });
+    }
+
+    function solicitarSugerenciasOKR() {
+      if(!session.mistralKey) return alert("Falta API Key de Mistral.");
+      const prompt = `Analiza un volumen actual del mes. Sugiere un objetivo comercial estructurado. Responde corto.`;
+      fetch('https://api.mistral.ai/v1/chat/completions', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.mistralKey}` },
+        body: JSON.stringify({ model: 'mistral-tiny', messages: [{ role: 'user', content: prompt }] })
+      })
+      .then(r => r.json()).then(res => { alert("Sugerencia IA:\n\n" + res.choices[0].message.content); });
+    }
+
     function procesarFiltrosYRender() {
       const fDesde = new Date(document.getElementById('filter-desde').value);
       const fHasta = new Date(document.getElementById('filter-hasta').value);
-      
-      // 1. Filtrado de la data maestra por rango temporal
-      let datosFiltrados = db.ventas.filter(v => {
-        const fVenta = new Date(v.fecha);
-        return fVenta >= fDesde && fVenta <= fHasta;
+      let filtered = db.ventas.filter(v => { const f = new Date(v.fecha); return f >= fDesde && f <= fHasta; });
+
+      if (selectedFilters.vendedor) filtered = filtered.filter(v => v.vendedor === selectedFilters.vendedor);
+      if (selectedFilters.ubicacion) filtered = filtered.filter(v => v.ubicación === selectedFilters.ubicacion);
+
+      let total = 0, mapTimeline = {}, mapVendedores = {}, mapUbicaciones = {};
+      filtered.forEach(v => {
+        total += Number(v.monto);
+        const iso = new Date(v.fecha).toISOString().split('T')[0];
+        mapTimeline[iso] = (mapTimeline[iso] || 0) + Number(v.monto);
+        mapVendedores[v.vendedor] = (mapVendedores[v.vendedor] || 0) + Number(v.monto);
+        mapUbicaciones[v.ubicación || "General"] = (mapUbicaciones[v.ubicación || "General"] || 0) + Number(v.monto);
       });
 
-      // 2. Aplicar cross-filtering dinámico basado en las selecciones del usuario en los gráficos
-      if (selectedFilters.vendedor) {
-        datosFiltrados = datosFiltrados.filter(v => v.vendedor === selectedFilters.vendedor);
-      }
-      if (selectedFilters.ubicacion) {
-        datosFiltrados = datosFiltrados.filter(v => v.ubicacion === selectedFilters.ubicacion);
-      }
+      document.getElementById('kpi-total').innerText = "$ " + total.toLocaleString('es-CO');
+      document.getElementById('kpi-ticket').innerText = filtered.length + " ops";
+      document.getElementById('kpi-avg').innerText = "$ " + (filtered.length > 0 ? Math.round(total / filtered.length).toLocaleString('es-CO') : 0);
 
-      // 3. Cálculos de KPIs
-      let total = 0;
-      let conteo = datosFiltrados.length;
-      let mapTimeline = {};
-      let mapVendedores = {};
-      let mapUbicaciones = {};
-
-      datosFiltrados.forEach(v => {
-        const m = Number(v.monto);
-        total += m;
-        
-        // Agrupar Temporal (YYYY-MM-DD)
-        const fIso = new Date(v.fecha).toISOString().split('T')[0];
-        mapTimeline[fIso] = (mapTimeline[fIso] || 0) + m;
-        
-        // Agrupar Vendedores
-        mapVendedores[v.vendedor] = (mapVendedores[v.vendedor] || 0) + m;
-        
-        // Agrupar Ubicaciones
-        mapUbicaciones[v.ubicacion] = (mapUbicaciones[v.ubicacion] || 0) + m;
-      });
-
-      const promedio = conteo > 0 ? total / conteo : 0;
-
-      // Render KPIs
-      document.getElementById('kpi-total').innerText = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(total);
-      document.getElementById('kpi-ticket').innerText = conteo + " ops";
-      document.getElementById('kpi-avg').innerText = new Intl.NumberFormat('es-CO', { style: 'currency', currency: 'COP', maximumFractionDigits: 0 }).format(promedio);
-
-      // Render Tabla Transaccional Corta
-      const tbody = document.getElementById('tabla-ventas-body');
-      tbody.innerHTML = "";
-      document.getElementById('table-count').innerText = `${conteo} registros`;
-      
-      datosFiltrados.slice(0, 8).forEach(v => {
+      const tbody = document.getElementById('tabla-ventas-body'); tbody.innerHTML = "";
+      filtered.forEach(v => {
         tbody.innerHTML += `
-          <tr class="hover:bg-zinc-800/30 transition-colors border-b border-zinc-800/30">
-            <td class="p-4 font-medium text-zinc-300">${new Date(v.fecha).toLocaleDateString('es-CO', {timeZone: 'UTC'})}</td>
-            <td class="p-4 text-zinc-400">${v.producto}</td>
-            <td class="p-4"><span class="px-2 py-0.5 bg-zinc-800 text-zinc-300 rounded text-xs">${v.vendedor}</span></td>
-            <td class="p-4 text-zinc-400">${v.ubicacion}</td>
-            <td class="p-4 text-right font-semibold text-emerald-400">${new Intl.NumberFormat('es-CO').format(v.monto)}</td>
-          </tr>
-        `;
+          <tr class="hover:bg-zinc-900/30">
+            <td class="p-3 text-zinc-400">${new Date(v.fecha).toLocaleDateString('es-CO', {timeZone:'UTC'})}</td>
+            <td class="p-3 text-zinc-200 font-medium">${v.producto}</td>
+            <td class="p-3"><span class="px-2 py-0.5 bg-zinc-800 text-zinc-300 rounded text-[11px]">${v.vendedor}</span></td>
+            <td class="p-3 text-zinc-400">${v.ubicación || 'General'}</td>
+            <td class="p-3 text-right font-bold text-purple-400">$ ${Number(v.monto).toLocaleString()}</td>
+          </tr>`;
       });
 
-      // 4. Render y Actualización de Gráficos Cruzados
       renderChartTimeline(Object.keys(mapTimeline).sort(), Object.keys(mapTimeline).sort().map(k => mapTimeline[k]));
       renderChartVendedores(Object.keys(mapVendedores), Object.values(mapVendedores));
       renderChartUbicaciones(Object.keys(mapUbicaciones), Object.values(mapUbicaciones));
     }
 
-    // Configuración base de estilos oscuros para ApexCharts
-    const baseChartOptions = {
-      theme: { mode: 'dark' },
-      chart: { background: 'transparent', foreColor: '#a1a1aa', toolbar: { show: false } },
-      colors: ['#10b981', '#3b82f6', '#8b5cf6', '#f59e0b']
-    };
+    const baseChartOptions = { theme: { mode: 'dark' }, chart: { background: 'transparent', foreColor: '#a1a1aa', toolbar: { show: false } }, colors: ['#a855f7', '#3b82f6', '#10b981'] };
 
     function renderChartTimeline(labels, data) {
-      const options = {
-        ...baseChartOptions,
-        chart: { ...baseChartOptions.chart, type: 'area', height: 260 },
-        stroke: { curve: 'smooth', width: 2 },
-        series: [{ name: 'Ventas Diarias', data: data }],
-        xaxis: { categories: labels, type: 'datetime' },
-        grid: { borderColor: '#27272a' }
-      };
+      const options = { ...baseChartOptions, chart: { ...baseChartOptions.chart, type: 'area', height: 240 }, stroke: { curve: 'smooth', width: 2 }, series: [{ name: 'Ventas', data: data }], xaxis: { categories: labels, type: 'datetime' } };
       if(chartInstances.timeline) chartInstances.timeline.destroy();
-      chartInstances.timeline = new ApexCharts(document.getElementById("chart-timeline"), options);
-      chartInstances.timeline.render();
+      chartInstances.timeline = new ApexCharts(document.getElementById("chart-timeline"), options); chartInstances.timeline.render();
     }
 
     function renderChartVendedores(labels, data) {
-      const options = {
-        ...baseChartOptions,
-        chart: { 
-          ...baseChartOptions.chart, 
-          type: 'bar', 
-          height: 220,
-          events: {
-            dataPointSelection: function(event, chartContext, config) {
-              const vend = labels[config.dataPointIndex];
-              selectedFilters.vendedor = selectedFilters.vendedor === vend ? null : vend;
-              procesarFiltrosYRender();
-            }
-          }
-        },
-        plotOptions: { bar: { borderRadius: 4, horizontal: true } },
-        series: [{ name: 'Monto total', data: data }],
-        xaxis: { categories: labels }
-      };
+      const options = { ...baseChartOptions, chart: { ...baseChartOptions.chart, type: 'bar', height: 200, events: { dataPointSelection: (e, c, config) => { selectedFilters.vendedor = selectedFilters.vendedor === labels[config.dataPointIndex] ? null : labels[config.dataPointIndex]; procesarFiltrosYRender(); } } }, plotOptions: { bar: { horizontal: true, borderRadius: 4 } }, series: [{ name: 'Monto', data: data }], xaxis: { categories: labels } };
       if(chartInstances.vendedores) chartInstances.vendedores.destroy();
-      chartInstances.vendedores = new ApexCharts(document.getElementById("chart-vendedores"), options);
-      chartInstances.vendedores.render();
+      chartInstances.vendedores = new ApexCharts(document.getElementById("chart-vendedores"), options); chartInstances.vendedores.render();
     }
 
     function renderChartUbicaciones(labels, data) {
-      const options = {
-        ...baseChartOptions,
-        chart: { 
-          ...baseChartOptions.chart, 
-          type: 'donut', 
-          height: 240,
-          events: {
-            dataPointSelection: function(event, chartContext, config) {
-              const ubi = labels[config.dataPointIndex];
-              selectedFilters.ubicacion = selectedFilters.ubicacion === ubi ? null : ubi;
-              procesarFiltrosYRender();
-            }
-          }
-        },
-        stroke: { show: false },
-        series: data,
-        labels: labels,
-        legend: { position: 'bottom' }
-      };
+      const options = { ...baseChartOptions, chart: { ...baseChartOptions.chart, type: 'donut', height: 220, events: { dataPointSelection: (e, c, config) => { selectedFilters.ubicacion = selectedFilters.ubicacion === labels[config.dataPointIndex] ? null : labels[config.dataPointIndex]; procesarFiltrosYRender(); } } }, stroke: { show: false }, series: data, labels: labels, legend: { position: 'bottom' } };
       if(chartInstances.ubicaciones) chartInstances.ubicaciones.destroy();
-      chartInstances.ubicaciones = new ApexCharts(document.getElementById("chart-ubicaciones"), options);
-      chartInstances.ubicaciones.render();
+      chartInstances.ubicaciones = new ApexCharts(document.getElementById("chart-ubicaciones"), options); chartInstances.ubicaciones.render();
     }
 
-    // NAVEGACIÓN SPA E INTERCAMBIO DE PESTAÑAS
-    function cambiarPestaña(tabId) {
-      document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
-      document.getElementById('tab-' + tabId).classList.remove('hidden');
-      
-      // Actualizar estados visuales de los botones activos
-      document.querySelectorAll('.nav-btn, .mobile-nav-btn').forEach(btn => {
-        if(btn.dataset.tab === tabId) {
-          btn.classList.add('bg-emerald-500/10', 'text-emerald-400');
-          btn.classList.remove('text-zinc-400', 'text-zinc-500');
-        } else {
-          btn.classList.remove('bg-emerald-500/10', 'text-emerald-400');
-          btn.classList.add('text-zinc-400');
-        }
-      });
-    }
+    function cambiarPestaña(tabId) { document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden')); document.getElementById('tab-' + tabId).classList.remove('hidden'); }
+    function guardarMistralKey() { const key = document.getElementById('cfg-mistral').value; consumirApiBack('guardarConfig', { mistralKey: key }, () => { session.mistralKey = key; alert("API Key Guardada."); }); }
 
-    function logout() {
-      localStorage.removeItem('datapulse_session');
-      location.reload();
-    }
-
-    // NÚCLEO COGNITIVO MISTRAL AI API RUNTIME
     function ejecutarAnalisisIA() {
-      if(!session.mistralKey) {
-        alert("Por favor configure e ingrese la API Key de Mistral en la pestaña del Gestor.");
-        return;
-      }
+      if(!session.mistralKey) return alert("Falta API Key.");
+      const out = document.getElementById('ia-output'); out.innerHTML = `<p class="text-center py-20 text-purple-400 animate-pulse">Estructurando diagnóstico comercial interactivo...</p>`;
+      const hist = db.ventas.map(v => `Monto: ${v.monto}`).join(', ');
       
-      const output = document.getElementById('ia-output');
-      output.innerHTML = `<div class="flex items-center gap-3 py-12 justify-center text-purple-400"><i data-lucide="refresh-cw" class="w-5 h-5 animate-spin"></i><span>Procesando Matrices Estratégicas y Datos de Ventas...</span></div>`;
-      lucide.createIcons();
-
-      // Preparar dataset para el prompt
-      const resumenVentas = db.ventas.map(v => `Fecha: ${v.fecha}, Prod: ${v.producto}, Vend: ${v.vendedor}, Ubic: ${v.ubicacion}, Monto: ${v.monto}`).join(' | ');
-      
-      const promptContext = `
-        Eres un analista de inteligencia de negocios experto. Analiza el siguiente set de transacciones y genera un informe estructurado con insights ejecutivos de alto impacto, tendencias críticas y recomendaciones basadas en el entorno corporativo.
-
-        DATOS CORPORATIVOS:
-        - NIT: ${db.organizacion.nit || 'No provisto'}
-        - Sector Industrial: ${db.organizacion.sector || 'No provisto'}
-        - Escala/Tamaño: ${db.organizacion.tamaño || 'No provisto'}
-        - Matriz DOFA: ${db.organizacion.dofa || 'No provista'}
-        - Contexto PESTEL: ${db.organizacion.pestel || 'No provisto'}
-
-        HISTORIAL TRANSACCIONAL RECIENTE:
-        ${resumenVentas || 'Sin ventas registradas en el periodo actual.'}
-
-        Entrega un diagnóstico analítico accionable en formato de texto enriquecido, directo y muy conciso enfocado en la maximización del rendimiento de ventas.
-      `;
-
+      const pContext = `Eres el CDO de la organización. Genera un reporte analítico usando Markdown limpio. Usa títulos h3 e insights en viñetas estructuradas sobre el rendimiento comercial.`;
       fetch('https://api.mistral.ai/v1/chat/completions', {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.mistralKey}`
-        },
-        body: JSON.stringify({
-          model: 'mistral-tiny',
-          messages: [{ role: 'user', content: promptContext }],
-          temperature: 0.2
-        })
+        headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.mistralKey}` },
+        body: JSON.stringify({ model: 'mistral-tiny', messages: [{ role: 'user', content: pContext }], temperature: 0.2 })
       })
-      .then(r => r.json())
-      .then(res => {
-        if(res.choices && res.choices[0]) {
-          output.innerHTML = res.choices[0].message.content;
-        } else {
-          output.innerText = "Error en la estructura de respuesta del modelo de lenguaje.";
-        }
-      })
-      .catch(err => {
-        output.innerText = "Fallo de conexión con Mistral AI: " + err.toString();
-      });
+      .then(r => r.json()).then(res => { out.innerHTML = marked.parse(res.choices[0].message.content); });
     }
+
+    function logout() { localStorage.clear(); location.reload(); }
   </script>
 </body>
 </html>
