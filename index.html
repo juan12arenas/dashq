@@ -687,10 +687,10 @@
           <h2>🔍 Contexto estratégico (DOFA)</h2>
           <p>Esta información alimenta al analizador de IA para darte recomendaciones reales y específicas de tu empresa.</p>
           <div class="form-grid">
-            <div class="field"><label>💪 Fortalezas (una por línea)</label><textarea id="ob_for" rows="4" placeholder="Red de distribución consolidada&#10;Productos frescos de alta calidad"></textarea></div>
-            <div class="field"><label>🚀 Oportunidades</label><textarea id="ob_opp" rows="4" placeholder="Crecimiento e-commerce alimentario&#10;Expansión a nuevos municipios"></textarea></div>
-            <div class="field"><label>⚠️ Debilidades</label><textarea id="ob_deb" rows="4" placeholder="Alta dependencia de temporadas&#10;Sistema de trazabilidad manual"></textarea></div>
-            <div class="field"><label>🔴 Amenazas</label><textarea id="ob_ame" rows="4" placeholder="Competidores con mayor capital&#10;Volatilidad de precios agrícolas"></textarea></div>
+            <div class="field"><label>💪 Fortalezas (una por línea)</label><textarea id="ob_for" rows="4" placeholder="Ej: Red de distribución consolidada&#10;Productos de alta calidad"></textarea></div>
+            <div class="field"><label>🚀 Oportunidades</label><textarea id="ob_opp" rows="4" placeholder="Ej: Crecimiento en canales digitales&#10;Expansión a nuevas regiones"></textarea></div>
+            <div class="field"><label>⚠️ Debilidades</label><textarea id="ob_deb" rows="4" placeholder="Ej: Dependencia de pocos clientes&#10;Procesos manuales sin automatizar"></textarea></div>
+            <div class="field"><label>🔴 Amenazas</label><textarea id="ob_ame" rows="4" placeholder="Ej: Competidores con mayor capital&#10;Cambios regulatorios del sector"></textarea></div>
           </div>
         </div>
         <div class="ob-nav">
@@ -1567,41 +1567,21 @@
     function startOnboarding(user) {
       STATE.user = user;
       showScreen('scOnboarding');
-      const saved = localStorage.getItem('dq_state');
-      if (saved) {
-        try {
-          const d = JSON.parse(saved);
-          if (d.config) {
-            document.getElementById('ob_emp').value = d.config.empresa || '';
-            document.getElementById('ob_sec').value = d.config.sector || '';
-            document.getElementById('ob_ciu').value = d.config.ciudad || '';
-            document.getElementById('ob_meta').value = d.config.meta || '';
-            document.getElementById('ob_nit').value = d.config.nit || '';
-            document.getElementById('ob_col').value = d.config.color || '#00E5A0';
-            document.getElementById('ob_sw').style.background = d.config.color || '#00E5A0';
-            document.getElementById('ob_mis').value = d.config.mision || '';
-            document.getElementById('ob_vis').value = d.config.vision || '';
-          }
-          if (d.dofa) {
-            document.getElementById('ob_for').value = d.dofa.fortalezas || '';
-            document.getElementById('ob_opp').value = d.dofa.oportunidades || '';
-            document.getElementById('ob_deb').value = d.dofa.debilidades || '';
-            document.getElementById('ob_ame').value = d.dofa.amenazas || '';
-          }
-          if (d.okrs && d.okrs.length > 0) {
-            const o = d.okrs[0];
-            document.getElementById('ob_obj').value = o.objective || '';
-            if (o.krs && o.krs.length >= 3) {
-              document.getElementById('ob_kr1').value = o.krs[0].texto || '';
-              document.getElementById('ob_km1').value = o.krs[0].meta || '';
-              document.getElementById('ob_kr2').value = o.krs[1].texto || '';
-              document.getElementById('ob_km2').value = o.krs[1].meta || '';
-              document.getElementById('ob_kr3').value = o.krs[2].texto || '';
-              document.getElementById('ob_km3').value = o.krs[2].meta || '';
-            }
-          }
-        } catch (e) {}
-      }
+      // Limpiar todos los campos — usuario nuevo empieza en blanco
+      ['ob_emp','ob_sec','ob_ciu','ob_nit','ob_mis','ob_vis',
+       'ob_for','ob_opp','ob_deb','ob_ame',
+       'ob_obj','ob_kr1','ob_kr2','ob_kr3','ob_tam'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+      ['ob_km1','ob_km2','ob_km3','ob_meta'].forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.value = '';
+      });
+      const col = document.getElementById('ob_col');
+      if (col) col.value = '#00E5A0';
+      const sw = document.getElementById('ob_sw');
+      if (sw) sw.style.background = '#00E5A0';
       obNext(1);
     }
 
@@ -1617,32 +1597,40 @@
     }
 
     function obSkip(step) {
+      // Omitir: avanza sin guardar datos de ejemplo
       if (step === 1) {
-        document.getElementById('ob_emp').value = 'Mi Empresa';
-        document.getElementById('ob_sec').value = 'Tecnología';
-        document.getElementById('ob_ciu').value = 'Ciudad';
-        document.getElementById('ob_meta').value = '90000000';
-        document.getElementById('ob_nit').value = '';
-        document.getElementById('ob_col').value = '#00E5A0';
-        document.getElementById('ob_sw').style.background = '#00E5A0';
-        document.getElementById('ob_mis').value = 'Proveer soluciones innovadoras';
-        document.getElementById('ob_vis').value = 'Ser líder en el mercado regional';
+        // Avanzar sin forzar ningún valor
         obNext(2);
       } else if (step === 2) {
-        document.getElementById('ob_for').value = 'Equipo talentoso\nExperiencia en el sector';
-        document.getElementById('ob_opp').value = 'Nuevos mercados\nTecnología emergente';
-        document.getElementById('ob_deb').value = 'Recursos limitados\nProcesos manuales';
-        document.getElementById('ob_ame').value = 'Competencia agresiva\nCambios regulatorios';
+        // Dejar FODA vacío — el usuario lo llenará después en Contexto
         obNext(3);
       } else if (step === 3) {
-        document.getElementById('ob_obj').value = 'Crecimiento y expansión';
-        document.getElementById('ob_kr1').value = 'Incrementar ventas en 20%';
-        document.getElementById('ob_km1').value = '90000000';
-        document.getElementById('ob_kr2').value = 'Incorporar 10 nuevos clientes';
-        document.getElementById('ob_km2').value = '10';
-        document.getElementById('ob_kr3').value = '95% de satisfacción';
-        document.getElementById('ob_km3').value = '95';
-        obFinish();
+        // Omitir OKRs: guardar config básica SIN enviar a Sheets
+        const config = {
+          empresa: document.getElementById('ob_emp').value.trim() || 'Mi Empresa',
+          sector: document.getElementById('ob_sec').value.trim() || '',
+          ciudad: document.getElementById('ob_ciu').value.trim() || '',
+          meta: parseFloat(document.getElementById('ob_meta').value) || 0,
+          nit: document.getElementById('ob_nit').value.trim() || '',
+          color: document.getElementById('ob_col').value || '#00E5A0',
+          mision: document.getElementById('ob_mis').value.trim() || '',
+          vision: document.getElementById('ob_vis').value.trim() || '',
+          valores: ''
+        };
+        const dofa = {
+          fortalezas: document.getElementById('ob_for').value.trim() || '',
+          oportunidades: document.getElementById('ob_opp').value.trim() || '',
+          debilidades: document.getElementById('ob_deb').value.trim() || '',
+          amenazas: document.getElementById('ob_ame').value.trim() || ''
+        };
+        STATE.config = config;
+        STATE.dofa = dofa;
+        STATE.okrs = [];
+        STATE.ventas = [];
+        STATE.filteredVentas = [];
+        saveLocal(); // solo local, sin enviar a Sheets
+        toast('⏭️ Puedes completar tu información en ⚙️ Config y Contexto');
+        setTimeout(() => initApp(STATE.user), 400);
       }
     }
 
