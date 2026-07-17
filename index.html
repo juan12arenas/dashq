@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Merco DataPulse Engine</title>
+  <title>Merco Suite Engine Pro</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdn.jsdelivr.net/npm/apexcharts"></script>
   <script src="https://unpkg.com/lucide@latest"></script>
@@ -13,40 +13,41 @@
     body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #09090b; color: #f4f4f5; }
     .glass { background: rgba(20, 20, 23, 0.85); backdrop-filter: blur(14px); border: 1px solid rgba(63, 63, 70, 0.3); }
     
-    /* STYLE RENDER DE MARKDOWN EJECUTIVO */
-    .ai-render h1 { color: #c084fc; font-size: 1.5rem; font-weight: 700; border-bottom: 1px solid rgba(168, 85, 247, 0.2); padding-bottom: 0.5rem; margin-top: 1.5rem; margin-bottom: 1rem; }
-    .ai-render h2 { color: #a855f7; font-size: 1.2rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.75rem; }
-    .ai-render h3 { color: #f4f4f5; font-size: 1rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; border-left: 3px solid #a855f7; padding-left: 8px; }
-    .ai-render p { margin-bottom: 0.5rem; color: #d4d4d8; line-height: 1.6; }
-    .ai-render ul { list-style-type: square; margin-left: 1.25rem; margin-bottom: 1rem; color: #d4d4d8; }
-    .ai-render li { margin-bottom: 0.25rem; }
+    /* CAPA DE DISEÑO EDITORIAL PARA RENDERIZAR COGNITIVAMENTE EL INFORME DE LA IA */
+    .ai-render h1 { color: #c084fc; font-size: 1.6rem; font-weight: 700; border-bottom: 1px solid rgba(168, 85, 247, 0.2); padding-bottom: 0.5rem; margin-top: 1.5rem; margin-bottom: 1rem; }
+    .ai-render h2 { color: #a855f7; font-size: 1.25rem; font-weight: 600; margin-top: 1.25rem; margin-bottom: 0.75rem; }
+    .ai-render h3 { color: #f4f4f5; font-size: 1.05rem; font-weight: 600; margin-top: 1rem; margin-bottom: 0.5rem; border-left: 3px solid #a855f7; padding-left: 8px; }
+    .ai-render p { margin-bottom: 0.6rem; color: #e4e4e7; line-height: 1.6; font-size: 0.9rem; }
+    .ai-render ul { list-style-type: square; margin-left: 1.5rem; margin-bottom: 1rem; color: #d4d4d8; }
+    .ai-render li { margin-bottom: 0.3rem; font-size: 0.875rem; }
     .ai-render strong { color: #ffffff; font-weight: 600; }
-    .ai-render table { width: 100%; text-align: left; margin: 1rem 0; border-collapse: collapse; background: #18181b; border: 1px solid #3f3f46; border-radius: 8px; }
-    .ai-render th { background: #27272a; padding: 0.5rem; font-weight: 600; color: #a1a1aa; border-bottom: 1px solid #3f3f46; }
-    .ai-render td { padding: 0.5rem; border-bottom: 1px solid #27272a; }
+    .ai-render table { width: 100%; text-align: left; margin: 1.25rem 0; border-collapse: collapse; background: #141417; border: 1px solid #27272a; border-radius: 8px; overflow: hidden; }
+    .ai-render th { background: #27272a; padding: 0.75rem; font-weight: 600; color: #a1a1aa; border-bottom: 1px solid #3f3f46; text-transform: uppercase; font-size: 0.75rem; }
+    .ai-render td { padding: 0.75rem; border-bottom: 1px solid #27272a; font-size: 0.85rem; }
   </style>
 </head>
 <body class="antialiased min-h-screen pb-16 md:pb-0">
 
-  <!-- FORMULARIO DE ACCESO -->
+  <!-- CAPA: LOGIN -->
   <div id="view-login" class="flex items-center justify-center min-h-screen px-4">
     <div class="w-full max-w-md p-8 glass rounded-2xl shadow-2xl space-y-5">
       <div class="text-center">
         <div class="inline-flex p-3 bg-purple-500/10 text-purple-400 rounded-xl mb-2"><i data-lucide="shield-check" class="w-7 h-7"></i></div>
         <h1 class="text-2xl font-bold tracking-tight">DataPulse Engine</h1>
+        <p class="text-xs text-zinc-400 mt-1">Ingresa los parámetros de conexión de tu ecosistema</p>
       </div>
       <form id="form-login" class="space-y-4">
         <div><label class="block text-xs font-semibold text-zinc-400 uppercase mb-1">Correo Electrónico</label><input type="email" id="login-email" required class="w-full px-4 py-2 bg-zinc-900 border border-zinc-700 rounded-xl text-white"></div>
         <div><label class="block text-xs font-semibold text-zinc-400 uppercase mb-1">ID Usuario</label><input type="text" id="login-id" required class="w-full px-4 py-2 bg-zinc-900 border border-zinc-700 rounded-xl text-white"></div>
-        <div><label class="block text-xs font-semibold text-zinc-400 uppercase mb-1">URL Script de Google</label><input type="url" id="login-url" required class="w-full px-4 py-2 bg-zinc-900 border border-zinc-700 rounded-xl text-white text-xs"></div>
-        <button type="submit" class="w-full py-3 bg-purple-500 font-bold rounded-xl text-zinc-950 transition-all hover:bg-purple-600">Inicializar Aplicación</button>
+        <div><label class="block text-xs font-semibold text-zinc-400 uppercase mb-1">URL Google Apps Script</label><input type="url" id="login-url" required class="w-full px-4 py-2 bg-zinc-900 border border-zinc-700 rounded-xl text-white text-xs"></div>
+        <button type="submit" class="w-full py-3 bg-purple-500 font-bold rounded-xl text-zinc-950 hover:bg-purple-600 transition-all">Inicializar Aplicación</button>
       </form>
     </div>
   </div>
 
-  <!-- SPA INTERFACE -->
+  <!-- CONTROL DE LA SPA -->
   <div id="view-app" class="hidden min-h-screen flex flex-col md:flex-row">
-    <!-- Sidebar -->
+    <!-- BARRA LATERAL -->
     <aside class="hidden md:flex flex-col w-64 glass p-6 space-y-7 shrink-0">
       <div class="flex items-center gap-3">
         <div class="p-2 bg-purple-500/10 text-purple-400 rounded-xl"><i data-lucide="layers"></i></div>
@@ -67,7 +68,7 @@
     </aside>
 
     <main class="flex-1 p-4 md:p-8 overflow-y-auto space-y-6 max-w-[1600px] mx-auto w-full">
-      <!-- DASHBOARD TAB -->
+      <!-- DASHBOARD -->
       <section id="tab-dash" class="tab-content space-y-6">
         <div class="grid grid-cols-1 sm:grid-cols-4 gap-4">
           <div class="glass p-5 rounded-2xl"><p class="text-xs font-semibold text-zinc-400 uppercase">Facturación Bruta</p><p class="text-2xl font-bold mt-2 text-purple-400" id="kpi-total">$ 0</p></div>
@@ -88,18 +89,18 @@
         </div>
       </section>
 
-      <!-- CATALOGO TAB -->
+      <!-- CATALOGO E INVENTARIO -->
       <section id="tab-gestor" class="tab-content space-y-6 hidden">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div class="space-y-4">
             <div class="glass p-5 rounded-2xl space-y-3">
               <h3 class="font-bold text-purple-400 text-xs uppercase tracking-wider">Facturar Venta</h3>
               <form id="form-nueva-venta" class="space-y-3 text-xs">
-                <div><label>Fecha</label><input type="date" id="v-fecha" required class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg"></div>
+                <div><label>Fecha Operación</label><input type="date" id="v-fecha" required class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg"></div>
                 <div><label>Producto</label><select id="v-prod" onchange="autoCompletarPrecioVenta()" class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg"></select></div>
                 <div class="grid grid-cols-2 gap-2">
                   <div><label>Cantidad</label><input type="number" id="v-cantidad" value="1" min="1" oninput="autoCompletarPrecioVenta()" required class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg"></div>
-                  <div><label>Precio Unitario</label><input type="number" id="v-precio-unitario" readonly class="w-full bg-zinc-800 border border-zinc-700 p-2 rounded-lg text-zinc-400"></div>
+                  <div><label>Precio Unitario</label><input type="number" id="v-precio-unitario" readonly class="w-full bg-zinc-800 border border-zinc-700 p-2 rounded-lg text-zinc-400 select-none"></div>
                 </div>
                 <div><label>Monto Total ($)</label><input type="number" id="v-monto" readonly required class="w-full bg-zinc-800 border border-zinc-700 p-2 rounded-lg text-emerald-400 font-bold"></div>
                 <div><label>Vendedor</label><select id="v-vend" class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg"></select></div>
@@ -110,7 +111,7 @@
             <div class="glass p-5 rounded-2xl space-y-3">
               <h3 class="font-bold text-blue-400 text-xs uppercase">Añadir Producto</h3>
               <form id="form-add-producto" class="space-y-2.5 text-xs">
-                <div><label>Nombre</label><input type="text" id="add-p-nombre" required class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg"></div>
+                <div><label>Nombre del Producto</label><input type="text" id="add-p-nombre" required class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg"></div>
                 <div class="grid grid-cols-2 gap-2">
                   <div><label>Stock Inicial</label><input type="number" id="add-p-stock" required class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg"></div>
                   <div><label>Precio Unitario</label><input type="number" id="add-p-precio" required class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg"></div>
@@ -134,25 +135,27 @@
         </div>
       </section>
 
-      <!-- OBJETIVOS TAB -->
+      <!-- TAB: TRACKING DE OBJETIVOS -->
       <section id="tab-objetivos" class="tab-content space-y-6 hidden">
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
           <div class="space-y-4">
+            <!-- Presupuesto Comercial Global -->
             <div class="glass p-5 rounded-2xl space-y-3">
               <h3 class="font-bold text-emerald-400 text-xs uppercase tracking-wider">Definir Presupuesto Comercial</h3>
               <div class="space-y-2 text-xs">
-                <label class="text-zinc-400 block">Meta Facturación del Período ($)</label>
+                <label class="text-zinc-400 block">Meta Facturación General ($)</label>
                 <div class="flex gap-2">
                   <input type="number" id="meta-ventas-global-input" value="50000000" class="flex-1 bg-zinc-900 border border-zinc-700 p-2 rounded-lg text-white font-bold">
-                  <button onclick="guardarMetaGlobal()" class="px-4 py-2 bg-emerald-500 text-zinc-950 rounded-lg font-bold">Fijar</button>
+                  <button onclick="guardarMetaGlobal()" class="px-4 py-2 bg-emerald-500 text-zinc-950 rounded-lg font-bold">Fijar Meta</button>
                 </div>
               </div>
             </div>
+            <!-- Crear OKR -->
             <div class="glass p-5 rounded-2xl space-y-3 h-fit">
               <h3 class="font-bold text-purple-400 text-xs uppercase tracking-wider">Crear Objetivo Estratégico</h3>
               <form id="form-nuevo-okr" class="space-y-3 text-xs">
                 <div><label class="block mb-1 text-zinc-400">Objetivo General (O)</label><input type="text" id="okr-obj" required class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg text-white" placeholder="Ej: Optimizar rotación de inventario"></div>
-                <div><label class="block mb-1 text-zinc-400">Key Result Asociado (KR)</label><input type="text" id="okr-desc" required class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg text-white" placeholder="Ej: Reducir stock de piña en un 30%"></div>
+                <div><label class="block mb-1 text-zinc-400">Key Result Asociado (KR)</label><input type="text" id="okr-desc" required class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg text-white" placeholder="Ej: Reducir stock en 30%"></div>
                 <div><label class="block mb-1 text-zinc-400">Meta Financiera del KR ($)</label><input type="number" id="okr-meta" required class="w-full bg-zinc-900 border border-zinc-700 p-2 rounded-lg text-white" placeholder="Ej: 15000000"></div>
                 <button type="submit" class="w-full py-2 bg-purple-500 font-bold text-zinc-950 rounded-lg">Establecer Meta</button>
               </form>
@@ -173,10 +176,10 @@
         </div>
       </section>
 
-      <!-- CONSULTOR IA TAB -->
+      <!-- CONSULTOR IA -->
       <section id="tab-ia" class="tab-content space-y-4 hidden">
         <div class="flex items-center justify-between">
-          <div><h2 class="text-xl font-bold tracking-tight">Consultor Avanzado</h2><p class="text-xs text-zinc-400">Análisis estratégico y correlación de rendimiento</p></div>
+          <div><h2 class="text-xl font-bold tracking-tight">Consultor Avanzado</h2><p class="text-xs text-zinc-400">Análisis operativo de rendimiento y matrices</p></div>
           <button onclick="ejecutarAnalisisIA()" class="px-4 py-2 bg-purple-500 hover:bg-purple-600 text-zinc-950 font-bold rounded-xl text-xs flex items-center gap-2"><i data-lucide="cpu" class="w-4 h-4"></i> Generar Informe Ejecutivo</button>
         </div>
         <div class="glass p-6 rounded-2xl min-h-[400px] flex flex-col justify-between bg-zinc-900/30">
@@ -184,7 +187,7 @@
         </div>
       </section>
 
-      <!-- PERFIL TAB -->
+      <!-- CONFIGURACIÓN PERFIL -->
       <section id="tab-perfil" class="tab-content space-y-6 hidden">
         <div class="glass p-6 rounded-2xl space-y-6">
           <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -222,7 +225,7 @@
       metaVentasGlobal = Number(document.getElementById('meta-ventas-global-input').value) || 0;
       localStorage.setItem('meta_global_ventas', metaVentasGlobal);
       document.getElementById('kpi-meta-global').innerText = "$ " + metaVentasGlobal.toLocaleString('es-CO');
-      alert("Meta unificada de ventas fijada.");
+      alert("Presupuesto comercial global fijado.");
       renderizarObjetivos();
     }
 
@@ -244,7 +247,6 @@
         consumirApiBack('obtenerDatosDashboard', {}, (res) => {
           db.ventas = res.ventas || [];
           db.productos = res.productos || [];
-          // LINEA CORREGIDA DEFINITIVA: Sincronización exacta con el Backend
           db.vendedores = res.vendedores || []; 
           db.objetivos = res.objetivos || [];
           db.organizacion = res.organizacion || {};
@@ -321,7 +323,7 @@
             <p class="text-zinc-400">Objetivo (O): <span class="text-white font-bold block text-sm mt-0.5">${o.objetivo || 'Estratégico'}</span></p>
             <p class="text-zinc-300 font-medium">Resultado Clave (KR): ${o.descripcion}</p>
             <div class="w-full bg-zinc-800 h-2 rounded-full overflow-hidden"><div class="bg-purple-500 h-full" style="width: ${pct}%"></div></div>
-            <div class="flex justify-between text-[11px] text-zinc-400 mb-2"><span>Avance: $${Number(o.actual).toLocaleString()}</span><span>Meta: $${Number(o.meta).toLocaleString()}</span></div>
+            <div class="flex justify-between text-[11px] text-zinc-400 mb-2"><span>Avance Actual: $${Number(o.actual).toLocaleString()}</span><span>Meta KR: $${Number(o.meta).toLocaleString()}</span></div>
             <div class="pt-2 border-t border-zinc-800 flex items-center gap-2">
               <input type="number" id="input-avance-${index}" value="${o.actual}" class="w-24 bg-zinc-900 border border-zinc-700 p-1 text-center rounded text-white text-xs">
               <button onclick="actualizarProgresoKRManual('${o.objetivo}', '${o.descripcion}', ${index})" class="flex-1 py-1 bg-purple-500 text-zinc-950 font-bold rounded text-[11px]">Actualizar Avance</button>
@@ -336,7 +338,7 @@
     function actualizarProgresoKRManual(objetivo, descripcion, index) {
       const nuevoValor = document.getElementById(`input-avance-${index}`).value;
       consumirApiBack('actualizarAvanceKR', { objetivo: objetivo, descripcion: descripcion, nuevoValor: nuevoValor }, () => {
-        alert("Progreso del KR guardado síncronamente.");
+        alert("Progreso sincronizado de forma segura.");
         cargarSesionExistente();
       });
     }
@@ -352,7 +354,7 @@
 
     function solicitarSugerenciasOKR() {
       if(!session.mistralKey) return alert("Falta API Token.");
-      const prompt = `Genera una meta para la empresa. Devuelve estrictamente un objeto JSON con las llaves exactas "objetivo" y "resultado_clave". No incluyas bloques de código de markdown.`;
+      const prompt = `Genera un objetivo estratégico comercial. Devuelve estrictamente un objeto JSON plano sin bloques markdown con las llaves exactas "objetivo" y "resultado_clave".`;
       const box = document.getElementById('ai-suggestion-box');
       box.classList.remove('hidden');
       document.getElementById('ai-suggestion-text').innerText = "Procesando...";
@@ -457,15 +459,20 @@
 
     function ejecutarAnalisisIA() {
       if(!session.mistralKey) return alert("Falta API Key.");
-      const out = document.getElementById('ia-output'); out.innerHTML = `<p class="text-center py-20 text-purple-400 animate-pulse">Compilando informe ejecutivo comercial...</p>`;
+      const out = document.getElementById('ia-output'); out.innerHTML = `<p class="text-center py-20 text-purple-400 animate-pulse">Compilando informe ejecutivo comercial corporativo...</p>`;
       
-      const pContext = `Genera un informe estratégico para Merco. Usa encabezados h1, h2 y listas con viñetas.`;
+      const total = db.ventas.reduce((acc, curr) => acc + Number(curr.monto || 0), 0);
+      const items = db.productos.map(p => `${p.nombre}: (Vendidos: ${p.vendidos}, Stock: ${p.stockInicial})`).join(' | ');
+
+      const pContext = `Genera un informe estratégico analítico para la empresa "${db.organizacion.nombreEmpresa || 'Merco'}". Datos reales: Ventas Totales: $${total} COP, Inventarios: [${items}]. Usa títulos h1, h2, h3 y tablas o listas con viñetas en Markdown de forma muy directa y sin introducciones largas.`;
+      
       fetch('https://api.mistral.ai/v1/chat/completions', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${session.mistralKey}` },
         body: JSON.stringify({ model: 'mistral-tiny', messages: [{ role: 'user', content: pContext }], temperature: 0.2 })
       })
       .then(r => r.json()).then(res => { 
+        // Solución definitiva al parseo visual: la librería limpia la notación y dibuja elementos HTML ejecutivos reales
         out.innerHTML = marked.parse(res.choices[0].message.content); 
       });
     }
