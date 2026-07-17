@@ -661,11 +661,11 @@
           <h2>🏢 Datos de tu empresa</h2>
           <p>Personaliza DashQ con el nombre, sector y color de marca de tu organización.</p>
           <div class="form-grid">
-            <div class="field"><label>Nombre de la empresa</label><input id="ob_emp" placeholder="Ej: Caribe"/></div>
+            <div class="field"><label>Nombre de la empresa</label><input id="ob_emp" placeholder="Ej: Mi Empresa S.A.S."/></div>
             <div class="field"><label>Sector / Industria</label><input id="ob_sec" placeholder="Ej: Distribución de alimentos"/></div>
             <div class="field"><label>Ciudad principal</label><input id="ob_ciu" placeholder="Ej: Barranquilla"/></div>
             <div class="field"><label>Producto / Servicio</label><input id="ob_pro" placeholder="Ej: Verduras"/></div>
-            <div class="field"><label>Meta ventas mensual ($)</label><input id="ob_meta" type="number" placeholder="90000000"/></div>
+            <div class="field"><label>Meta ventas mensual ($)</label><input id="ob_meta" type="number" placeholder="Ej: 90000000"/></div>
             <div class="field"><label>NIT</label><input id="ob_nit" placeholder="900.000.000-0"/></div>
             <div class="field"><label>Color de marca</label>
               <div class="color-row">
@@ -673,8 +673,8 @@
                 <div class="swatch" id="ob_sw" style="background:#00E5A0;"></div>
               </div>
             </div>
-            <div class="field"><label>Misión</label><textarea id="ob_mis" rows="2" placeholder="Proveer productos de calidad..."></textarea></div>
-            <div class="field"><label>Visión</label><textarea id="ob_vis" rows="2" placeholder="Ser líder en la región..."></textarea></div>
+            <div class="field"><label>Misión</label><textarea id="ob_mis" rows="2" placeholder="Ej: Proveer productos de calidad a nuestros clientes"></textarea></div>
+            <div class="field"><label>Visión</label><textarea id="ob_vis" rows="2" placeholder="Ej: Ser líderes en nuestra región para 2028"></textarea></div>
           </div>
         </div>
         <div class="ob-nav">
@@ -704,13 +704,13 @@
           <h2>🎯 Tu primer OKR</h2>
           <p>Define el objetivo más importante para este período. La IA te ayudará a proponer Key Results medibles.</p>
           <div class="form-grid">
-            <div class="field full"><label>Objective</label><input id="ob_obj" placeholder="Ej: Incrementar ventas y cobertura en Q3 2025"/></div>
-            <div class="field"><label>Key Result 1</label><input id="ob_kr1" placeholder="Alcanzar $85M en ventas mensuales"/></div>
-            <div class="field"><label>Meta KR1</label><input id="ob_km1" type="number" placeholder="90000000"/></div>
-            <div class="field"><label>Key Result 2</label><input id="ob_kr2" placeholder="Incorporar 15 nuevos clientes"/></div>
-            <div class="field"><label>Meta KR2</label><input id="ob_km2" type="number" placeholder="15"/></div>
-            <div class="field"><label>Key Result 3</label><input id="ob_kr3" placeholder="90% de entregas a tiempo"/></div>
-            <div class="field"><label>Meta KR3 (%)</label><input id="ob_km3" type="number" placeholder="90"/></div>
+            <div class="field full"><label>Objective</label><input id="ob_obj" placeholder="Ej: Incrementar ventas en un 20% este trimestre"/></div>
+            <div class="field"><label>Key Result 1</label><input id="ob_kr1" placeholder="Ej: Alcanzar $X en ventas mensuales"/></div>
+            <div class="field"><label>Meta KR1</label><input id="ob_km1" type="number" placeholder="Ej: 90000000"/></div>
+            <div class="field"><label>Key Result 2</label><input id="ob_kr2" placeholder="Ej: Incorporar X nuevos clientes"/></div>
+            <div class="field"><label>Meta KR2</label><input id="ob_km2" type="number" placeholder="Ej: 15"/></div>
+            <div class="field"><label>Key Result 3</label><input id="ob_kr3" placeholder="Ej: X% de entregas a tiempo"/></div>
+            <div class="field"><label>Meta KR3 (%)</label><input id="ob_km3" type="number" placeholder="Ej: 90"/></div>
           </div>
         </div>
         <div class="ob-nav">
@@ -871,7 +871,7 @@
         <div class="panel" id="panel_okrs">
           <div style="background:var(--ink2);border:1px solid var(--rim);border-radius:var(--r);padding:16px;margin-bottom:16px;">
             <div class="form-grid">
-              <div class="field full"><label>Nuevo Objective</label><input id="inp_obj" placeholder="Ej: Incrementar ventas y cobertura en Q3 2025"/></div>
+              <div class="field full"><label>Nuevo Objective</label><input id="inp_obj" placeholder="Ej: Incrementar ventas en un 20% este trimestre"/></div>
             </div>
             <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:4px;">
               <button class="btn btn-em" onclick="generarOKRs()">🤖 IA propone Key Results</button>
@@ -1568,9 +1568,10 @@
       STATE.user = user;
       showScreen('scOnboarding');
       // Limpiar todos los campos — usuario nuevo empieza en blanco
+      // Limpiar TODOS los campos del onboarding
       ['ob_emp','ob_sec','ob_ciu','ob_nit','ob_mis','ob_vis',
        'ob_for','ob_opp','ob_deb','ob_ame',
-       'ob_obj','ob_kr1','ob_kr2','ob_kr3','ob_tam'].forEach(id => {
+       'ob_obj','ob_kr1','ob_kr2','ob_kr3','ob_tam','ob_pro'].forEach(id => {
         const el = document.getElementById(id);
         if (el) el.value = '';
       });
@@ -1578,6 +1579,11 @@
         const el = document.getElementById(id);
         if (el) el.value = '';
       });
+      // Reset color to default
+      const col = document.getElementById('ob_col');
+      if (col) col.value = '#00E5A0';
+      const sw = document.getElementById('ob_sw');
+      if (sw) sw.style.background = '#00E5A0';
       const col = document.getElementById('ob_col');
       if (col) col.value = '#00E5A0';
       const sw = document.getElementById('ob_sw');
