@@ -1709,14 +1709,14 @@
       if (url) {
         const email = STATE.user?.email || '';
         const nombre = STATE.user?.name || '';
-        fetch(url, {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
+        fetch(url, {method:'POST',headers:{'Content-Type':'application/json'},
           body:JSON.stringify({action:'saveUsuario',email,nombre,rol:'admin'})});
         // Send config fields flat — Apps Script saveMap iterates Object.entries(body)
-        fetch(url, {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
+        fetch(url, {method:'POST',headers:{'Content-Type':'application/json'},
           body:JSON.stringify({action:'saveConfig',...config})});
-        fetch(url, {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
+        fetch(url, {method:'POST',headers:{'Content-Type':'application/json'},
           body:JSON.stringify({action:'saveContexto',dofa,email})});
-        if (okr) fetch(url, {method:'POST',mode:'no-cors',headers:{'Content-Type':'application/json'},
+        if (okr) fetch(url, {method:'POST',headers:{'Content-Type':'application/json'},
           body:JSON.stringify({action:'postOKRs',okrs:[okr],email})});
         toast('✅ Configuración guardada y enviada a Sheets');
       } else {
@@ -2830,7 +2830,6 @@ Responde solo con JSON en este formato:
         }
         await fetch(url, {
           method: 'POST',
-          mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ action, ...data })
         });
@@ -2872,7 +2871,6 @@ Responde solo con JSON en este formato:
           if (!exists) {
             await fetch(url, {
               method: 'POST',
-              mode: 'no-cors',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ action: 'postVenta', ...v })
             });
@@ -2883,21 +2881,18 @@ Responde solo con JSON en este formato:
 
         await fetch(url, {
           method: 'POST',
-          mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ action: 'postOKRs', okrs: STATE.okrs })
         });
 
         await fetch(url, {
           method: 'POST',
-          mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ action: 'saveConfig', ...STATE.config })
         });
 
         await fetch(url, {
           method: 'POST',
-          mode: 'no-cors',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ action: 'saveContexto', dofa: STATE.dofa })
         });
